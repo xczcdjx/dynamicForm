@@ -1,0 +1,115 @@
+@f_start:flex-start;
+@f_end:flex-end;
+@f_center:center;
+.centerFlex(@row:@f_center,@col:@f_center){
+  display: flex;
+  justify-content: @row;
+  align-items: @col;
+}
+.dynamicForm{
+  overflow: hidden;
+  .dyFormList{
+    max-height: 200px;
+    overflow: auto;
+    display: grid;
+    gap: 6px;
+    padding: 10px 5px;
+    .dItem{
+      width: 100%;
+      display: grid;
+      grid-template-columns:1fr 100px;
+      .input{
+        .centerFlex(@row: @f_start);
+        column-gap: 15px;
+        .key{
+          width: 150px;
+        }
+      }
+      .btn{
+        .centerFlex(@row: @f_end);
+        column-gap: 8px;
+        .n-button{
+          font-size: 25px;
+          padding: 10px 12px;
+        }
+      }
+    }
+  }
+}
+.dynamicCascadeForm{
+  .dynamicForm();
+  max-height: 600px;
+  .form{
+    max-height: 550px;
+    .dItem{
+      width: inherit;
+    }
+    >.depth-1{
+      display: grid;
+      row-gap: 20px;
+      >.dItem{
+        border: 1px solid rgba(255, 0, 0, 0.61);
+        border-style: dashed;
+        padding: 5px;
+        border-radius: 5px;
+      }
+    }
+    .depth-1 {
+      /*.depth-2 {
+        border: 1px solid green;
+        border-style: dashed;
+        padding: 5px;
+        border-radius: 5px;
+        margin-top: 10px;
+        display: grid;
+        row-gap: 10px;
+        .dItem{
+          .btn{
+            .n-button{
+              transform: scale(0.9);
+            }
+          }
+        }
+        .depth-3 {
+          border: 1px solid blue;
+          border-style: dashed;
+          padding: 5px;
+          border-radius: 5px;
+          margin-top: 8px;
+          display: grid;
+          row-gap: 8px;
+          .dItem{
+            .btn{
+              .n-button{
+                transform: scale(0.8);
+              }
+            }
+          }
+        }
+      }*/
+      .loop(5); // 生成 depth-1 到 depth-5
+    }
+  }
+}
+.loop(@n, @i: 2) when (@i =< @n) {
+  .depth-@{i} {
+    //border: 1px solid lighten(green, @i * 4%);
+    border: 1px solid hsl(@i * 60, 70%, 50%);
+    border-style: dashed;
+    padding: (10px - @i);
+    border-radius: 5px;
+    margin-top: (12px - @i);
+    display: grid;
+    row-gap: (12px - @i * 2);
+
+    .dItem {
+      .btn {
+        .n-button {
+          transform: scale(1 - @i * 0.1);
+        }
+      }
+    }
+
+    .loop(@n, @i + 1); // 递归调用，生成下一层
+  }
+}
