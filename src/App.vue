@@ -13,7 +13,7 @@ const test=ref<{a:string,b:number,c:number[]}>({
 <template>
   <n-message-provider>
   <div class="app">
-    <dynamic-form v-model="test"/>
+    <dynamic-form v-model="test" :configs="{hideReset:true}" :dy-list-configs="{arraySplitSymbol:'-'}"/>
     <p>{{test}}</p>
   </div>
   </n-message-provider>
