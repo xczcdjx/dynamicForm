@@ -30,14 +30,15 @@ export default defineConfig({
             name: 'DynamicForm',
             formats: ['es', 'cjs'],                // 👈 多入口建议用这两个
             fileName: (format, entryName) => {
-                // 输出：dist/index.mjs / dist/index.cjs / dist/naiveUi.mjs / ...
-                if (format === 'es') {
-                    return `${entryName}.mjs`
+                const ext = format === 'es' ? 'mjs' : 'cjs'
+
+                // 核心版放根目录
+                if (entryName === 'index') {
+                    return `index.${ext}`
                 }
-                if (format === 'cjs') {
-                    return `${entryName}.cjs`
-                }
-                return `${entryName}.${format}.js`
+
+                // UI 版本放各自文件夹：naiveUi/index.mjs、elementPlus/index.mjs
+                return `${entryName}/index.${ext}`
             },
         },
         rollupOptions: {

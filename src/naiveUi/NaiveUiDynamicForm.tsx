@@ -2,7 +2,6 @@ import {computed, defineComponent, nextTick, ref} from "vue";
 import {NButton, NInput, NSpace, useMessage} from "naive-ui";
 import type {PropType} from 'vue'
 import {parseValue} from "@/utils/tools.ts";
-
 export default defineComponent({
     name: "NaiveUiDynamicForm",
     props: {

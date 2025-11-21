@@ -2,7 +2,9 @@
 
 import {ref} from "vue";
 import {NMessageProvider} from "naive-ui"
-import NaiveUiDynamicForm from "@/naiveUi/NaiveUiDynamicForm";
+import {NaiveUiDynamicForm} from "../dist/naiveUi";
+import  "../dist/index.css";
+// import NaiveUiDynamicForm from "@/naiveUi/NaiveUiDynamicForm";
 const test=ref<{a:string,b:number,c:number[]}>({
   a:'1111',
   b:123,

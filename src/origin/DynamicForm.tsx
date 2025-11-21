@@ -1,6 +1,5 @@
 import {computed, defineComponent, nextTick, ref} from "vue";
 import type {PropType} from 'vue'
-
 export default defineComponent({
     name: "DynamicForm",
     props: {
@@ -27,6 +26,6 @@ export default defineComponent({
         onMerge: (v: ValueType) => true,
     },
     setup(props, {emit}) {
-        return ()=><div>123</div>
+        return ()=><div class='aaa'>123</div>
     }
 });
