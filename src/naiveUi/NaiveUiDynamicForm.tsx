@@ -1,30 +1,10 @@
 import {computed, defineComponent, nextTick, ref} from "vue";
 import {NButton, NInput, NSpace, useMessage} from "naive-ui";
 import type {PropType} from 'vue'
-import "./index.less";
-import {parseValue} from "../utils/tools.ts";
+import {parseValue} from "@/utils/tools.ts";
 
-export type DyCFormItem = {
-    rId: string;
-    key: string;
-    value: string;
-    isArray?: boolean;
-    isNumber?: boolean;
-};
-export type DyBtnConfig = Record<'resetTxt' | 'newTxt' | 'mergeTxt', string>
-export type DyConfig = {
-    // 隐藏重置按钮
-    hideReset?: boolean;
-    // 输入栏最大高度
-    maxHeight?: string;
-}
-export type DyListConfig = {
-    // 分隔符
-    arraySplitSymbol: string
-}
-type ValueType = Record<string, any>
 export default defineComponent({
-    name: "DynamicForm",
+    name: "NaiveUiDynamicForm",
     props: {
         dyCls: {
             type: String,

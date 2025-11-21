@@ -12,7 +12,13 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "isolatedModules": true,
+
+    "allowImportingTsExtensions": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["src/App.vue","src/main.ts","src/components/DynamicCascadeForm.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue","src/**/*.d.ts"],
+  "exclude": ["src/App.vue","src/main.ts"]
 }

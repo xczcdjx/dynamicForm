@@ -1,12 +1,29 @@
 {
   "name": "dynamicformdjx",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "author": "xczcdjx <xczcdjx@126.com>",
-  "description": "Dynamic form base on naive-ui",
-  "main": "dist/dynamicform.umd.js",
-  "module": "dist/dynamicform.es.js",
+  "description": "Dynamic form for Vue3 (core + naive-ui + element-plus)",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./naiveUi": {
+      "types": "./dist/naiveUi/index.d.ts",
+      "import": "./dist/naiveUi.mjs",
+      "require": "./dist/naiveUi.cjs"
+    },
+    "./elementPlus": {
+      "types": "./dist/elementPlus/index.d.ts",
+      "import": "./dist/elementPlus.mjs",
+      "require": "./dist/elementPlus.cjs"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -26,11 +43,19 @@
     "pub": "npm version patch && npm publish"
   },
   "dependencies": {
-    "vue": "^3.0.0"
   },
   "peerDependencies": {
+    "vue": "^3.0.0",
     "naive-ui": "^2.0.0",
-    "vue": "^3.0.0"
+    "element-plus": "^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "naive-ui": {
+      "optional": true
+    },
+    "element-plus": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
@@ -39,10 +64,12 @@
     "@vue/tsconfig": "^0.8.1",
     "less": "^4.4.2",
     "naive-ui": "^2.43.2",
+    "element-plus": "^2.8.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-lib-inject-css": "^2.2.2",
+    "vue": "^3.0.0",
     "vue-tsc": "^3.1.3"
   }
 }

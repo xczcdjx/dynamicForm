@@ -1,9 +1,8 @@
-import DynamicForm from './components/DynamicForm';
-
+import DynamicForm from "@/origin/DynamicForm.tsx";
 // 命名导出
 export const DynamicFormPlugin = {
     install(app: any) {
-        app.component('DyDynamicForm', DynamicForm);
+        app.component('DynamicForm', DynamicForm);
     }
 };
 

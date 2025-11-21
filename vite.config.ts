@@ -1,33 +1,54 @@
-import {defineConfig} from 'vite'
+// vite.config.ts
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import dts from "vite-plugin-dts";
-import path from 'path'
-import {libInjectCss} from "vite-plugin-lib-inject-css";
+import dts from 'vite-plugin-dts'
+import {libInjectCss} from 'vite-plugin-lib-inject-css'
+import path from 'node:path'
 
 export default defineConfig({
     plugins: [
         vue(),
-        vueJsx(),//这里必须引入vite-plugin-dts插件，否则不会生成d.ts文件
-        dts({tsconfigPath: './tsconfig.app.json'}),
+        vueJsx(),
+        dts({
+            tsconfigPath: './tsconfig.app.json',
+        }),
         libInjectCss(),
     ],
+    resolve: {
+        alias: [{ find: '@', replacement: path.join(__dirname, './src') }],
+        extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+    },
     build: {
-        outDir: "dist",
+        outDir: 'dist',
         lib: {
-            entry: path.resolve(__dirname, 'src/index.ts'),
+            entry: {
+                index: 'src/index.ts',                // 普通版
+                naiveUi: 'src/naiveUi/index.ts',      // Naive UI 版
+                elementPlus: 'src/elementPlus/index.ts', // Element Plus 版
+            },
             name: 'DynamicForm',
-            fileName: (format) => `dynamicform.${format}.js`,
-            // cssFileName: 'style.css', // 可选，统一命名
+            formats: ['es', 'cjs'],                // 👈 多入口建议用这两个
+            fileName: (format, entryName) => {
+                // 输出：dist/index.mjs / dist/index.cjs / dist/naiveUi.mjs / ...
+                if (format === 'es') {
+                    return `${entryName}.mjs`
+                }
+                if (format === 'cjs') {
+                    return `${entryName}.cjs`
+                }
+                return `${entryName}.${format}.js`
+            },
         },
         rollupOptions: {
-            external: ['vue', 'naive-ui'],   // 👈 不要把这些打包进去
+            external: ['vue', 'naive-ui', 'element-plus'], // 👈 外部依赖
             output: {
                 globals: {
                     vue: 'Vue',
-                    'naive-ui': 'naiveUI'
-                }
-            }
-        }
-    }
+                    'naive-ui': 'naiveUI',
+                    'element-plus': 'ElementPlus',
+                },
+            },
+        },
+    },
 })

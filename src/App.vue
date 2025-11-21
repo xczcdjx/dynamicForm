@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
-import DynamicForm from "./components/DynamicForm.tsx";
 import {NMessageProvider} from "naive-ui"
+import NaiveUiDynamicForm from "@/naiveUi/NaiveUiDynamicForm";
 const test=ref<{a:string,b:number,c:number[]}>({
   a:'1111',
   b:123,
@@ -13,7 +13,7 @@ const test=ref<{a:string,b:number,c:number[]}>({
 <template>
   <n-message-provider>
   <div class="app">
-    <dynamic-form v-model="test" :configs="{hideReset:true}" :dy-list-configs="{arraySplitSymbol:'-'}"/>
+    <naive-ui-dynamic-form v-model="test" :configs="{hideReset:true}" :dy-list-configs="{arraySplitSymbol:'-'}"/>
     <p>{{test}}</p>
   </div>
   </n-message-provider>
