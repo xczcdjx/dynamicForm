@@ -1,3 +1,3 @@
-import NaiveUiDynamicForm from "@/naiveUi/NaiveUiDynamicForm.tsx";
+import NaiveUiDynamicForm from "./NaiveUiDynamicForm";
 import '../index.less'
 export { NaiveUiDynamicForm };

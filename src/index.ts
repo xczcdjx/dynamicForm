@@ -1,4 +1,4 @@
-import DynamicForm from "@/origin/DynamicForm.tsx";
+import DynamicForm from './origin/DynamicForm';
 import './index.less'
 // 命名导出
 export const DynamicFormPlugin = {

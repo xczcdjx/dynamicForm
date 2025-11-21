@@ -1,3 +1,3 @@
-import ElementPlusDynamicForm from "@/elementPlus/ElementPlusDynamicForm.tsx";
+import ElementPlusDynamicForm from "./ElementPlusDynamicForm";
 import '../index.less'
 export { ElementPlusDynamicForm };
