@@ -4,21 +4,21 @@ import type {PropType} from 'vue'
 import "./index.less";
 import {parseValue} from "../utils/tools.ts";
 
-type DyCFormItem = {
+export type DyCFormItem = {
     rId: string;
     key: string;
     value: string;
     isArray?: boolean;
     isNumber?: boolean;
 };
-type DyBtnConfig = Record<'resetTxt' | 'newTxt' | 'mergeTxt', string>
-type DyConfig = {
+export type DyBtnConfig = Record<'resetTxt' | 'newTxt' | 'mergeTxt', string>
+export type DyConfig = {
     // 隐藏重置按钮
     hideReset?: boolean;
     // 输入栏最大高度
     maxHeight?: string;
 }
-type DyListConfig = {
+export type DyListConfig = {
     // 分隔符
     arraySplitSymbol: string
 }

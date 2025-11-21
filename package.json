@@ -1,6 +1,6 @@
 {
-  "name": "dynamicform",
-  "version": "0.0.1",
+  "name": "dynamicformdjx",
+  "version": "0.0.3",
   "type": "module",
   "author": "xczcdjx <xczcdjx@126.com>",
   "description": "Dynamic form base on naive-ui",
@@ -9,6 +9,15 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "keywords": [
+    "vite",
+    "vue3",
+    "typescript",
+    "dynamicForm"
   ],
   "scripts": {
     "dev": "vite",
@@ -32,6 +41,8 @@
     "naive-ui": "^2.43.2",
     "typescript": "~5.9.3",
     "vite": "^7.2.2",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-lib-inject-css": "^2.2.2",
     "vue-tsc": "^3.1.3"
   }
 }
