@@ -6,7 +6,7 @@
   "description": "Dynamic form for Vue3 (core or naive-ui or element-plus)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xczcdjx/dynamicForm.git"
+    "url": "https://github.com/xczcdjx/dynamicForm"
   },
   "homepage": "https://github.com/xczcdjx/dynamicForm#readme",
   "bugs": {
