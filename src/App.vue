@@ -2,8 +2,9 @@
 
 import {ref} from "vue";
 import {NMessageProvider} from "naive-ui"
-import "../dist/index.css";
+// import "../dist/index.css";
 import {NaiveUiDynamicForm, naiveUiDynamicFormRef} from "@/naiveUi";
+import ElementPlusDynamicForm from "@/elementPlus/ElementPlusDynamicForm";
 const dyRef=ref<naiveUiDynamicFormRef|null>(null)
 const test = ref<{ a: string, b: number, c: number[] }>({
   a: '1111',
@@ -21,7 +22,8 @@ const onSet = () => {
 <template>
   <n-message-provider>
     <div class="app">
-      <naive-ui-dynamic-form is-controller v-model="test" ref="dyRef"/>
+<!--      <naive-ui-dynamic-form is-controller v-model="test" ref="dyRef"/>-->
+      <element-plus-dynamic-form is-controller v-model="test" ref="dyRef"/>
       <p>{{ test }}</p>
       <button @click="getD">get D</button>
       <button @click="onSet">OnSet</button>

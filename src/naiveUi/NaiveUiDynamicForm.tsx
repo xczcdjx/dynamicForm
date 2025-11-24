@@ -1,4 +1,4 @@
-import {computed, defineComponent, nextTick, ref, toRaw, watch} from "vue";
+import {defineComponent, nextTick, ref, toRaw, watch} from "vue";
 import {NButton, NInput} from "naive-ui";
 import type {PropType} from 'vue'
 import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
@@ -71,7 +71,7 @@ export default defineComponent({
                 if (!props.isController) return
                 const obj = resetObj(list, ml.arraySplitSymbol)
                 emit('update:modelValue', obj)
-                emit('onMerge', obj)
+                emit('onMerge', obj,toRaw(renderM.value))
             },
             {deep: true}
         )
