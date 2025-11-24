@@ -9,14 +9,22 @@ declare global {
     };
     type DyBtnConfig = Record<'resetTxt' | 'newTxt' | 'mergeTxt', string>
     type DyConfig = {
-        // 隐藏重置按钮
+        // 隐藏重置按钮 (默认false)
         hideReset?: boolean;
-        // 输入栏最大高度
+        // 输入栏最大高度 (默认300px)
         maxHeight?: string;
+        // 新增项超过高度时是否自动滚动 (默认true)
+        autoScroll?: boolean;
+        // 允许输入过滤  (默认true)
+        allowFilter?: boolean;
+        // ...
     }
     type DyListConfig = {
         // 分隔符
         arraySplitSymbol: string
+        // ...
     }
     type ValueType = Record<string, any>
+    // 内部新建键值对id
+    export type DyRandomFun = (id?: number|string) => string
 }

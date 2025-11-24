@@ -1,12 +1,25 @@
-import {computed, defineComponent, nextTick, ref} from "vue";
-import {NButton, NInput, NSpace, useMessage} from "naive-ui";
+import {computed, defineComponent, nextTick, ref, toRaw, watch} from "vue";
+import {NButton, NInput} from "naive-ui";
 import type {PropType} from 'vue'
-import {parseValue} from "@/utils/tools.ts";
+import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
+import type {Size} from "naive-ui/es/input/src/interface";
+
+
 export default defineComponent({
     name: "NaiveUiDynamicForm",
     props: {
+        size: {
+            type: String as PropType<Size>,
+        },
+        isController: {
+            type: Boolean,
+        },
         dyCls: {
             type: String,
+        },
+        randomFun: {
+            type: Function as PropType<DyRandomFun>,
+            default: (i?: number) => `${Date.now()}_${i ?? 0}`
         },
         btnConfigs: {
             type: Object as PropType<Partial<DyBtnConfig>>,
@@ -25,60 +38,71 @@ export default defineComponent({
     emits: {
         "update:modelValue": (v: ValueType) => true,
         onReset: () => true,
-        onMerge: (v: ValueType) => true,
+        onMerge: (v: ValueType, ori: DyCFormItem[]) => true,
     },
-    setup(props, {emit}) {
+    setup(props, {emit, expose}) {
         // config
-        const mb = computed(() => ({
+        const mb: DyBtnConfig = {
             resetTxt: "重置",
             newTxt: "添加项",
             mergeTxt: "合并",
             ...props.btnConfigs,
-        }));
-        const mc = computed(() => ({
+        }
+        const mc: DyConfig = {
             hideReset: false,
             maxHeight: "300px",
+            autoScroll: true,
+            allowFilter: true,
             ...props.configs,
-        }));
-        const ml = computed(() => ({
+        }
+        const ml: DyListConfig = {
             arraySplitSymbol: ',',
             ...props.dyListConfigs,
-        }));
+        }
+        const size = props.size
         // data
-        const keyF = (i: number = 0) => Date.now() + i + ""
-        const tranArr = (obj: ValueType) => Object.keys(obj).map((it, i) => {
-            const v = obj[it]
-            const isArray = Array.isArray(v)
-            const isNumber = isArray ? v.every(v => typeof v === 'number') : typeof v === 'number'
-            return {
-                rId: keyF(i),
-                key: it,
-                value: isArray ? v.join(ml.value.arraySplitSymbol) : v,
-                isArray: isArray || undefined,
-                isNumber: isNumber || undefined
-            }
-        }) as DyCFormItem[];
-        const resetObj = (arr: DyCFormItem[]) => {
-            return arr.reduce((pre, cur) => {
-                if (cur.key.trim()) {
-                    pre[cur.key] = parseValue(cur.value, cur.isArray, cur.isNumber, ml.value.arraySplitSymbol);
-                }
-                return pre;
-            }, {} as ValueType);
-        };
-        const renderM = ref(tranArr(props.modelValue));
+        const renderM = ref<DyCFormItem[]>(tranArr(props.modelValue, props.randomFun, ml.arraySplitSymbol))
         // node
         const dyFormListRef = ref<HTMLDivElement | null>(null)
+        // supervise
+        watch(
+            renderM,
+            (list) => {
+                if (!props.isController) return
+                const obj = resetObj(list, ml.arraySplitSymbol)
+                emit('update:modelValue', obj)
+                emit('onMerge', obj)
+            },
+            {deep: true}
+        )
 
-        return () => <div class={props.dyCls ?? "dynamicForm"} style={{maxHeight: mc.value.maxHeight}}>
+        //expose
+        expose({
+            onReset: (o: object) => {
+                renderM.value = tranArr(o, props.randomFun, ml.arraySplitSymbol)
+            }
+        })
+        return () => <div class={props.dyCls ?? "dynamicForm"} style={{maxHeight: mc.maxHeight}}>
             <div class="dyFormList" ref={dyFormListRef}>
                 {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
                     <div class="input">
-                        <NInput value={r.key} class="key" onInput={(v) => {
+                        <NInput size={size} value={r.key} class="key" onInput={(v) => {
                             r.key = v
                         }}/>:
-                        <NInput value={r.value} class='value' onInput={(v) => {
-                            r.value = v
+                        <NInput size={size} value={r.value} class='value' onInput={(v) => {
+                            if (!mc.allowFilter) {
+                                r.value = v
+                            } else {
+                                if (r.isNumber) {
+                                    r.value = formatNumberInput(
+                                        v,
+                                        r.isArray,
+                                        ml.arraySplitSymbol
+                                    )
+                                } else {
+                                    r.value = v
+                                }
+                            }
                         }} v-slots={{
                             prefix: () => <>
                                 <NButton
@@ -105,37 +129,39 @@ export default defineComponent({
                         }/>
                     </div>
                     <div class="btn">
-                        <NButton type="success" disabled={i !== arr.length - 1} onClick={() => {
-                            renderM.value.push({rId: keyF(), key: '', value: ''})
+                        <NButton type="success" size={size} disabled={i !== arr.length - 1} onClick={() => {
+                            renderM.value.push({rId: props.randomFun(), key: '', value: ''})
                             nextTick(() => {
                                 const el = dyFormListRef.value
                                 el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
                             })
                         }}>+</NButton>
-                        <NButton type="error" onClick={() => {
+                        <NButton size={size} type="error" onClick={() => {
                             renderM.value = renderM.value.filter(it => it.rId !== r.rId)
                         }}>-</NButton>
                     </div>
                 </div>)}
             </div>
-            <NSpace justify="center" class='mt-3'>
-                {
-                    !renderM.value.length && <NButton type="success" onClick={() => {
-                        renderM.value.push({rId: keyF(), key: '', value: ''})
-                    }}>{mb.value.newTxt}</NButton>
-                }
-                {!mc.value.hideReset && <NButton type="default" onClick={() => {
-                    renderM.value = tranArr(props.modelValue)
-                    emit('onReset')
-                }}>{mb.value.resetTxt}</NButton>}
-                <NButton type="info" onClick={() => {
-                    renderM.value.sort((a, b) => +a.rId - +b.rId)
-                    const obj = resetObj(renderM.value)
-                    emit("update:modelValue", obj)
-                    emit('onMerge', obj)
-                    renderM.value = tranArr(obj)
-                }}>{mb.value.mergeTxt}</NButton>
-            </NSpace>
+            {
+                !props.isController && <div class='control'>
+                    {
+                        !renderM.value.length && <NButton size={size} type="success" onClick={() => {
+                            renderM.value.push({rId: props.randomFun(), key: '', value: ''})
+                        }}>{mb.newTxt}</NButton>
+                    }
+                    {!mc.hideReset && <NButton size={size} type="default" onClick={() => {
+                        renderM.value = tranArr(props.modelValue, props.randomFun, ml.arraySplitSymbol)
+                        emit('onReset')
+                    }}>{mb.resetTxt}</NButton>}
+                    <NButton size={size} type="info" onClick={() => {
+                        renderM.value.sort((a, b) => +a.rId - +b.rId)
+                        const obj = resetObj(renderM.value, ml.arraySplitSymbol)
+                        emit("update:modelValue", obj)
+                        emit('onMerge', obj, toRaw(renderM.value))
+                        renderM.value = tranArr(obj, props.randomFun, ml.arraySplitSymbol)
+                    }}>{mb.mergeTxt}</NButton>
+                </div>
+            }
         </div>;
     }
 });
