@@ -1,9 +1,17 @@
 {
   "name": "dynamicformdjx",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "type": "module",
   "author": "xczcdjx <xczcdjx@126.com>",
   "description": "Dynamic form for Vue3 (core or naive-ui or element-plus)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xczcdjx/dynamicForm.git"
+  },
+  "homepage": "https://github.com/xczcdjx/dynamicForm#readme",
+  "bugs": {
+    "url": "https://github.com/xczcdjx/dynamicForm/issues"
+  },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
