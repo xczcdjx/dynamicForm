@@ -5,6 +5,7 @@ import {NMessageProvider} from "naive-ui"
 // import "../dist/index.css";
 import {NaiveUiDynamicForm, naiveUiDynamicFormRef} from "@/naiveUi";
 import ElementPlusDynamicForm from "@/elementPlus/ElementPlusDynamicForm";
+import DynamicForm from "@/origin/DynamicForm";
 const dyRef=ref<naiveUiDynamicFormRef|null>(null)
 const test = ref<{ a: string, b: number, c: number[] }>({
   a: '1111',
@@ -22,8 +23,13 @@ const onSet = () => {
 <template>
   <n-message-provider>
     <div class="app">
-<!--      <naive-ui-dynamic-form is-controller v-model="test" ref="dyRef"/>-->
-      <element-plus-dynamic-form is-controller v-model="test" ref="dyRef"/>
+      <naive-ui-dynamic-form size="large" is-controller v-model="test" ref="dyRef"/>
+<!--      <element-plus-dynamic-form is-controller size="small" v-model="test" ref="dyRef"/>-->
+<!--      <element-plus-dynamic-form is-controller v-model="test" ref="dyRef"/>-->
+<!--      <element-plus-dynamic-form is-controller size="large" v-model="test" ref="dyRef"/>-->
+      <dynamic-form v-model="test" is-controller size="small"/>
+      <dynamic-form v-model="test" is-controller/>
+      <dynamic-form v-model="test" is-controller size="large"/>
       <p>{{ test }}</p>
       <button @click="getD">get D</button>
       <button @click="onSet">OnSet</button>

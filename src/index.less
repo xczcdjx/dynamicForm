@@ -1,72 +1,244 @@
-@f_start:flex-start;
-@f_end:flex-end;
-@f_center:center;
-.centerFlex(@row:@f_center,@col:@f_center){
+@f_start: flex-start;
+@f_end: flex-end;
+@f_center: center;
+.centerFlex(@row:@f_center,@col:@f_center) {
   display: flex;
   justify-content: @row;
   align-items: @col;
 }
-.dynamicForm{
+
+.dynamicForm {
   overflow: hidden;
-  .dyFormList{
-    max-height: 200px;
-    overflow: auto;
-    display: grid;
-    gap: 6px;
-    padding: 10px 5px;
-    .dItem{
-      width: 100%;
-      display: grid;
-      grid-template-columns:1fr 100px;
-      //column-gap: 10px;
-      .input{
-        .centerFlex(@row: @f_start);
-        column-gap: 15px;
-        .key{
-          text-align: center;
-          width: 150px;
-          .el-input__inner{
-            text-align: center;
+
+  &.small {
+    .dyFormList {
+      gap: 6px;
+
+      .typeBtn {
+        padding: 0.2em 0.6em;
+        height: 18px;
+      }
+
+      > .dItem {
+        .input {
+          .key {
+            font-size: 0.7em;
+          }
+
+          .vInput {
+            padding: 0.15em 0.4em;
+
+            .slot {
+              white-space: nowrap;
+
+              > button {
+                padding: 0.1em 0.4em;
+                font-size: 0.8em;
+              }
+            }
           }
         }
-      }
-      .btn{
-        .centerFlex(@row: @f_end);
-        column-gap: 8px;
-        .n-button{
-          font-size: 25px;
-          padding: 10px 12px;
-        }
-        .el-button + .el-button{
-          margin-left: 0;
+
+        .btn {
+          .bt {
+            padding: 0.3em 0.8em;
+          }
         }
       }
     }
   }
-  .control{
+
+  &.large {
+    .dyFormList {
+      gap: 15px;
+
+      .dItem {
+        column-gap: 20px;
+
+        .input {
+          .key {
+            font-size: 1.2em;
+          }
+
+          .vInput {
+            padding: 0.5em 0.4em;
+
+            input {
+              font-size: 1.2em;
+            }
+
+            .slot {
+              white-space: nowrap;
+
+              > button {
+                padding: 0.15em 0.4em;
+                font-size: 1em;
+              }
+            }
+          }
+        }
+
+        .btn {
+          .bt {
+            padding: 0.8em 1.2em;
+          }
+        }
+      }
+    }
+  }
+
+  .dyFormList {
+    max-height: 200px;
+    overflow: auto;
+    display: grid;
+    gap: 10px;
+    padding: 10px 5px;
+
+    .dItem {
+      width: 100%;
+      display: grid;
+      grid-template-columns:1fr 100px;
+      column-gap: 0;
+
+      .input {
+        .centerFlex(@row: @f_start);
+        column-gap: 15px;
+
+        .key {
+          text-align: center;
+          width: 150px;
+
+          .el-input__inner {
+            text-align: center;
+          }
+
+          &.nativeInput {
+            border: 1px solid #d2d6dd;
+            padding: 0.5em 0.4em;
+            border-radius: 3px;
+          }
+        }
+
+        .vInput {
+          width: 100%;
+          border: 1px solid #d2d6dd;
+          padding: 0.2em 0.4em;
+          border-radius: 3px;
+          display: flex;
+          column-gap: 5px;
+
+          > .value {
+            border: none;
+            width: 100%;
+
+            &.nativeV {
+              letter-spacing: 3px;
+            }
+          }
+
+          .slot {
+            white-space: nowrap;
+
+            > button {
+              font-weight: normal;
+              border-radius: 3px;
+              font-size: 0.8em;
+            }
+          }
+        }
+      }
+
+      .btn {
+        .centerFlex(@row: @f_end);
+        column-gap: 8px;
+
+        .n-button {
+          font-size: 25px;
+          padding: 10px 12px;
+        }
+
+        .el-button + .el-button {
+          margin-left: 0;
+        }
+
+        .bt {
+          padding: 0.5em 1em;
+        }
+      }
+    }
+  }
+
+  .control {
     .centerFlex();
     margin-top: 5px;
     column-gap: 10px;
   }
+
+  .bt {
+    color: #fff;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    padding: 0.3em 0.8em;
+    font-size: 0.9em;
+    font-weight: 600;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: 0.25s;
+    opacity: 0.9;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  .default {
+    background: #fff;
+    color: #000;
+    border: 1px solid #d2d6dd;
+  }
+
+  .info {
+    background: #8a8e94;
+  }
+
+  .success {
+    background: #63ba39;
+  }
+
+  .danger {
+    background: #ea696a;
+  }
 }
-.dynamicCascadeForm{
+
+.dynamicCascadeForm {
   .dynamicForm();
   max-height: 600px;
-  .form{
+
+  .form {
     max-height: 550px;
-    .dItem{
+
+    .dItem {
       width: inherit;
     }
-    >.depth-1{
+
+    > .depth-1 {
       display: grid;
       row-gap: 20px;
-      >.dItem{
+
+      > .dItem {
         border: 1px solid rgba(255, 0, 0, 0.61);
         border-style: dashed;
         padding: 5px;
         border-radius: 5px;
       }
     }
+
     .depth-1 {
       /*.depth-2 {
         border: 1px solid green;
@@ -104,6 +276,7 @@
     }
   }
 }
+
 .loop(@n, @i: 2) when (@i =< @n) {
   .depth-@{i} {
     //border: 1px solid lighten(green, @i * 4%);
@@ -126,18 +299,21 @@
     .loop(@n, @i + 1); // 递归调用，生成下一层
   }
 }
-.aaa{
-  color:red;
+
+.aaa {
+  color: red;
 }
+
 @media (max-width: 756px) {
-  .dynamicForm{
-    .dyFormList{
-      .dItem{
-        .input{
-          .key{
+  .dynamicForm {
+    .dyFormList {
+      .dItem {
+        .input {
+          .key {
             width: 50px;
           }
-          .value{
+
+          .value {
             width: calc(100% - 60px);
           }
         }

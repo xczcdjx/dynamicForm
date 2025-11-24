@@ -3,12 +3,11 @@ import type {PropType} from 'vue'
 import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
 import {ElButton, ElInput} from "element-plus";
 
-type Size = "small" | "large" | "default"
 export default defineComponent({
     name: "ElementPlusDynamicForm",
     props: {
         size: {
-            type: String as PropType<Size>,
+            type: String as PropType<FSize>,
         },
         isController: {
             type: Boolean,
@@ -84,7 +83,7 @@ export default defineComponent({
                 return toRaw(renderM.value)
             }
         })
-        return () => <div class={props.dyCls ?? "dynamicForm"} style={{maxHeight: mc.maxHeight}}>
+        return () => <div class={props.dyCls ?? `dynamicForm ${size}`} style={{maxHeight: mc.maxHeight}}>
             <div class="dyFormList" ref={dyFormListRef}>
                 {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
                     <div class="input">
@@ -108,6 +107,7 @@ export default defineComponent({
                         }} v-slots={{
                             prefix: () => <>
                                 <ElButton
+                                    class='typeBtn'
                                     type={r.isArray ? "success" : "default"}
                                     size="small"
                                     onClick={() => {
@@ -118,6 +118,7 @@ export default defineComponent({
                                 </ElButton>
                                 &nbsp;
                                 <ElButton
+                                    class='typeBtn'
                                     type={r.isNumber ? "success" : "default"}
                                     size="small"
                                     onClick={() => {

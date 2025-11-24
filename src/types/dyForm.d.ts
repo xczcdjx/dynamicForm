@@ -7,6 +7,7 @@ declare global {
         isArray?: boolean;
         isNumber?: boolean;
     };
+    type FSize = "small" | "large" | "default"
     type DyBtnConfig = Record<'resetTxt' | 'newTxt' | 'mergeTxt', string>
     type DyConfig = {
         // 隐藏重置按钮 (默认false)

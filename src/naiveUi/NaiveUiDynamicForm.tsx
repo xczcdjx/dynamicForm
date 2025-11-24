@@ -85,7 +85,7 @@ export default defineComponent({
                 return toRaw(renderM.value)
             }
         })
-        return () => <div class={props.dyCls ?? "dynamicForm"} style={{maxHeight: mc.maxHeight}}>
+        return () => <div class={props.dyCls ?? `dynamicForm ${size}`} style={{maxHeight: mc.maxHeight}}>
             <div class="dyFormList" ref={dyFormListRef}>
                 {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
                     <div class="input">
