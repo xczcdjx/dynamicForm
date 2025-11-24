@@ -78,8 +78,11 @@ export default defineComponent({
 
         //expose
         expose({
-            onReset: (o: object) => {
+            onSet: (o: object) => {
                 renderM.value = tranArr(o, props.randomFun, ml.arraySplitSymbol)
+            },
+            getRenderArr: () => {
+                return toRaw(renderM.value)
             }
         })
         return () => <div class={props.dyCls ?? "dynamicForm"} style={{maxHeight: mc.maxHeight}}>
@@ -143,23 +146,27 @@ export default defineComponent({
                 </div>)}
             </div>
             {
-                !props.isController && <div class='control'>
+                <div class='control'>
                     {
                         !renderM.value.length && <NButton size={size} type="success" onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})
                         }}>{mb.newTxt}</NButton>
                     }
-                    {!mc.hideReset && <NButton size={size} type="default" onClick={() => {
-                        renderM.value = tranArr(props.modelValue, props.randomFun, ml.arraySplitSymbol)
-                        emit('onReset')
-                    }}>{mb.resetTxt}</NButton>}
-                    <NButton size={size} type="info" onClick={() => {
-                        renderM.value.sort((a, b) => +a.rId - +b.rId)
-                        const obj = resetObj(renderM.value, ml.arraySplitSymbol)
-                        emit("update:modelValue", obj)
-                        emit('onMerge', obj, toRaw(renderM.value))
-                        renderM.value = tranArr(obj, props.randomFun, ml.arraySplitSymbol)
-                    }}>{mb.mergeTxt}</NButton>
+                    {
+                        !props.isController && <>
+                            {!mc.hideReset && <NButton size={size} type="default" onClick={() => {
+                                renderM.value = tranArr(props.modelValue, props.randomFun, ml.arraySplitSymbol)
+                                emit('onReset')
+                            }}>{mb.resetTxt}</NButton>}
+                            <NButton size={size} type="info" onClick={() => {
+                                renderM.value.sort((a, b) => +a.rId - +b.rId)
+                                const obj = resetObj(renderM.value, ml.arraySplitSymbol)
+                                emit("update:modelValue", obj)
+                                emit('onMerge', obj, toRaw(renderM.value))
+                                renderM.value = tranArr(obj, props.randomFun, ml.arraySplitSymbol)
+                            }}>{mb.mergeTxt}</NButton>
+                        </>
+                    }
                 </div>
             }
         </div>;

@@ -3,20 +3,28 @@
 import {ref} from "vue";
 import {NMessageProvider} from "naive-ui"
 import "../dist/index.css";
-import {NaiveUiDynamicForm} from "@/naiveUi";
-
+import {NaiveUiDynamicForm, naiveUiDynamicFormRef} from "@/naiveUi";
+const dyRef=ref<naiveUiDynamicFormRef|null>(null)
 const test = ref<{ a: string, b: number, c: number[] }>({
   a: '1111',
   b: 123,
   c: [1, 3, 5]
 })
+const getD = () => {
+  console.log(dyRef.value?.getRenderArr())
+}
+const onSet = () => {
+  dyRef.value?.onSet({a:8888})
+}
 </script>
 
 <template>
   <n-message-provider>
     <div class="app">
-      <naive-ui-dynamic-form v-model="test"/>
+      <naive-ui-dynamic-form is-controller v-model="test" ref="dyRef"/>
       <p>{{ test }}</p>
+      <button @click="getD">get D</button>
+      <button @click="onSet">OnSet</button>
     </div>
   </n-message-provider>
 </template>
