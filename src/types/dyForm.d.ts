@@ -27,5 +27,10 @@ declare global {
     }
     type ValueType = Record<string, any>
     // 内部新建键值对id
-    export type DyRandomFun = (id?: number|string) => string
+    type DyRandomFun = (id?: number|string) => string
+    //
+    type ExposeType={
+        onSet?:(obj:object)=>void
+        getRenderArr?:()=>DyCFormItem[]
+    }
 }

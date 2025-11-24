@@ -6,6 +6,6 @@ export const DynamicFormPlugin = {
         app.component('DynamicForm', DynamicForm);
     }
 };
-
+export type dynamicFormRef=InstanceType<typeof DynamicForm>&ExposeType
 // 或者直接命名导出组件
 export { DynamicForm };
