@@ -225,6 +225,21 @@
 
     .dItem {
       width: inherit;
+
+      .input {
+        .key {
+
+        }
+
+        .value {
+          &.isKey {
+            text-align: center;
+            input{
+              font-weight: bold;
+            }
+          }
+        }
+      }
     }
 
     > .depth-1 {
@@ -291,7 +306,8 @@
     .dItem {
       .btn {
         .n-button {
-          transform: scale(1 - @i * 0.1);
+          transform: scale(1 - @i * 0.08);
+          //height:(34px - @i*2);
         }
       }
     }

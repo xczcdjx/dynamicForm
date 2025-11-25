@@ -7,6 +7,12 @@ declare global {
         isArray?: boolean;
         isNumber?: boolean;
     };
+    type DyCasFormItem = {
+        rId: string;
+        key: string;
+        value: string | DyCasFormItem[];
+        isArray?: boolean
+    };
     type FSize = "small" | "large" | "default"
     type DyBtnConfig = Record<'resetTxt' | 'newTxt' | 'mergeTxt', string>
     type DyConfig = {
