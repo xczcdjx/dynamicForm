@@ -68,7 +68,8 @@ pre {
 }
 </style>
 ```
-### 联集基本使用 (当前仅支持naive ui方式)
+### 联集基本使用
+#### (当前仅支持naive ui方式,暂不支持强制number类型操作)
 ```vue
 <script setup lang="ts">
 import {ref} from "vue";
