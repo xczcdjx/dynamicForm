@@ -12,9 +12,10 @@ export default defineComponent({
         dyCls: {
             type: String,
         },
+        // 子层深度 (超过则不再出现添加选项)
         depth: {
             type: Number,
-            default: 5
+            default: 3
         },
         isController: {
             type: Boolean,
