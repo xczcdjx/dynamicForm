@@ -1,6 +1,6 @@
 {
   "name": "dynamicformdjx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "author": "xczcdjx <xczcdjx@126.com>",
   "description": "Dynamic form for Vue3 (core or naive-ui or element-plus)",

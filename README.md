@@ -1,6 +1,7 @@
 # dynamicformdjx
 
 基于 **Vue 3** 的动态表单组件。
+
 ## 概述
 
 `DynamicForm` 组件是一个灵活且动态的表单组件，允许用户添加、修改和删除键值对。它提供了多种自定义选项，如按钮文本、表单布局和输入过滤等。
@@ -26,84 +27,71 @@ pnpm add dynamicformdjx
 ### 基本使用
 
 ```vue
+
 <script setup lang="ts">
-import {ref} from "vue";
-import {DynamicForm, type dynamicFormRef} from "dynamicformdjx";
-// 如果你组件使用 "naive-ui" 或 "element plus" ui组件库可直接使用下方引入使用
-// 依赖于naive-ui
-// import {NaiveUiDynamicForm} from "dynamicformdjx/naiveUi";
-// 依赖于element-plus
-// import {ElementPlusDynamicForm} from "dynamicformdjx/elementPlus";
-const test = ref<{ a: string, b: number, c: number[] }>({
-  a: 'Hello world',
-  b: 1314,
-  c: [5, 2, 0]
-})
-const dyRef=ref<dynamicFormRef>()
-const setD = () => {
-  dyRef.value?.onSet({test:"helloWorld"})
-}
+  import {ref} from "vue";
+  import {DynamicForm, type dynamicFormRef} from "dynamicformdjx";
+  // 如果你组件使用 "naive-ui" 或 "element plus" ui组件库可直接使用下方引入使用
+  // 依赖于naive-ui
+  // import {NaiveUiDynamicForm} from "dynamicformdjx/naiveUi";
+  // 依赖于element-plus
+  // import {ElementPlusDynamicForm} from "dynamicformdjx/elementPlus";
+  const test = ref<{ a: string, b: number, c: number[] }>({
+    a: 'Hello world',
+    b: 1314,
+    c: [5, 2, 0]
+  })
+  const dyRef = ref<dynamicFormRef>()
+  const setD = () => {
+    dyRef.value?.onSet({test: "helloWorld"})
+  }
 </script>
 
 <template>
+  <p>Base</p>
+  <DynamicForm v-model="test" ref="dyRef"/>
+  <pre>{{ test }}</pre>
   <div>
-    <p>Base</p>
-    <DynamicForm v-model="test" ref="dyRef"/>
-    <pre>{{ test }}</pre>
-    <div>
-      <button @click="setD">setD</button>
-    </div>
+    <button @click="setD">setD</button>
   </div>
 </template>
-
-<style scoped>
-p {
-  text-align: left;
-  font-size: 25px;
-  font-weight: bold;
-}
-
-pre {
-  text-align: left;
-}
-</style>
 ```
-### 联集基本使用
-#### (当前仅支持naive ui方式,暂不支持强制number类型操作)
-```vue
-<script setup lang="ts">
-import {ref} from "vue";
-import {NaiveUiDynamicCascadeForm} from "dynamicformdjx/naiveUi";
 
-const test2 = ref({
-  a: {
-    b: {
-      c: {
-        d: {
-          e: "hello world"
+### 联集基本使用
+
+#### (当前仅支持naive ui方式)
+
+```vue
+
+<script setup lang="ts">
+  import {ref} from "vue";
+  import {NaiveUiDynamicCascadeForm} from "dynamicformdjx/naiveUi";
+
+  const test2 = ref({
+    a: {
+      b: {
+        c: {
+          d: {
+            e: "hello world"
+          }
         }
       }
-    }
-  }
-})
+    },
+    aa: [5, 2, 0],
+    aaa: 1314
+  })
 </script>
 
 <template>
   <p>Cascade dynamicForm</p>
-  <naive-ui-dynamic-cascade-form v-model="test2" is-controller/>
+  <naive-ui-dynamic-cascade-form v-model="test2" is-controller :depth="5"/>
   <pre>{{ test2 }}</pre>
 </template>
 
-<style scoped>
-.app {
-  padding: 20px;
-}
-</style>
-
 ```
 
-
 ## Props
+
 ### size
 
 类型: String
@@ -173,19 +161,23 @@ onReset: 当表单被重置时触发。
 onMerge: 当表单数据合并时触发，传递更新后的对象和原始表单项。
 
 ### Expose (ref)
-onSet(o: object)
+
+onSet(o?: object)
 
 描述: 设置表单数据为提供的对象，并重新渲染表单。
 
 参数:
 
-o (object): 新的表单数据。
+o () 重置表单数据。
 
-getRenderArr()
+o (object) 设置新的表单数据。
 
-描述: 返回当前渲染的表单数据数组。
+getResult(t: 'res' | 'ori' = 'res')
 
-插槽
+描述: 返回当前渲染的表单结果或渲染时的数组。
 
-default: 可以在表单中提供自定义内容。
+参数:
 
+t () | t ('res') : 表单结果。
+
+t ('ori'): 渲染时数组。

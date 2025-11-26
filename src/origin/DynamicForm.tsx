@@ -76,12 +76,12 @@ export default defineComponent({
 
         //expose
         expose({
-            onSet: (o: object) => {
-                renderM.value = tranArr(o, props.randomFun, ml.arraySplitSymbol)
+            onSet: (o?: object) => {
+                renderM.value = tranArr(o ?? props.modelValue, props.randomFun, ml.arraySplitSymbol)
             },
-            getRenderArr: () => {
-                return toRaw(renderM.value)
-            }
+            getResult: (t: 'res' | 'ori' = 'res') => {
+                return t === 'ori' ? toRaw(renderM.value) : resetObj(renderM.value, ml.arraySplitSymbol)
+            },
         })
         return () => <div class={props.dyCls ?? `dynamicForm ${size}`} style={{maxHeight: mc.maxHeight}}>
             <div class="dyFormList" ref={dyFormListRef}>
