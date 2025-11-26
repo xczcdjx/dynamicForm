@@ -1,6 +1,6 @@
 {
   "name": "dynamicformdjx",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "author": "xczcdjx <xczcdjx@126.com>",
   "description": "Dynamic form for Vue3 (core or naive-ui or element-plus)",
@@ -53,9 +53,7 @@
   "peerDependencies": {
     "vue": "^3.0.0"
   },
-  "peerDependenciesMeta": {
-
-  },
+  "peerDependenciesMeta": {},
   "devDependencies": {
     "@types/node": "^24.10.0",
     "@vitejs/plugin-vue": "^6.0.1",
