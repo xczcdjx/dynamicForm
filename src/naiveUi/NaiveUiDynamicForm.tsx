@@ -71,22 +71,22 @@ export default defineComponent({
                 if (!props.isController) return
                 const obj = resetObj(list, ml.arraySplitSymbol)
                 emit('update:modelValue', obj)
-                emit('onMerge', obj,toRaw(renderM.value))
+                emit('onMerge', obj, toRaw(renderM.value))
             },
             {deep: true}
         )
 
         //expose
         expose({
-            onSet: (o: object) => {
-                renderM.value = tranArr(o, props.randomFun, ml.arraySplitSymbol)
+            onSet: (o?: object) => {
+                renderM.value = tranArr(o ?? props.modelValue, props.randomFun, ml.arraySplitSymbol)
             },
-            getRenderArr: () => {
-                return toRaw(renderM.value)
-            }
+            getResult: (t: 'res' | 'ori' = 'res') => {
+                return t === 'ori' ? toRaw(renderM.value) : resetObj(renderM.value, ml.arraySplitSymbol)
+            },
         })
-        return () => <div class={props.dyCls ?? `dynamicForm ${size}`} style={{maxHeight: mc.maxHeight}}>
-            <div class="dyFormList" ref={dyFormListRef}>
+        return () => <div class={props.dyCls ?? `dynamicForm ${size}`}>
+            <div class="dyFormList" ref={dyFormListRef} style={{maxHeight: mc.maxHeight}}>
                 {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
                     <div class="input">
                         <NInput size={size} value={r.key} class="key" onInput={(v) => {

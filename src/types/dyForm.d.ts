@@ -12,6 +12,7 @@ declare global {
         key: string;
         value: string | DyCasFormItem[];
         isArray?: boolean
+        isNumber?: boolean
     };
     type FSize = "small" | "large" | "default"
     type DyBtnConfig = Record<'resetTxt' | 'newTxt' | 'mergeTxt', string>
@@ -26,6 +27,7 @@ declare global {
         allowFilter?: boolean;
         // ...
     }
+    type DyCasConfig = {} & Omit<DyConfig, 'autoScroll'>
     type DyListConfig = {
         // 分隔符
         arraySplitSymbol: string
@@ -33,10 +35,10 @@ declare global {
     }
     type ValueType = Record<string, any>
     // 内部新建键值对id
-    type DyRandomFun = (id?: number|string) => string
+    type DyRandomFun = (id?: number | string) => string
     //
-    type ExposeType={
-        onSet?:(obj:object)=>void
-        getRenderArr?:()=>DyCFormItem[]
+    type ExposeType = {
+        onSet?: (obj?: object) => void
+        getResult?: (t: 'res' | 'ori' = 'res') => DyCFormItem[] | object
     }
 }

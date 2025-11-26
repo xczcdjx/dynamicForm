@@ -1,7 +1,7 @@
 import {defineComponent, type PropType, ref, toRaw, watch} from "vue";
 import {NButton, NInput} from "naive-ui";
+import {formatNumberInput, parseValue} from "@/utils/tools.ts";
 
-// 其中嵌套数值和数值数组暂未处理 (后续更改)
 export default defineComponent({
     name: "NaiveUiDynamicCascadeForm",
     props: {
@@ -9,16 +9,33 @@ export default defineComponent({
             type: Object as PropType<ValueType>,
             required: true
         },
+        isController: {
+            type: Boolean,
+        },
         dyCls: {
             type: String,
+        },
+        randomFun: {
+            type: Function as PropType<DyRandomFun>,
+            default: (i?: number) => `${Date.now()}_${i ?? 0}`
         },
         // 子层深度 (超过则不再出现添加选项)
         depth: {
             type: Number,
             default: 3
         },
-        isController: {
-            type: Boolean,
+        btnConfigs: {
+            type: Object as PropType<Partial<DyBtnConfig>>,
+        },
+        configs: {
+            type: Object as PropType<DyCasConfig>,
+        },
+        dyListConfigs: {
+            type: Object as PropType<DyListConfig>,
+        },
+        newChildTxt: {
+            type: Function as PropType<(it: DyCasFormItem) => string>,
+            default: (it: DyCasFormItem) => `添加 '${it.key}' 子项`
         },
     },
     emits: {
@@ -26,29 +43,48 @@ export default defineComponent({
         onReset: () => true,
         onMerge: (v: ValueType, ori: DyCasFormItem[]) => true,
     },
-    setup(props, {emit}) {
-        const keyF = (i: number = 0) => Date.now() + i + "";
+    setup(props, {emit, expose}) {
+        // config
+        const mb: DyBtnConfig = {
+            resetTxt: "重置",
+            newTxt: "添加项",
+            mergeTxt: "合并",
+            ...props.btnConfigs,
+        }
+        const mc: DyCasConfig = {
+            hideReset: false,
+            maxHeight: "600px",
+            allowFilter: true,
+            ...props.configs,
+        }
+        const ml: DyListConfig = {
+            arraySplitSymbol: ',',
+            ...props.dyListConfigs,
+        }
+        // function
         const allowType = (v: any): boolean => ['string', 'number'].includes(v)
         // 初始化数据，支持嵌套
         const tranMulObj = (obj: ValueType): DyCasFormItem[] =>
             Object.keys(obj).map((it, i) => {
                 let v = obj[it]
                 const isArray = Array.isArray(v)
+                const isNumber = isArray ? v.every((it2: string | number) => typeof it2 === 'number') : typeof v === 'number'
                 const isNull = v === null
                 if (allowType(typeof v)) v = obj[it]
                 if (isNull) v = ''
                 return {
-                    rId: keyF(i),
+                    rId: props.randomFun(i),
                     key: it,
-                    value: Object.prototype.toString.call(v) === '[object Object]' ? tranMulObj(obj[it]) : isArray ? v.join(',') : v,
-                    isArray: isArray || undefined
+                    value: Object.prototype.toString.call(v) === '[object Object]' ? tranMulObj(obj[it]) : isArray ? v.join(ml.arraySplitSymbol) : v,
+                    isArray: isArray || undefined,
+                    isNumber: isNumber || undefined
                 }
             });
         const resetMulObj = (items: DyCasFormItem[]): ValueType => {
             return items.reduce((pre, cur) => {
                 const v = cur.value
                 if (cur.key.trim().length) {
-                    pre[cur.key] = Array.isArray(v) ? resetMulObj(v) : cur.isArray ? v.split(',') : v;
+                    pre[cur.key] = Array.isArray(v) ? resetMulObj(v) : parseValue(cur.value as string, cur.isArray, cur.isNumber, ml.arraySplitSymbol);
                 }
                 return pre;
             }, {} as ValueType);
@@ -79,8 +115,15 @@ export default defineComponent({
                                             r.key = v
                                             return
                                         }
-                                        if (isAllow) {
-                                            r.value = v;
+                                        if (!mc.allowFilter) r.value = v
+                                        else {
+                                            if (r.isNumber) {
+                                                r.value = formatNumberInput(
+                                                    v,
+                                                    r.isArray,
+                                                    ml.arraySplitSymbol
+                                                )
+                                            } else r.value = v
                                         }
                                     }}
                                     v-slots={{
@@ -94,6 +137,16 @@ export default defineComponent({
                                             >
                                                 Array
                                             </NButton>
+                                            &nbsp;
+                                            <NButton
+                                                type={r.isNumber ? "success" : "default"}
+                                                size="tiny"
+                                                onClick={() => {
+                                                    r.isNumber = !r.isNumber
+                                                }}
+                                            >
+                                                Number
+                                            </NButton>
                                         </>,
                                         suffix: () =>
                                             depth < props.depth ? (
@@ -106,13 +159,13 @@ export default defineComponent({
                                                             r.isArray = undefined
                                                         }
                                                         (r.value as DyCasFormItem[]).push({
-                                                            rId: keyF(),
+                                                            rId: props.randomFun(),
                                                             key: "",
                                                             value: ""
                                                         });
                                                     }}
                                                 >
-                                                    添加 '{r.key}' 子项
+                                                    {props.newChildTxt(r)}
                                                 </NButton>
                                             ) : null
                                     }}
@@ -123,7 +176,7 @@ export default defineComponent({
                                     type="success"
                                     disabled={i !== arr.length - 1}
                                     onClick={() => {
-                                        items.push({rId: keyF(), key: "", value: ""});
+                                        items.push({rId: props.randomFun(), key: "", value: ""});
                                     }}
                                 >
                                     +
@@ -163,31 +216,40 @@ export default defineComponent({
             },
             {deep: true}
         )
+        //expose
+        expose({
+            onSet: (o?: object) => {
+                renderM.value = tranMulObj(o ?? props.modelValue)
+            },
+            getResult: (t: 'res' | 'ori' = 'res') => {
+                return t === 'ori' ? toRaw(renderM.value) : resetMulObj(renderM.value)
+            },
+        })
         return () => (
             <div class={props.dyCls ?? `dynamicCascadeForm`}>
-                <div class="dyFormList">{renderFormItems(renderM.value)}</div>
+                <div class="dyFormList" style={{maxHeight: mc.maxHeight}}>{renderFormItems(renderM.value)}</div>
                 <div class='control'>
                     {!renderM.value.length && (
                         <NButton
                             type="success"
                             onClick={() => {
-                                renderM.value.push({rId: keyF(), key: "", value: ""});
+                                renderM.value.push({rId: props.randomFun(), key: "", value: ""});
                             }}
                         >
-                            添加项
+                            {mb.newTxt}
                         </NButton>
                     )}
                     {
                         !props.isController && <>
-                            <NButton
+                            {!mc.hideReset && <NButton
                                 type="default"
                                 onClick={() => {
                                     renderM.value = tranMulObj(props.modelValue);
                                     emit('onReset')
                                 }}
                             >
-                                重置
-                            </NButton>
+                                {mb.resetTxt}
+                            </NButton>}
                             <NButton
                                 type="info"
                                 onClick={() => {
@@ -197,7 +259,7 @@ export default defineComponent({
                                     renderM.value = tranMulObj(obj);
                                 }}
                             >
-                                合并
+                                {mb.mergeTxt}
                             </NButton>
                         </>
                     }

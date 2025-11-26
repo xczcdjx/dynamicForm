@@ -1,4 +1,4 @@
-const tranArr = (obj: ValueType,arrayFun:DyRandomFun,splitSymbol:string) => Object.keys(obj).map((it, i) => {
+const tranArr = (obj: ValueType, arrayFun: DyRandomFun, splitSymbol: string) => Object.keys(obj).map((it, i) => {
     const v = obj[it]
     const isArray = Array.isArray(v)
     const isNumber = isArray ? v.every(v => typeof v === 'number') : typeof v === 'number'
@@ -10,7 +10,7 @@ const tranArr = (obj: ValueType,arrayFun:DyRandomFun,splitSymbol:string) => Obje
         isNumber: isNumber || undefined
     }
 }) as DyCFormItem[];
-const resetObj = (arr: DyCFormItem[],splitSymbol:string) => {
+const resetObj = (arr: DyCFormItem[], splitSymbol: string) => {
     return arr.reduce((pre, cur) => {
         if (cur.key.trim()) {
             pre[cur.key] = parseValue(cur.value, cur.isArray, cur.isNumber, splitSymbol);
@@ -25,8 +25,9 @@ const parseValue = (value: string, isArray?: boolean, isNumber?: boolean, splitS
             d = String(value).split(splitSym).map(Number).filter(it => !Number.isNaN(it))
         } else d = String(value).split(splitSym)
     } else {
-        if (isNumber) d = parseInt(value)
-        else d = value.toString()
+        if (isNumber) {
+            d = parseFloat(value)
+        } else d = value.toString()
     }
     return d
 };
