@@ -107,14 +107,15 @@
           text-align: center;
           width: 150px;
 
-          .el-input__inner {
-            text-align: center;
-          }
 
           &.nativeInput {
             border: 1px solid #d2d6dd;
             padding: 0.5em 0.4em;
             border-radius: 3px;
+            &:focus{
+              outline: none;
+              box-shadow: 0 0 5px rgba(0, 123, 255, 0.3)
+            }
           }
         }
 
@@ -132,6 +133,10 @@
 
             &.nativeV {
               letter-spacing: 3px;
+              &:focus{
+                outline: none;
+                //box-shadow: 0 0 5px rgba(0, 123, 255, 0.3)
+              }
             }
           }
 
@@ -167,6 +172,11 @@
     }
   }
 
+  .key,.isKey{
+    .el-input__inner {
+      text-align: center;
+    }
+  }
   .control {
     .centerFlex();
     margin-top: 5px;
@@ -191,7 +201,7 @@
     }
 
     &:disabled {
-      opacity: 0.7;
+      opacity: 0.35;
       cursor: not-allowed;
     }
   }
@@ -222,7 +232,16 @@
 
     .dItem {
       width: inherit;
+      .vInput{
+        .surSlot{
+          white-space: nowrap;
 
+          > button {
+            padding: 0.1em 0.4em;
+            font-size: 0.8em;
+          }
+        }
+      }
       .input {
         .key {
 
@@ -246,7 +265,7 @@
       border-style: dashed;
       border-radius: 5px;
       >.dItem{
-        padding: 5px 0;
+        padding: 5px;
       }
        .dItem +.dItem {
         //padding: 5px;

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import {NaiveUiDynamicCascadeForm, type naiveUiDynamicCascadeFFormRef, type naiveUiDynamicFormRef} from "@/naiveUi";
+import {ElementPlusDynamicCascadeForm,elementPlusDynamicFormRef} from "@/elementPlus";
+import {dynamicCascadeFormRef,DynamicCascadeForm} from "@";
 
-const dyCascadeRef = ref<naiveUiDynamicFormRef | null>(null)
+const dyCascadeRef = ref<dynamicCascadeFormRef | null>(null)
 const test2 = ref({
   a: {
     b: {
@@ -29,7 +30,8 @@ const onSet2 = () => {
 
 <template>
   <p>Cascade dynamicForm</p>
-  <naive-ui-dynamic-cascade-form v-model="test2" :depth="5" ref="dyCascadeRef" is-controller :configs="{showBorder:false,showPad:false}"/>
+<!--  <element-plus-dynamic-cascade-form v-model="test2" :depth="5" ref="dyCascadeRef" is-controller :configs="{showBorder:false,showPad:false}"/>-->
+  <dynamic-cascade-form  v-model="test2" :depth="5" ref="dyCascadeRef" is-controller/>
   <pre>{{ test2 }}</pre>
   <button @click="getD">get D</button>
   <button @click="onSet">OnSet</button>
