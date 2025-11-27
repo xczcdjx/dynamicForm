@@ -50,7 +50,7 @@ pnpm add dynamicformdjx
   <p>Result</p>
   <pre>{{ test }}</pre>
   <div>
-    <button @click="setData">setData</button>
+    <button @click="setData">setData helloWorld</button>
   </div>
 </template>
 ```
@@ -60,11 +60,11 @@ pnpm add dynamicformdjx
 #### (当前仅支持naive ui方式)
 
 ```vue
-
 <script setup lang="ts">
   import {ref} from "vue";
-  import {NaiveUiDynamicCascadeForm} from "dynamicformdjx/naiveUi";
+  import {dynamicCascadeFormRef,DynamicCascadeForm} from "dynamicformdjx";
 
+  const dyCascadeRef = ref<dynamicCascadeFormRef | null>(null)
   const test2 = ref({
     a: {
       b: {
@@ -78,12 +78,15 @@ pnpm add dynamicformdjx
     aa: [5, 2, 0],
     aaa: 1314
   })
+  const setData = () => {
+    dyCascadeRef.value?.onSet?.({a: 8888})
+  }
 </script>
 
 <template>
   <p>Cascade dynamicForm</p>
-  <naive-ui-dynamic-cascade-form v-model="test2" is-controller :depth="5"/>
+  <dynamic-cascade-form  v-model="test2" :depth="5" ref="dyCascadeRef" is-controller/>
   <pre>{{ test2 }}</pre>
+  <button @click="setData">setData 8888</button>
 </template>
-
 ```
