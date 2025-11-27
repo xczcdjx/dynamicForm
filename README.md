@@ -57,8 +57,6 @@ pnpm add dynamicformdjx
 
 ### 联集基本使用
 
-#### (当前仅支持naive ui方式)
-
 ```vue
 <script setup lang="ts">
   import {ref} from "vue";
