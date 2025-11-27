@@ -27,7 +27,12 @@ declare global {
         allowFilter?: boolean;
         // ...
     }
-    type DyCasConfig = {} & Omit<DyConfig, 'autoScroll'>
+    type DyCasConfig = {
+        showBorder?:boolean
+        retractLen?:number
+        borderColors?:string[]
+        showPad?:boolean
+    } & Omit<DyConfig, 'autoScroll'>
     type DyListConfig = {
         // 分隔符
         arraySplitSymbol: string

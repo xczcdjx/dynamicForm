@@ -1,6 +1,6 @@
 import {defineComponent, type PropType, ref, toRaw, watch} from "vue";
 import {NButton, NInput} from "naive-ui";
-import {formatNumberInput, parseValue} from "@/utils/tools.ts";
+import {formatNumberInput, getDepthColor, parseValue, saferRepairColor} from "@/utils/tools.ts";
 
 export default defineComponent({
     name: "NaiveUiDynamicCascadeForm",
@@ -55,6 +55,10 @@ export default defineComponent({
             hideReset: false,
             maxHeight: "600px",
             allowFilter: true,
+            showBorder: true,
+            showPad: true,
+            retractLen: 0,
+            borderColors: [],
             ...props.configs,
         }
         const ml: DyListConfig = {
@@ -93,13 +97,21 @@ export default defineComponent({
 
         // render Cascade form
         const renderFormItems = (items: DyCasFormItem[], depth = 1, oriObj?: DyCasFormItem) => {
-            return <div class={`depth-${depth}`} style={{'--depth': depth}}>
+            return <div class={[
+                `depth-${depth}`,
+                mc.showBorder ? '' : 'no-border',
+                mc.showPad ? '' : 'no-pad',
+            ]}
+                        style={{
+                            '--depth': depth,
+                            ['--c' + [depth]]: saferRepairColor(mc.borderColors!, depth),
+                        }}>
                 {
                     items.map((r, i, arr) => {
                         const isChildren = Array.isArray(r.value)
                         const isAllow = allowType(typeof r.value)
                         return <div class="dItem" key={r.rId}
-                                    style={{marginLeft: depth > 1 ? `${depth * 15}px` : '0px'}}>
+                                    style={{marginLeft: depth > 1 ? `${depth * mc.retractLen!}px` : '0'}}>
                             <div class="input">
                                 {
                                     !isChildren && <>

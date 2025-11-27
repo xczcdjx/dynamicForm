@@ -99,10 +99,22 @@ const formatNumberInput = (
         return sanitizeOne(val)
     }
 }
+const getDepthColor = (depth: number) => {
+    const hue = (depth * 35) % 360
+    const saturation = 60
+    const lightness = 65
 
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+}
+const saferRepairColor = (colors: string[], i: number): string => {
+    const c = colors[i - 1]
+    return c ?? getDepthColor(i)
+}
 export {
     tranArr,
     resetObj,
     parseValue,
-    formatNumberInput
+    formatNumberInput,
+    getDepthColor,
+    saferRepairColor
 }
