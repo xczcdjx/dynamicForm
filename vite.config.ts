@@ -12,6 +12,8 @@ export default defineConfig({
         vueJsx(),
         dts({
             tsconfigPath: './tsconfig.app.json',
+            include: ['src'],  // 确保这个声明文件被处理
+            copyDtsFiles: true,               // 让原始 .d.ts 也拷贝到 dist
         }),
         libInjectCss(),
     ],

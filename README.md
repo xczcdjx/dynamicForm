@@ -55,7 +55,7 @@ pnpm add dynamicformdjx
 </template>
 ```
 
-### 联集基本使用
+### 级联基本使用
 
 ```vue
 <script setup lang="ts">

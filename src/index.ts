@@ -2,6 +2,7 @@ import DynamicForm from './origin/DynamicForm';
 import DynamicCascadeForm from "./origin/DynamicCascadeForm";
 
 import './index.less'
+import type {ExposeType} from "@/types";
 // 命名导出
 export const DynamicFormPlugin = {
     install(app: any) {
