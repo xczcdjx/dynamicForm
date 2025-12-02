@@ -3,7 +3,7 @@ import {NButton, NInput} from "naive-ui";
 import type {PropType} from 'vue'
 import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
 import type {Size} from "naive-ui/es/input/src/interface";
-
+import type {ValueType,DyRandomFun,DyBtnConfig,DyListConfig,DyConfig,DyCFormItem} from "@/types";
 
 export default defineComponent({
     name: "NaiveUiDynamicForm",
@@ -134,10 +134,12 @@ export default defineComponent({
                     <div class="btn">
                         <NButton type="success" size={size} disabled={i !== arr.length - 1} onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})
-                            nextTick(() => {
-                                const el = dyFormListRef.value
-                                el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
-                            })
+                            if (mc.autoScroll) {
+                                nextTick(() => {
+                                    const el = dyFormListRef.value
+                                    el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
+                                })
+                            }
                         }}>+</NButton>
                         <NButton size={size} type="error" onClick={() => {
                             renderM.value = renderM.value.filter(it => it.rId !== r.rId)

@@ -2,7 +2,12 @@
 
 基于 **Vue 3** 的动态表单输入组件。
 
-[Document](https://xczcdjx.github.io/dynamicFormDoc/)
+[文档](https://xczcdjx.github.io/dynamicFormDoc/)
+
+[Vue2 版本](https://www.npmjs.com/package/dynamicformdjx-vue2) (正在适配)
+
+[React 版本](https://www.npmjs.com/package/dynamicformdjx-react) (正在适配)
+
 
 ## 概述
 

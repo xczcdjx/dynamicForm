@@ -1,7 +1,7 @@
 import {defineComponent, nextTick, ref, toRaw, watch} from "vue";
 import type {PropType} from 'vue'
 import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
-
+import type {FSize,ValueType,DyRandomFun,DyBtnConfig,DyListConfig,DyConfig,DyCFormItem} from "@/types";
 
 export default defineComponent({
     name: "DynamicForm",
@@ -83,8 +83,8 @@ export default defineComponent({
                 return t === 'ori' ? toRaw(renderM.value) : resetObj(renderM.value, ml.arraySplitSymbol)
             },
         })
-        return () => <div class={props.dyCls ?? `dynamicForm ${size}`} style={{maxHeight: mc.maxHeight}}>
-            <div class="dyFormList" ref={dyFormListRef}>
+        return () => <div class={props.dyCls ?? `dynamicForm ${size}`}>
+            <div class="dyFormList" ref={dyFormListRef} style={{maxHeight: mc.maxHeight}}>
                 {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
                     <div class="input">
                         <input size={size} value={r.key} class="key nativeInput" onInput={v => {
@@ -139,10 +139,12 @@ export default defineComponent({
                     <div class="btn">
                         <button class={[size, 'success', 'bt']} disabled={i !== arr.length - 1} onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})
-                            nextTick(() => {
-                                const el = dyFormListRef.value
-                                el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
-                            })
+                            if (mc.autoScroll) {
+                                nextTick(() => {
+                                    const el = dyFormListRef.value
+                                    el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
+                                })
+                            }
                         }}>+
                         </button>
                         <button class={[

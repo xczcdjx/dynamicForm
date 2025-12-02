@@ -2,6 +2,7 @@ import {defineComponent, nextTick, ref, toRaw, watch} from "vue";
 import type {PropType} from 'vue'
 import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
 import {ElButton, ElInput} from "element-plus";
+import type {FSize, ValueType, DyRandomFun, DyBtnConfig, DyListConfig, DyConfig, DyCFormItem} from "@/types";
 
 export default defineComponent({
     name: "ElementPlusDynamicForm",
@@ -134,10 +135,12 @@ export default defineComponent({
                     <div class="btn">
                         <ElButton type="success" size={size} disabled={i !== arr.length - 1} onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})
-                            nextTick(() => {
-                                const el = dyFormListRef.value
-                                el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
-                            })
+                            if (mc.autoScroll) {
+                                nextTick(() => {
+                                    const el = dyFormListRef.value
+                                    el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
+                                })
+                            }
                         }}>+</ElButton>
                         <ElButton size={size} type="danger" onClick={() => {
                             renderM.value = renderM.value.filter(it => it.rId !== r.rId)

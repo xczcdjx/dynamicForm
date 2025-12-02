@@ -118,54 +118,6 @@ export default defineComponent({
                                         :
                                     </>
                                 }
-                                {
-                                    /*
-                                    v-slots={{
-                                        prefix:
-                                        Array.isArray(r.value) ? undefined : () => <>
-                                            <button
-                                                type={r.isArray ? "success" : "default"}
-                                                size="tiny"
-                                                onClick={() => {
-                                                    r.isArray = !r.isArray
-                                                }}
-                                            >
-                                                Array
-                                            </button>
-                                            &nbsp;
-                                            <button
-                                                type={r.isNumber ? "success" : "default"}
-                                                size="tiny"
-                                                onClick={() => {
-                                                    r.isNumber = !r.isNumber
-                                                }}
-                                            >
-                                                Number
-                                            </button>
-                                        </>,
-                                        suffix: () =>
-                                            depth < props.depth ? (
-                                                !isChildren && <button
-                                                    type="success"
-                                                    size="tiny"
-                                                    onClick={() => {
-                                                        if (isAllow) {
-                                                            r.value = [];
-                                                            r.isArray = undefined
-                                                        }
-                                                        (r.value as DyCasFormItem[]).push({
-                                                            rId: props.randomFun(),
-                                                            key: "",
-                                                            value: ""
-                                                        });
-                                                    }}
-                                                >
-                                                    {props.newChildTxt(r)}
-                                                </button>
-                                            ) : null
-                                    }}
-                                    * */
-                                }
                                 <div class="vInput">
                                     <div class="slot">
                                         {Array.isArray(r.value) ? undefined :  <>
