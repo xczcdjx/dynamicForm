@@ -1,5 +1,6 @@
 import {defineComponent, type PropType, ref, toRaw, watch} from "vue";
 import {formatNumberInput, parseValue, saferRepairColor} from "@/utils/tools.ts";
+import type {ValueType, DyRandomFun, DyBtnConfig, DyListConfig, DyCasConfig,DyCasFormItem} from "@/types";
 export default defineComponent({
     name: "DynamicCascadeForm",
     props: {
