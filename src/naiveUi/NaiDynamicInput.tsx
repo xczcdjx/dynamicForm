@@ -1,13 +1,15 @@
 import {defineComponent, nextTick, ref, toRaw, watch} from "vue";
+import {NButton, NInput} from "naive-ui";
 import type {PropType} from 'vue'
 import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
-import type {FSize,ValueType,DyRandomFun,DyBtnConfig,DyListConfig,DyConfig,DyCFormItem} from "@/types";
+import type {Size} from "naive-ui/es/input/src/interface";
+import type {ValueType,DyRandomFun,DyBtnConfig,DyListConfig,DyConfig,DyCFormItem} from "@/types";
 
 export default defineComponent({
-    name: "DynamicForm",
+    name: "NaiDynamicInput",
     props: {
         size: {
-            type: String as PropType<FSize>,
+            type: String as PropType<Size>,
         },
         isController: {
             type: Boolean,
@@ -87,57 +89,50 @@ export default defineComponent({
             <div class="dyFormList" ref={dyFormListRef} style={{maxHeight: mc.maxHeight}}>
                 {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
                     <div class="input">
-                        <input size={size} value={r.key} class="key nativeInput" onInput={v => {
-                            r.key = (v.target as HTMLInputElement).value
+                        <NInput size={size} value={r.key} class="key" onInput={(v) => {
+                            r.key = v
                         }}/>:
-                        <div class="vInput">
-                            <div class="slot">
-                                <button
-                                    class={[
-                                        r.isArray ? "success" : "default",
-                                        "small",
-                                        "bt"
-                                    ]}
+                        <NInput size={size} value={r.value} class='value' onInput={(v) => {
+                            if (!mc.allowFilter) {
+                                r.value = v
+                            } else {
+                                if (r.isNumber) {
+                                    r.value = formatNumberInput(
+                                        v,
+                                        r.isArray,
+                                        ml.arraySplitSymbol
+                                    )
+                                } else {
+                                    r.value = v
+                                }
+                            }
+                        }} v-slots={{
+                            prefix: () => <>
+                                <NButton
+                                    type={r.isArray ? "success" : "default"}
+                                    size="tiny"
                                     onClick={() => {
                                         r.isArray = !r.isArray
                                     }}
                                 >
                                     Array
-                                </button>
+                                </NButton>
                                 &nbsp;
-                                <button
-                                    class={[
-                                        r.isNumber ? "success" : "default",
-                                        "small",
-                                        "bt"
-                                    ]}
+                                <NButton
+                                    type={r.isNumber ? "success" : "default"}
+                                    size="tiny"
                                     onClick={() => {
                                         r.isNumber = !r.isNumber
                                     }}
                                 >
                                     Number
-                                </button>
-                            </div>
-                            <input size={size} value={r.value} class='value nativeV' onInput={v => {
-                                const vv = (v.target as HTMLInputElement).value
-                                if (!mc.allowFilter) {
-                                    r.value = vv
-                                } else {
-                                    if (r.isNumber) {
-                                        r.value = formatNumberInput(
-                                            vv,
-                                            r.isArray,
-                                            ml.arraySplitSymbol
-                                        )
-                                    } else {
-                                        r.value = vv
-                                    }
-                                }
-                            }}/>
-                        </div>
+                                </NButton>
+                            </>
+                        }
+                        }/>
                     </div>
                     <div class="btn">
-                        <button class={[size, 'success', 'bt']} disabled={i !== arr.length - 1} onClick={() => {
+                        <NButton type="success" size={size} disabled={i !== arr.length - 1} onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})
                             if (mc.autoScroll) {
                                 nextTick(() => {
@@ -145,48 +140,33 @@ export default defineComponent({
                                     el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
                                 })
                             }
-                        }}>+
-                        </button>
-                        <button class={[
-                            "danger",
-                            size
-                            , 'bt'
-                        ]} onClick={() => {
+                        }}>+</NButton>
+                        <NButton size={size} type="error" onClick={() => {
                             renderM.value = renderM.value.filter(it => it.rId !== r.rId)
-                        }}>-
-                        </button>
+                        }}>-</NButton>
                     </div>
                 </div>)}
             </div>
             {
                 <div class='control'>
                     {
-                        !renderM.value.length && <button class={[
-                            "success",
-                            size,'bt'
-                        ]} onClick={() => {
+                        !renderM.value.length && <NButton size={size} type="success" onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})
-                        }}>{mb.newTxt}</button>
+                        }}>{mb.newTxt}</NButton>
                     }
                     {
                         !props.isController && <>
-                            {!mc.hideReset && <button class={[
-                                "default",
-                                size,'bt'
-                            ]} onClick={() => {
+                            {!mc.hideReset && <NButton size={size} type="default" onClick={() => {
                                 renderM.value = tranArr(props.modelValue, props.randomFun, ml.arraySplitSymbol)
                                 emit('onReset')
-                            }}>{mb.resetTxt}</button>}
-                            <button class={[
-                                "info",
-                                size,'bt'
-                            ]} onClick={() => {
+                            }}>{mb.resetTxt}</NButton>}
+                            <NButton size={size} type="info" onClick={() => {
                                 renderM.value.sort((a, b) => +a.rId - +b.rId)
                                 const obj = resetObj(renderM.value, ml.arraySplitSymbol)
                                 emit("update:modelValue", obj)
                                 emit('onMerge', obj, toRaw(renderM.value))
                                 renderM.value = tranArr(obj, props.randomFun, ml.arraySplitSymbol)
-                            }}>{mb.mergeTxt}</button>
+                            }}>{mb.mergeTxt}</NButton>
                         </>
                     }
                 </div>

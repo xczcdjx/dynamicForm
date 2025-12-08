@@ -7,7 +7,7 @@ import CascadeData from "@/components/cascadeData.vue";
 <template>
   <n-message-provider>
     <div class="app">
-<!--      <simple-data/>-->
+      <simple-data/>
       <cascade-data/>
     </div>
   </n-message-provider>

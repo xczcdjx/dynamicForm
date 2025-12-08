@@ -1,15 +1,14 @@
 import {defineComponent, nextTick, ref, toRaw, watch} from "vue";
-import {NButton, NInput} from "naive-ui";
 import type {PropType} from 'vue'
 import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
-import type {Size} from "naive-ui/es/input/src/interface";
-import type {ValueType,DyRandomFun,DyBtnConfig,DyListConfig,DyConfig,DyCFormItem} from "@/types";
+import {ElButton, ElInput} from "element-plus";
+import type {FSize, ValueType, DyRandomFun, DyBtnConfig, DyListConfig, DyConfig, DyCFormItem} from "@/types";
 
 export default defineComponent({
-    name: "NaiveUiDynamicForm",
+    name: "EleDynamicInput",
     props: {
         size: {
-            type: String as PropType<Size>,
+            type: String as PropType<FSize>,
         },
         isController: {
             type: Boolean,
@@ -85,14 +84,14 @@ export default defineComponent({
                 return t === 'ori' ? toRaw(renderM.value) : resetObj(renderM.value, ml.arraySplitSymbol)
             },
         })
-        return () => <div class={props.dyCls ?? `dynamicForm ${size}`}>
-            <div class="dyFormList" ref={dyFormListRef} style={{maxHeight: mc.maxHeight}}>
+        return () => <div class={props.dyCls ?? `dynamicForm ${size}`} style={{maxHeight: mc.maxHeight}}>
+            <div class="dyFormList" ref={dyFormListRef}>
                 {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
                     <div class="input">
-                        <NInput size={size} value={r.key} class="key" onInput={(v) => {
+                        <ElInput size={size} modelValue={r.key} class="key" onInput={(v) => {
                             r.key = v
                         }}/>:
-                        <NInput size={size} value={r.value} class='value' onInput={(v) => {
+                        <ElInput size={size} modelValue={r.value} class='value' onInput={(v) => {
                             if (!mc.allowFilter) {
                                 r.value = v
                             } else {
@@ -108,31 +107,33 @@ export default defineComponent({
                             }
                         }} v-slots={{
                             prefix: () => <>
-                                <NButton
+                                <ElButton
+                                    class='typeBtn'
                                     type={r.isArray ? "success" : "default"}
-                                    size="tiny"
+                                    size="small"
                                     onClick={() => {
                                         r.isArray = !r.isArray
                                     }}
                                 >
                                     Array
-                                </NButton>
+                                </ElButton>
                                 &nbsp;
-                                <NButton
+                                <ElButton
+                                    class='typeBtn'
                                     type={r.isNumber ? "success" : "default"}
-                                    size="tiny"
+                                    size="small"
                                     onClick={() => {
                                         r.isNumber = !r.isNumber
                                     }}
                                 >
                                     Number
-                                </NButton>
+                                </ElButton>
                             </>
                         }
                         }/>
                     </div>
                     <div class="btn">
-                        <NButton type="success" size={size} disabled={i !== arr.length - 1} onClick={() => {
+                        <ElButton type="success" size={size} disabled={i !== arr.length - 1} onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})
                             if (mc.autoScroll) {
                                 nextTick(() => {
@@ -140,33 +141,33 @@ export default defineComponent({
                                     el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
                                 })
                             }
-                        }}>+</NButton>
-                        <NButton size={size} type="error" onClick={() => {
+                        }}>+</ElButton>
+                        <ElButton size={size} type="danger" onClick={() => {
                             renderM.value = renderM.value.filter(it => it.rId !== r.rId)
-                        }}>-</NButton>
+                        }}>-</ElButton>
                     </div>
                 </div>)}
             </div>
             {
                 <div class='control'>
                     {
-                        !renderM.value.length && <NButton size={size} type="success" onClick={() => {
+                        !renderM.value.length && <ElButton size={size} type="success" onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})
-                        }}>{mb.newTxt}</NButton>
+                        }}>{mb.newTxt}</ElButton>
                     }
                     {
                         !props.isController && <>
-                            {!mc.hideReset && <NButton size={size} type="default" onClick={() => {
+                            {!mc.hideReset && <ElButton size={size} type="default" onClick={() => {
                                 renderM.value = tranArr(props.modelValue, props.randomFun, ml.arraySplitSymbol)
                                 emit('onReset')
-                            }}>{mb.resetTxt}</NButton>}
-                            <NButton size={size} type="info" onClick={() => {
+                            }}>{mb.resetTxt}</ElButton>}
+                            <ElButton size={size} type="info" onClick={() => {
                                 renderM.value.sort((a, b) => +a.rId - +b.rId)
                                 const obj = resetObj(renderM.value, ml.arraySplitSymbol)
                                 emit("update:modelValue", obj)
                                 emit('onMerge', obj, toRaw(renderM.value))
                                 renderM.value = tranArr(obj, props.randomFun, ml.arraySplitSymbol)
-                            }}>{mb.mergeTxt}</NButton>
+                            }}>{mb.mergeTxt}</ElButton>
                         </>
                     }
                 </div>

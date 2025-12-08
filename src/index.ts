@@ -1,15 +1,15 @@
-import DynamicForm from './origin/DynamicForm';
-import DynamicCascadeForm from "./origin/DynamicCascadeForm";
+import DynamicInput from './origin/DynamicInput';
+import DynamicCascadeInput from "./origin/DynamicCascadeInput";
 import type {ExposeType} from "@/types";
 import './index.less'
 // 命名导出
-export const DynamicFormPlugin = {
+export const DynamicInputPlugin = {
     install(app: any) {
-        app.component('DynamicForm', DynamicForm);
-        app.component('DynamicCascadeForm', DynamicCascadeForm);
+        app.component('DynamicInput', DynamicInput);
+        app.component('DynamicCascadeInput', DynamicCascadeInput);
     }
 };
-export type dynamicFormRef = InstanceType<typeof DynamicForm> & ExposeType
-export type dynamicCascadeFormRef = InstanceType<typeof DynamicCascadeForm> & ExposeType
+export type dynamicInputRef = InstanceType<typeof DynamicInput> & ExposeType
+export type dynamicCascadeInputRef = InstanceType<typeof DynamicCascadeInput> & ExposeType
 // 或者直接命名导出组件
-export {DynamicForm, DynamicCascadeForm};
+export {DynamicInput, DynamicCascadeInput};

@@ -1,38 +1,24 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import {NaiveUiDynamicForm, type naiveUiDynamicFormRef} from "@/naiveUi";
-import {ElementPlusDynamicForm, type elementPlusDynamicFormRef} from "../../dist/elementPlus";
-import {DynamicForm, type dynamicFormRef} from "../../dist";
+import {DynamicInput, type dynamicInputRef} from "../../dist";
 
-const dyRef = ref<naiveUiDynamicFormRef | null>(null)
 const test = ref<{ a: string, b: number, c: number[] }>({
-  a: '1111',
-  b: 123.333,
-  c: [1, 3, 5]
+  a: 'Hello world',
+  b: 1314,
+  c: [5, 2, 0]
 })
-const getD = () => {
-  console.log(dyRef.value?.getResult?.())
-}
-const onSet = () => {
-  dyRef.value?.onSet?.({a:8888})
-}
-const onSet2 = () => {
-  dyRef.value?.onSet?.()
+const dyRef = ref<dynamicInputRef>()
+const setData = () => {
+  dyRef.value?.onSet({test: "helloWorld"})
 }
 </script>
 
 <template>
-      <naive-ui-dynamic-form v-model="test" ref="dyRef"/>
-<!--      <element-plus-dynamic-form is-controller v-model="test" ref="dyRef"/>-->
-      <!--      <element-plus-dynamic-form is-controller v-model="test" ref="dyRef"/>-->
-      <!--      <element-plus-dynamic-form is-controller size="large" v-model="test" ref="dyRef"/>-->
-<!--      <dynamic-form v-model="test" is-controller/>-->
-      <p>{{ test }}</p>
-      <button @click="getD">get D</button>
-      <button @click="onSet">OnSet</button>
-      <button @click="onSet2">OnSet2</button>
+  <p>DynamicInput</p>
+  <DynamicInput v-model="test" is-controller ref="dyRef"/>
+  <p>Result</p>
+  <pre>{{ test }}</pre>
+  <div>
+    <button @click="setData">setData helloWorld</button>
+  </div>
 </template>
-
-<style scoped>
-
-</style>

@@ -4,10 +4,20 @@
 
 [文档](https://xczcdjx.github.io/dynamicFormDoc/)
 
-[Vue2 版本](https://www.npmjs.com/package/dynamicformdjx-vue2) (正在适配)
+[Vue2 版本](https://www.npmjs.com/package/dynamicformdjx-vue2) 
 
-[React 版本](https://www.npmjs.com/package/dynamicformdjx-react) (正在适配)
+[React 版本](https://www.npmjs.com/package/dynamicformdjx-react) 
 
+### 组件版本说明
+- **v0.2 及以上版本**
+- Form字段改为Input, ElementPlus缩短为Ele, NaiveUi缩短为Nai
+- 请使用：`DynamicInput`, `DynamicCascadeInput`，`EleDynamicInput`,`NaiDynamicInput` 等导入
+
+
+| 版本范围 | 组件导入方式 |
+|---------|--------------|
+| ≥ 0.2   | DynamicInput, DynamicCascadeInput |
+| < 0.2   | DynamicForm, DynamicCascadeForm |
 
 ## 概述
 
@@ -33,25 +43,24 @@ pnpm add dynamicformdjx
 ### 基本使用
 
 ```vue
-
 <script setup lang="ts">
   import {ref} from "vue";
-  import {DynamicForm, type dynamicFormRef} from "dynamicformdjx";
+  import {DynamicInput, type dynamicInputRef} from "dynamicformdjx";
 
   const test = ref<{ a: string, b: number, c: number[] }>({
     a: 'Hello world',
     b: 1314,
     c: [5, 2, 0]
   })
-  const dyRef = ref<dynamicFormRef>()
+  const dyRef = ref<dynamicInputRef>()
   const setData = () => {
-    dyRef.value?.onSet({test: "helloWorld"})
+    dyRef.value?.onSet?.({test: "helloWorld"})
   }
 </script>
 
 <template>
   <p>Input</p>
-  <DynamicForm v-model="test" is-controller ref="dyRef"/>
+  <DynamicInput v-model="test" is-controller ref="dyRef"/>
   <p>Result</p>
   <pre>{{ test }}</pre>
   <div>
@@ -65,9 +74,9 @@ pnpm add dynamicformdjx
 ```vue
 <script setup lang="ts">
   import {ref} from "vue";
-  import {dynamicCascadeFormRef,DynamicCascadeForm} from "dynamicformdjx";
+  import {dynamicCascadeInputRef,DynamicCascadeInput} from "dynamicformdjx";
 
-  const dyCascadeRef = ref<dynamicCascadeFormRef | null>(null)
+  const dyCascadeRef = ref<dynamicCascadeInputRef | null>(null)
   const test2 = ref({
     a: {
       b: {
@@ -87,9 +96,10 @@ pnpm add dynamicformdjx
 </script>
 
 <template>
-  <p>Cascade dynamicForm</p>
-  <dynamic-cascade-form  v-model="test2" :depth="5" ref="dyCascadeRef" is-controller/>
+  <p>Cascade dynamicInput</p>
+  <dynamic-cascade-input  v-model="test2" :depth="5" ref="dyCascadeRef" is-controller/>
   <pre>{{ test2 }}</pre>
+  <p>Result</p>
   <button @click="setData">setData 8888</button>
 </template>
 ```

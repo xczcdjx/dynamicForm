@@ -1,8 +1,9 @@
 import {defineComponent, type PropType, ref, toRaw, watch} from "vue";
+import {NButton, NInput} from "naive-ui";
 import {formatNumberInput, parseValue, saferRepairColor} from "@/utils/tools.ts";
 import type {ValueType, DyRandomFun, DyBtnConfig, DyListConfig, DyCasConfig,DyCasFormItem} from "@/types";
 export default defineComponent({
-    name: "DynamicCascadeForm",
+    name: "NaiveUiDynamicCascadeInput",
     props: {
         modelValue: {
             type: Object as PropType<ValueType>,
@@ -114,70 +115,56 @@ export default defineComponent({
                             <div class="input">
                                 {
                                     !isChildren && <>
-                                        <input value={r.key} class="key nativeInput"
-                                               onInput={(v) => (r.key = (v.target as HTMLInputElement).value)}/>
+                                        <NInput value={r.key} class="key" onInput={(v) => (r.key = v)}/>
                                         :
                                     </>
                                 }
-                                <div class="vInput">
-                                    <div class="slot">
-                                        {Array.isArray(r.value) ? undefined :  <>
-                                            <button
-                                                class={[
-                                                    r.isArray ? "success" : "default",
-                                                    "small",
-                                                    "bt"
-                                                ]}
+                                <NInput
+                                    class={`value ${isChildren ? 'isKey' : ''}`}
+                                    value={isAllow ? r.value as string : r.key}
+                                    onInput={(v) => {
+                                        if (isChildren) {
+                                            r.key = v
+                                            return
+                                        }
+                                        if (!mc.allowFilter) r.value = v
+                                        else {
+                                            if (r.isNumber) {
+                                                r.value = formatNumberInput(
+                                                    v,
+                                                    r.isArray,
+                                                    ml.arraySplitSymbol
+                                                )
+                                            } else r.value = v
+                                        }
+                                    }}
+                                    v-slots={{
+                                        prefix: Array.isArray(r.value) ? undefined : () => <>
+                                            <NButton
+                                                type={r.isArray ? "success" : "default"}
+                                                size="tiny"
                                                 onClick={() => {
                                                     r.isArray = !r.isArray
                                                 }}
                                             >
                                                 Array
-                                            </button>
+                                            </NButton>
                                             &nbsp;
-                                            <button
-                                                class={[
-                                                    r.isNumber ? "success" : "default",
-                                                    "small",
-                                                    "bt"
-                                                ]}
+                                            <NButton
+                                                type={r.isNumber ? "success" : "default"}
+                                                size="tiny"
                                                 onClick={() => {
                                                     r.isNumber = !r.isNumber
                                                 }}
                                             >
                                                 Number
-                                            </button>
-                                        </>}
-                                    </div>
-                                    <input
-                                        class={`value nativeV ${isChildren ? 'isKey' : ''}`}
-                                        value={isAllow ? r.value as string : r.key}
-                                        onInput={(tv) => {
-                                            const v = (tv.target as HTMLInputElement).value
-                                            if (isChildren) {
-                                                r.key = v
-                                                return
-                                            }
-                                            if (!mc.allowFilter) r.value = v
-                                            else {
-                                                if (r.isNumber) {
-                                                    r.value = formatNumberInput(
-                                                        v,
-                                                        r.isArray,
-                                                        ml.arraySplitSymbol
-                                                    )
-                                                } else r.value = v
-                                            }
-                                        }}
-                                    />
-                                    <div class="surSlot">
-                                        {
+                                            </NButton>
+                                        </>,
+                                        suffix: () =>
                                             depth < props.depth ? (
-                                                !isChildren && <button
-                                                    class={[
-                                                        "success",
-                                                        "bt"
-                                                    ]}
+                                                !isChildren && <NButton
+                                                    type="success"
+                                                    size="tiny"
                                                     onClick={() => {
                                                         if (isAllow) {
                                                             r.value = [];
@@ -191,27 +178,23 @@ export default defineComponent({
                                                     }}
                                                 >
                                                     {props.newChildTxt(r)}
-                                                </button>
+                                                </NButton>
                                             ) : null
-                                        }
-                                    </div>
-                                </div>
+                                    }}
+                                />
                             </div>
                             <div class="btn">
-                                <button
-                                    class={['success', 'bt']}
+                                <NButton
+                                    type="success"
                                     disabled={i !== arr.length - 1}
                                     onClick={() => {
                                         items.push({rId: props.randomFun(), key: "", value: ""});
                                     }}
                                 >
                                     +
-                                </button>
-                                <button
-                                    class={[
-                                        "danger",
-                                        'bt'
-                                    ]}
+                                </NButton>
+                                <NButton
+                                    type="error"
                                     onClick={() => {
                                         items.splice(i, 1);
                                         if (items.length < 1) {
@@ -223,7 +206,7 @@ export default defineComponent({
                                     }}
                                 >
                                     -
-                                </button>
+                                </NButton>
                             </div>
                             {Array.isArray(r.value) && renderFormItems(r.value, depth + 1, r)}
                         </div>
@@ -257,34 +240,28 @@ export default defineComponent({
                 <div class="dyFormList" style={{maxHeight: mc.maxHeight}}>{renderFormItems(renderM.value)}</div>
                 <div class='control'>
                     {!renderM.value.length && (
-                        <button
-                            class={[
-                                "success", 'bt'
-                            ]}
+                        <NButton
+                            type="success"
                             onClick={() => {
                                 renderM.value.push({rId: props.randomFun(), key: "", value: ""});
                             }}
                         >
                             {mb.newTxt}
-                        </button>
+                        </NButton>
                     )}
                     {
                         !props.isController && <>
-                            {!mc.hideReset && <button
-                                class={[
-                                    "default", 'bt'
-                                ]}
+                            {!mc.hideReset && <NButton
+                                type="default"
                                 onClick={() => {
                                     renderM.value = tranMulObj(props.modelValue);
                                     emit('onReset')
                                 }}
                             >
                                 {mb.resetTxt}
-                            </button>}
-                            <button
-                                class={[
-                                    "info", 'bt'
-                                ]}
+                            </NButton>}
+                            <NButton
+                                type="info"
                                 onClick={() => {
                                     const obj = resetMulObj(renderM.value);
                                     emit("update:modelValue", obj);
@@ -293,7 +270,7 @@ export default defineComponent({
                                 }}
                             >
                                 {mb.mergeTxt}
-                            </button>
+                            </NButton>
                         </>
                     }
                 </div>

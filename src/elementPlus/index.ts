@@ -1,8 +1,8 @@
-import ElementPlusDynamicForm from "./ElementPlusDynamicForm";
-import ElementPlusDynamicCascadeForm from "./ElementPlusDynamicCascadeForm.tsx";
+import EleDynamicInput from "./EleDynamicInput.tsx";
+import EleDynamicCascadeInput from "./EleDynamicCascadeInput.tsx";
 import type {ExposeType} from "@/types";
 import '../index.less'
 
-export type elementPlusDynamicFormRef = InstanceType<typeof ElementPlusDynamicForm> & ExposeType
-export type elementPlusCascadeDynamicFormRef = InstanceType<typeof ElementPlusDynamicCascadeForm> & ExposeType
-export {ElementPlusDynamicForm, ElementPlusDynamicCascadeForm};
+export type eleDynamicInputRef = InstanceType<typeof EleDynamicInput> & ExposeType
+export type eleCascadeDynamicInputRef = InstanceType<typeof EleDynamicCascadeInput> & ExposeType
+export {EleDynamicInput, EleDynamicCascadeInput};
