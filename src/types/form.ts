@@ -1,28 +1,36 @@
-import type {MessageApi} from "naive-ui";
 import type {Ref, VNode} from "vue";
+import type {FormItemRule, FormRules} from "naive-ui/es/form/src/interface";
+import type {SelectOption} from "naive-ui";
+
 export interface SelectOptionItem {
     label: string
     value: any
 }
-export interface TableSearchItem<T=any>{
+
+export interface BaseDyFormItem<T = any> {
     key: keyof T
     label: string
-    value: any
+    value: Ref<any>
     placeholder?: string
-    associatedOption?: string
+    options?: SelectOption[] | any[]
     onChange?: (value: any, associationItem: string) => void
     span?: number
 }
-export interface FormItem<U=any> extends TableSearchItem<U> {
-    required?: boolean
-    validator?: (value: FormItem, message: MessageApi) => boolean
-    hidden?: boolean
-    inputType?: string
-    maxLength?: number
-    rows?: number
-    disabled?: Ref<boolean> | boolean
-    optionItems?: Array<SelectOptionItem>
+
+export interface DyFormItem<K = any> extends BaseDyFormItem<K> {
     path?: string
-    reset?: (formItem: FormItem) => void
-    render?: (formItem: FormItem) => VNode
+    hidden?: boolean
+    render2?: (formItem: DyFormItem) => VNode
+    reset?: (formItem: DyFormItem) => void
+    rule?: FormRules | FormItemRule | FormItemRule[]
+    required?: boolean
+    disabled?: Ref<boolean> | boolean
+    clearable?: boolean
+    // 以下是简化类型
+    type?: "text" | "textarea" | "password"
+    rows?: number
+    labelField?: string
+    valueField?: string
+    filterable?: boolean
+    multiple?: boolean
 }

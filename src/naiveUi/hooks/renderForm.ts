@@ -41,6 +41,8 @@ export function renderInput(value: Ref<string>, options: InputProps | AllowedCom
         value: value.value,
         onUpdateValue: (newVal: string) => {
             value.value = newVal;
+            // @ts-ignore
+            options?.onChange(newVal, options);
         },
         ...options
     });

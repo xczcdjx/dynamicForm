@@ -1,4 +1,4 @@
-import {defineComponent, h, type PropType, ref, toRef} from "vue";
+import {computed, defineComponent, h, type PropType, ref, toRef} from "vue";
 import {
     type FormInst,
     type FormProps,
@@ -9,7 +9,7 @@ import {
     NGrid,
     useMessage
 } from 'naive-ui'
-import type {FormItem} from "@/types/form";
+import type {DyFormItem} from "@/types/form";
 import type {FormRules} from "naive-ui/es/form/src/interface";
 
 export default defineComponent({
@@ -47,18 +47,32 @@ export default defineComponent({
             },
         },
         items: {
-            type: Array as PropType<Array<FormItem>>,
+            type: Array as PropType<Array<DyFormItem>>,
             require: true,
         }
     },
     setup(props, {emit, expose}) {
         const dataForm = ref<FormInst | null>(null)
         const itemsV = toRef(props, 'items')
-        const message = useMessage()
+        const combineRules = computed(() => {
+            const fRules = itemsV.value?.reduce((p, c) => {
+                let oRule = c.rule
+                if (c.required && !c.rule) {
+                    oRule = {
+                        required: true,
+                        message: `${c.label}不能为空`,
+                        trigger: ['blur']
+                    }
+                }
+                p[c.key as string] = oRule!
+                return p
+            }, {} as FormRules)
+            return {...fRules, ...props.rules}
+        })
 
         function reset() {
             if (!itemsV.value) return
-            itemsV.value.forEach((it: FormItem) => {
+            itemsV.value.forEach((it: DyFormItem) => {
                 if (it.reset) {
                     it.reset(it)
                 } else {
@@ -69,7 +83,7 @@ export default defineComponent({
 
         function generatorResults() {
             if (!itemsV.value) return
-            return itemsV.value.reduce((pre: any, cur: FormItem) => {
+            return itemsV.value.reduce((pre: any, cur: DyFormItem) => {
                 pre[cur.key] = cur.value.value
                 return pre
             }, {})
@@ -93,7 +107,7 @@ export default defineComponent({
 
         if (!props.items) throw new Error('prop items must be not null')
         return () => <div class={'naiDynamicForm'}>
-            <NForm ref={dataForm} {...props.formConfig} model={generatorResults()} rules={props.rules} v-slots={
+            <NForm ref={dataForm} {...props.formConfig} model={generatorResults()} rules={combineRules.value} v-slots={
                 {
                     default() {
                         const options = props.items?.filter(it => !it.hidden)
@@ -139,14 +153,14 @@ export default defineComponent({
     }
 })
 
-function renderItem(formItem: FormItem) {
+function renderItem(formItem: DyFormItem) {
     return function () {
-        if (formItem.render) {
+        if (formItem.render2) {
             return formItem.required
                 ? [
-                    formItem.render(formItem),
+                    formItem.render2(formItem),
                 ]
-                : formItem.render(formItem)
+                : formItem.render2(formItem)
         } else {
             return null
         }
