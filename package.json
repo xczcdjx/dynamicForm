@@ -46,8 +46,8 @@
     "dynamicForm"
   ],
   "scripts": {
-    "devTest": "vite --host",
-    "build": "vue-tsc -b && vite build",
+    "dev:v3": "vite --host",
+    "build:v3": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "pub": "npm version patch && npm publish"
   },

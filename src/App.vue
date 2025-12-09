@@ -1,14 +1,16 @@
 <script setup lang="ts">
-
-import SimpleData from "@/components/simpleData.vue";
-import CascadeData from "@/components/cascadeData.vue";
+import {NMessageProvider} from "naive-ui";
+// import SimpleData from "@/components/simpleData.vue";
+// import CascadeData from "@/components/cascadeData.vue";
+import DynamicformTest from "@/components/dynamicformTest.vue";
 </script>
 
 <template>
   <n-message-provider>
     <div class="app">
-      <simple-data/>
-      <cascade-data/>
+<!--      <simple-data/>-->
+<!--      <cascade-data/>-->
+      <dynamicform-test/>
     </div>
   </n-message-provider>
 </template>
