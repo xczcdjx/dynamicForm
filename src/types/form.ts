@@ -1,10 +1,12 @@
-import type {Ref, VNode} from "vue";
+import type {CSSProperties, Ref, VNode} from "vue";
 import type {FormItemRule, FormRules} from "naive-ui/es/form/src/interface";
-import type {SelectOption} from "naive-ui";
 
 export interface SelectOptionItem {
     label: string
     value: any
+    class?: string;
+    style?: string | CSSProperties;
+    disabled?: boolean;
 }
 
 export interface BaseDyFormItem<T = any> {
@@ -12,8 +14,8 @@ export interface BaseDyFormItem<T = any> {
     label: string
     value: Ref<any>
     placeholder?: string
-    options?: SelectOption[] | any[]
-    onChange?: (value: any, associationItem: string) => void
+    options?: SelectOptionItem[] | any[]
+    onChange?: (value: any, associationItem: DyFormItem, options?: SelectOptionItem[] | any[]) => void
     span?: number
 }
 

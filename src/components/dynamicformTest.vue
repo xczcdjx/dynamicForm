@@ -1,56 +1,43 @@
 <script setup lang="ts">
 
-import {ref, shallowReactive} from "vue";
-import {renderInput, renderSelect} from "@/naiveUi/hooks/renderForm";
+import {h, ref, shallowReactive} from "vue";
+import {
+  renderCheckbox,
+  renderCheckboxGroup, renderDatePicker,
+  renderInput, renderPopSelect,
+  renderRadioButtonGroup,
+  renderSelect, renderSwitch, renderTimePicker, renderTreeSelect
+} from "@/naiveUi/hooks/renderForm";
 import {MessageApi, NButton} from "naive-ui";
 import {DyFormItem} from "@/types/form.ts";
 import NaiDynamicForm from "@/naiveUi/NaiDynamicForm";
 
 type FormRow = {
-  name: string
-  sex: number
+  username: string
+  password: string
+  gender: number
+  description: string
+  email: string
+  birthday: string
 }
 const naiDynamicFormRef = ref<InstanceType<typeof NaiDynamicForm> | null>(null)
-const comSexRenderMore = (gender: string[] = ["男", "女"], skip: number = 0) => {
-  return gender.map((it, i) => ({label: it, value: i + skip}));
-};
-const rules = {
-  name: {
-    required: true,
-    message: '请输入',
-    trigger: ['blur']
-  },
-  sex: {
-    required: true,
-    message: '请选择',
-    trigger: ['blur']
-  }
-}
 const formItems: DyFormItem<FormRow>[] = [
   shallowReactive({
-    key: "name",
+    key: "username",
     label: "姓名",
     value: ref<string | null>(null),
     clearable: true,
-    type: 'password',
     placeholder: '请输入姓名',
-    onChange(v,f){
-      console.log(v,f)
-    },
     render2: f => renderInput(f.value, {...f}),
   }),
   shallowReactive({
-    key: "sex",
-    label: "性别",
-    options: [
-      {label1: '男', value1: 0},
-      {label1: '女', value1: 1},
-    ],
-    placeholder: "请选择性别",
-    labelField:'label1',
-    valueField:'value1',
-    value: ref<number | null>(null),
-    render2: f => renderSelect(f.value, [], {...f}),
+    key: "password",
+    label: "密码",
+    value: ref<string | null>(null),
+    clearable: true,
+    type: 'password',
+    placeholder: '请输入密码',
+    render2: f => renderInput(f.value, {...f, showPasswordOn: true}),
   }),
   shallowReactive({
     key: "desc",
@@ -61,6 +48,88 @@ const formItems: DyFormItem<FormRow>[] = [
     rows: 5,
     render2: f => renderInput(f.value, {...f}),
     required: true
+  }),
+  shallowReactive({
+    key: "sex",
+    label: "性别",
+    labelField: 'label1',
+    valueField: 'value1',
+    value: ref<number | null>(null),
+    render2: f => renderRadioButtonGroup(f.value, [
+      {label1: '男', value1: 0},
+      {label1: '女', value1: 1},
+    ], {...f}),
+  }),
+  shallowReactive({
+    key: "favorite",
+    label: "爱好",
+    labelField: 'fl',
+    valueField: 'fv',
+    options: [
+      {fl: '吃饭', fv: 0},
+      {fl: '睡觉', fv: 1},
+      {fl: '打豆豆', fv: 2},
+    ],
+    value: ref<number[]>([]),
+    render2: f => renderCheckboxGroup(f.value, [], {...f}),
+  }),
+  shallowReactive({
+    key: "job",
+    label: "职位",
+    value: ref<number | null>(null),
+    clearable: true,
+    render2: f => renderSelect(f.value, ['前端', '后端'].map((label, value) => ({label, value})), {...f}),
+  }),
+  shallowReactive({
+    key: "job2",
+    label: "职位2",
+    value: ref<number | null>(null),
+    labelField: 'l',
+    valueField: 'v',
+    render2: f => renderPopSelect(f.value, ['Drive My Car', 'Norwegian Wood'].map((label, index) => ({
+      l: label,
+      v: label
+    })), {...f, trigger: 'click'}),
+  }),
+  shallowReactive({
+    key: "job3",
+    label: "职位3",
+    value: ref<number | null>(null),
+    valueField: 'key',
+    render2: f => renderTreeSelect(f.value, [
+      {
+        label: 'Rubber Soul',
+        key: '1',
+        children: [
+          {
+            label: 'Everybody\'s Got Something to Hide Except Me and My Monkey',
+            key: '1-1'
+          },
+          {
+            label: 'Drive My Car',
+            key: '1-2',
+            disabled: true
+          },]
+      }
+    ], {...f}),
+  }),
+  shallowReactive({
+    key: "admin",
+    label: "管理员？",
+    value: ref<number | null>(null),
+    render2: f => renderSwitch(f.value,),
+  }),
+  shallowReactive({
+    key: "birthday",
+    label: "生日",
+    value: ref<number | null>(null),
+    render2: f => renderDatePicker(f.value,{type:'datetime'}),
+  }),
+  shallowReactive({
+    key: "birthdayT",
+    label: "时间",
+    value: ref<number | null>(null),
+    render2: f => renderTimePicker(f.value),
   }),
 ];
 const getData = () => {
@@ -73,13 +142,13 @@ const getData = () => {
 }
 const setData = () => {
   formItems.forEach(it => {
-    it.disabled = false
+    it.disabled = true
   })
 }
 </script>
 
 <template>
-  <NaiDynamicForm :rules="rules" :items="formItems" ref="naiDynamicFormRef"/>
+  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
   <!--  <NaiDynamicForm :items="formItems" preset="grid"/>-->
   <n-button @click="getData" type="success">get Data</n-button>&nbsp;
   <n-button @click="setData" type="success">set Data</n-button>

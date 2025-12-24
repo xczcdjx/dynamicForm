@@ -54,6 +54,13 @@ export default defineComponent({
     setup(props, {emit, expose}) {
         const dataForm = ref<FormInst | null>(null)
         const itemsV = toRef(props, 'items')
+        const formModel = computed(() => {
+            if (!itemsV.value) return {}
+            return itemsV.value.reduce((pre: any, cur: DyFormItem) => {
+                pre[cur.key] = cur.value.value
+                return pre
+            }, {})
+        })
         const combineRules = computed(() => {
             const fRules = itemsV.value?.reduce((p, c) => {
                 let oRule = c.rule
@@ -81,19 +88,11 @@ export default defineComponent({
             })
         }
 
-        function generatorResults() {
-            if (!itemsV.value) return
-            return itemsV.value.reduce((pre: any, cur: DyFormItem) => {
-                pre[cur.key] = cur.value.value
-                return pre
-            }, {})
-        }
-
         function validator(): Promise<object> {
             return new Promise((resolve, reject) => {
                 dataForm.value?.validate((errors) => {
                     if (!errors) {
-                        resolve(generatorResults())
+                        resolve(formModel.value)
                     } else {
                         reject(errors)
                     }
@@ -102,12 +101,13 @@ export default defineComponent({
         }
 
         expose({
-            generatorResults, reset, validator
+            reset, validator,
+            getResult: () => formModel.value
         })
 
         if (!props.items) throw new Error('prop items must be not null')
         return () => <div class={'naiDynamicForm'}>
-            <NForm ref={dataForm} {...props.formConfig} model={generatorResults()} rules={combineRules.value} v-slots={
+            <NForm ref={dataForm} {...props.formConfig} model={formModel.value} rules={combineRules.value} v-slots={
                 {
                     default() {
                         const options = props.items?.filter(it => !it.hidden)
