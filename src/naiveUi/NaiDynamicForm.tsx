@@ -7,7 +7,6 @@ import {
     NFormItem,
     NFormItemGridItem,
     NGrid,
-    useMessage
 } from 'naive-ui'
 import type {DyFormItem} from "@/types/form";
 import type {FormRules} from "naive-ui/es/form/src/interface";
@@ -88,13 +87,13 @@ export default defineComponent({
         })
 
         // func
-        function reset() {
+        function reset(v:any=null) {
             if (!itemsV.value) return
             itemsV.value.forEach((it: DyFormItem) => {
                 if (it.reset) {
                     it.reset(it)
                 } else {
-                    it.value.value = null
+                    it.value.value = v
                 }
             })
         }

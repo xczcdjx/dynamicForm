@@ -13,3 +13,4 @@ export type dynamicInputRef = InstanceType<typeof DynamicInput> & ExposeType
 export type dynamicCascadeInputRef = InstanceType<typeof DynamicCascadeInput> & ExposeType
 // 或者直接命名导出组件
 export {DynamicInput, DynamicCascadeInput};
+export * from './hooks/useDyForm'

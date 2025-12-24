@@ -38,13 +38,13 @@ import {type AllowedComponentProps, computed, createVNode, h, type Ref, type VNo
 import type {DyFormItem} from "@/types/form.ts";
 
 // 输入
-export function renderInput(model: Ref<string>, optionProps: InputProps | AllowedComponentProps = {}) {
+export function renderInput(model: Ref<string>, optionProps: InputProps | AllowedComponentProps = {}, rf?: DyFormItem) {
     return h(NInput, {
+        ...rf as any,
         value: model.value,
         onUpdateValue: (newVal: string) => {
             model.value = newVal;
-            // @ts-ignore
-            optionProps.onChange?.(newVal, optionProps);
+            rf?.onChange?.(newVal, rf);
         },
         ...optionProps
     });
@@ -54,18 +54,18 @@ export function renderInput(model: Ref<string>, optionProps: InputProps | Allowe
 export function renderSelect(
     model: Ref<SelectValue>,
     options: SelectOption[],
-    optionProps: SelectProps | AllowedComponentProps = {}
+    optionProps: SelectProps | AllowedComponentProps = {},
+    rf?: DyFormItem
 ) {
-    const {value, ...resetProps} = optionProps as DyFormItem
     return h(NSelect, {
+        ...rf as any,
         value: model.value,
         options,
         onUpdateValue: (newVal: any) => {
             model.value = newVal;
-            // @ts-ignore
-            optionProps.onChange?.(newVal, optionProps, options);
+            rf?.onChange?.(newVal, rf, options);
         },
-        ...resetProps as SelectProps | AllowedComponentProps
+        ...optionProps
     });
 }
 
@@ -73,28 +73,29 @@ export function renderPopSelect(
     model: Ref<string | number | Array<string | number> | null>,
     options: Array<SelectOption | SelectGroupOption>,
     optionProps: PopselectProps | AllowedComponentProps = {},
-    defaultRender: VNode = createVNode(NButton, null, {
-        default: () => model.value || "请选择"
-    })
+    rf?: DyFormItem,
+    defaultRender?: VNode
 ) {
-    const {value, labelField, valueField, ...resetProps} = optionProps as DyFormItem
+    const {value, labelField, valueField, ...resetProps} = rf as DyFormItem
     const labelF = labelField ?? 'label'
     const valueF = valueField ?? 'value'
     const mOptions = resetProps.options ?? options
     return createVNode(
         NPopselect,
         {
+            ...resetProps as any,
             value: model.value,
             onUpdateValue: (newVal: string | number | Array<string | number> | null) => {
                 model.value = newVal;
-                // @ts-ignore
-                options.onChange?.(newVal, optionProps, options);
+                rf?.onChange?.(newVal, rf, mOptions);
             },
             options: mOptions.map(it => ({...it, label: it[labelF], value: it[valueF]})),
-            ...resetProps as PopselectProps | AllowedComponentProps,
+            ...optionProps
         },
         {
-            default: () => defaultRender
+            default: () => defaultRender ?? createVNode(NButton, null, {
+                default: () => model.value || "请选择"
+            })
         }
     );
 }
@@ -102,19 +103,20 @@ export function renderPopSelect(
 export function renderTreeSelect(
     model: Ref<Value>,
     options: TreeSelectOption[],
-    optionProps: TreeSelectProps | AllowedComponentProps = {}
+    optionProps: TreeSelectProps | AllowedComponentProps = {},
+    rf?: DyFormItem,
 ) {
-    const {value, valueField = 'value', ...resetProps} = optionProps as DyFormItem
+    const {valueField = 'value', ...resetProps} = rf as DyFormItem
     return h(NTreeSelect, {
+        ...resetProps as any,
         value: model.value,
         options,
-        onUpdateValue: (newVal) => {
+        onUpdateValue: (newVal: any) => {
             model.value = newVal;
-            // @ts-ignore
-            optionProps.onChange?.(newVal, optionProps, options);
+            rf?.onChange?.(newVal, rf, options);
         },
         keyField: valueField,
-        ...resetProps as TreeSelectProps | AllowedComponentProps
+        ...optionProps
     });
 }
 
@@ -123,24 +125,24 @@ export function renderRadioGroup(
     value: Ref<string | number | null | undefined>,
     options: RadioProps[],
     optionProps: RadioGroupProps | AllowedComponentProps = {},
+    rf?: DyFormItem,
 ) {
     return h(
         NRadioGroup,
         {
+            ...rf as any,
             value: value.value,
-            ...optionProps,
             onUpdateValue: (newVal: string | number | null | undefined) => {
                 value.value = newVal;
-                // @ts-ignore
-                optionProps.onChange?.(newVal, optionProps, options);
-            }
+                rf?.onChange?.(newVal, rf, options);
+            },
+            ...optionProps,
         },
         {
             default: () => {
-                //@ts-ignore
-                const opts = optionProps.options ?? options
+                const opts = rf?.options ?? options
                 return opts.map((it: RadioButtonProps) => {
-                    const opt = optionProps as DyFormItem
+                    const opt = rf as DyFormItem
                     const label = it[(opt?.labelField ?? 'label') as keyof RadioButtonProps] as string;
                     const value = it[(opt?.valueField ?? 'value') as keyof RadioButtonProps] as string;
                     return h(
@@ -164,24 +166,24 @@ export function renderRadioButtonGroup(
     value: Ref<string | number | null | undefined>,
     options: RadioButtonProps[],
     optionProps: RadioGroupProps | AllowedComponentProps = {},
+    rf?: DyFormItem,
 ) {
     return createVNode(
         NRadioGroup,
         {
+            ...rf as any,
             value: value.value,
-            ...optionProps,
             onUpdateValue: (newVal: string | number | null | undefined) => {
                 value.value = newVal;
-                // @ts-ignore
-                optionProps.onChange?.(newVal, optionProps, options);
-            }
+                rf?.onChange?.(newVal, rf, options);
+            },
+            ...optionProps,
         },
         {
             default: () => {
-                //@ts-ignore
-                const opts = optionProps.options ?? options
+                const opts = rf?.options ?? options
                 return opts.map((it: RadioButtonProps) => {
-                    const opt = optionProps as DyFormItem
+                    const opt = rf as DyFormItem
                     const label = it[(opt?.labelField ?? 'label') as keyof RadioButtonProps] as string;
                     const value = it[(opt?.valueField ?? 'value') as keyof RadioButtonProps] as string;
                     return createVNode(
@@ -204,19 +206,19 @@ export function renderRadioButtonGroup(
 export function renderCheckboxGroup(
     model: Ref<(string | number)[]>,
     options: CheckboxProps[],
-    optionProps: CheckboxGroupProps | AllowedComponentProps = {}
+    optionProps: CheckboxGroupProps | AllowedComponentProps = {},
+    rf?: DyFormItem,
 ) {
-    const {value, ...resetProps} = optionProps as DyFormItem
     return h(
         NCheckboxGroup,
         {
+            ...rf as any,
             value: model.value,
             onUpdateValue: (newVal) => {
                 model.value = newVal;
-                // @ts-ignore
-                optionProps.onChange?.(newVal, optionProps, options);
+                rf?.onChange?.(newVal, rf, options);
             },
-            ...resetProps as CheckboxGroupProps as AllowedComponentProps,
+            ...optionProps
         },
         {
             default: () => {
@@ -227,10 +229,9 @@ export function renderCheckboxGroup(
                     },
                     {
                         default: () => {
-                            //@ts-ignore
-                            const opts = optionProps.options ?? options
+                            const opts = rf?.options ?? options
                             return opts.map((it: CheckboxProps) => {
-                                const opt = optionProps as DyFormItem
+                                const opt = rf as DyFormItem
                                 const label = it[(opt?.labelField ?? 'label') as keyof CheckboxProps] as string;
                                 const value = it[(opt?.valueField ?? 'value') as keyof CheckboxProps] as string;
                                 return h(NCheckbox, {
@@ -249,14 +250,15 @@ export function renderCheckboxGroup(
 // 开关
 export function renderSwitch(
     value: Ref<boolean>,
-    optionProps: SwitchProps | AllowedComponentProps = {}
+    optionProps: SwitchProps | AllowedComponentProps = {},
+    rf?: DyFormItem,
 ) {
     return h(NSwitch, {
+        ...rf as any,
         value: value.value,
         onUpdateValue: (newVal: boolean) => {
             value.value = newVal;
-            // @ts-ignore
-            optionProps.onChange?.(newVal, optionProps);
+            rf?.onChange?.(newVal, rf);
         },
         ...optionProps
     });
@@ -265,33 +267,37 @@ export function renderSwitch(
 // 日期时间
 export function renderDatePicker(
     value: Ref<DatePickerValue>,
-    optionProps: DatePickerProps | AllowedComponentProps = {}
+    optionProps: DatePickerProps | AllowedComponentProps = {},
+    rf?: DyFormItem,
 ) {
     return h(NDatePicker, {
+        ...rf as any,
         value: value.value,
         onUpdateValue: (newVal: any) => {
             value.value = newVal;
-            // @ts-ignore
-            optionProps.onChange?.(newVal, optionProps);
+            rf?.onChange?.(newVal, rf);
         },
         ...optionProps
     });
 }
 
-export function renderTimePicker(value: Ref<number | null>, optionProps: TimePickerProps = {}) {
+export function renderTimePicker(
+    value: Ref<number | null>,
+    optionProps: TimePickerProps = {},
+    rf?: DyFormItem,) {
     return h(NTimePicker, {
+        ...rf as any,
         value: value.value,
         onUpdateValue: (newVal: number | null) => {
             value.value = newVal;
-            // @ts-ignore
-            optionProps.onChange?.(newVal, optionProps);
+            rf?.onChange?.(newVal, rf);
         },
         ...optionProps
     });
 }
 
-// otherRender
-export function renderCheckbox(
+// otherRender 暂未适配
+function renderCheckbox(
     value: Ref<boolean>,
     label: string,
     optionProps: CheckboxProps | AllowedComponentProps = {}
@@ -313,7 +319,8 @@ export function renderCheckbox(
     );
 }
 
-export function renderTag(label: string, optionProps: TagProps | AllowedComponentProps = {}) {
+//
+function renderTag(label: string, optionProps: TagProps | AllowedComponentProps = {}) {
     return h(NTag, optionProps, {
         default: () => label
     });

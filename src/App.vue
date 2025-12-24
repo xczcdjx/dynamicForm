@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {NMessageProvider} from "naive-ui";
-// import SimpleData from "@/components/simpleData.vue";
-// import CascadeData from "@/components/cascadeData.vue";
+import SimpleData from "@/components/simpleData.vue";
+import CascadeData from "@/components/cascadeData.vue";
 import DynamicformTest from "@/components/dynamicformTest.vue";
+import SimpleDyFormTest from "@/components/simpleDyFormTest.vue";
 </script>
 
 <template>
@@ -10,7 +11,8 @@ import DynamicformTest from "@/components/dynamicformTest.vue";
     <div class="app">
 <!--      <simple-data/>-->
 <!--      <cascade-data/>-->
-      <dynamicform-test/>
+<!--      <dynamicform-test/>-->
+      <simple-dy-form-test/>
     </div>
   </n-message-provider>
 </template>

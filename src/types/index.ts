@@ -1,3 +1,5 @@
+import type {DyFormItem} from "./form.ts";
+
 export type DyCFormItem = {
     rId: string;
     key: string;
@@ -26,10 +28,10 @@ export type DyConfig = {
     // ...
 }
 export type DyCasConfig = {
-    showBorder?:boolean
-    retractLen?:number
-    borderColors?:string[]
-    showPad?:boolean
+    showBorder?: boolean
+    retractLen?: number
+    borderColors?: string[]
+    showPad?: boolean
 } & Omit<DyConfig, 'autoScroll'>
 export type DyListConfig = {
     // 分隔符
@@ -42,5 +44,11 @@ export type DyRandomFun = (id?: number | string) => string
 //
 export type ExposeType = {
     onSet?: (obj?: object) => void
-    getResult?: (t: 'res' | 'ori') => DyCFormItem[] | object
+    getResult?: (t?: 'res' | 'ori') => DyCFormItem[] | object
+}
+// DynamicForm type
+export type ExposeDyFType = {
+    reset?: (v?: any) => void
+    validator: () => Promise<object>
+    getResult?: (t?: 'res' | 'ori') => DyFormItem[] | object
 }

@@ -4,8 +4,8 @@ import type {DyFormItem} from "@/types/form"
 
 type KeyOf<T> = Extract<keyof T, string>
 
-export function useReactiveForm<T extends Record<string, any>>(items: DyFormItem<T>[], isDecorate: boolean = true) {
-    return (isDecorate ? items.map(it => shallowReactive<DyFormItem<T>>(it)) : items) as DyFormItem<T>[]
+export function useReactiveForm<T extends Record<string, any>, U=any>(items: DyFormItem<T, U>[], isDecorate: boolean = true) {
+    return (isDecorate ? items.map(it => shallowReactive<DyFormItem<T, U>>(it)) : items) as DyFormItem<T, U>[]
 }
 
 export function useDyForm<Row extends Record<string, any>>(
