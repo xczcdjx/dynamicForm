@@ -21,12 +21,16 @@
 
 ## 概述
 
-`DynamicForm` 组件是一个灵活且动态的表单输入组件，允许用户添加、修改和删除键值对。它提供了多种自定义选项，如按钮文本、表单布局和输入过滤等。
+`DynamicForm` 一个灵活且动态的表单组件，使用数组，简化模版操作，提供多种hook快速操作表单等。
+
+- 简化template代码，快速处理表单
+- 提供render2函数，自定义处理表单项灵活性强
+
+`DynamicInput` 组件是一个灵活且动态的表单输入组件，允许用户添加、修改和删除键值对。它提供了多种自定义选项，如按钮文本、表单布局和输入过滤
 
 - 支持通过 `v-model` 双向绑定任意对象，(包含受控和非受控) 可动态增删字段
 - 支持将值解析为：字符串 / 数字 / 数组（字符串数组、数字数组）
 - 文案、样式、数组分隔符等均可配置
-
 ---
 
 ## 安装
@@ -39,9 +43,81 @@ yarn add dynamicformdjx
 # or
 pnpm add dynamicformdjx
 ```
+###  动态表单 (**新**)
+> (该表单依赖于naive ui,请配合一起使用)
 
-### 基本使用
+#### 1.简单表单
+```vue
+<script setup lang="ts">
+  import {ref} from "vue";
+  import {NButton} from "naive-ui";
+  import {useDyForm, useReactiveForm} from "dynamicformdjx";
+  import {type naiDynamicFormRef, NaiDynamicForm, renderInput} from "dynamicformdjx/naiveUi";
 
+  type FormRow = {
+    username: string
+    password: string
+  }
+  const naiDynamicFormRef = ref<naiDynamicFormRef | null>(null)
+  const formItems = useReactiveForm<FormRow>([
+    {
+      key: "username",
+      label: "姓名",
+      value: ref<string | null>(null),
+      clearable: true,
+      placeholder: '请输入姓名',
+      required: true, // 是否必填 (简化rules规则)
+      render2: f => renderInput(f.value, {}, f),
+    },
+    {
+      key: "password",
+      label: "密码",
+      value: ref<string | null>(null),
+      clearable: true,
+      type: 'password',
+      required: true,
+      placeholder: '请输入密码',
+      render2: f => renderInput(f.value, {showPasswordOn: 'click'}, f),
+    },
+  ])
+  const useForm = useDyForm<FormRow>(formItems)
+  const getData = () => {
+    // const res=useForm.getValues() // 或
+    const res = naiDynamicFormRef.value?.getResult()
+    console.log(res)
+  }
+  const setData = () => {
+    // 隐藏username
+    // useForm.setHidden(true, ['username'])
+    // 设置username 为不可输入
+    // useForm.setDisabled(true, ['username'])
+    //  直接修改
+    useForm.setValues({
+      username: 'naive-ui',
+      password: '520'
+    })
+  }
+  const validatorData = () => {
+    // 校验
+    naiDynamicFormRef.value.validator().then(data => {
+      console.log(data)
+    }).catch(err => {
+      console.log(err)
+    })
+  }
+</script>
+
+<template>
+  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
+  <n-button @click="getData" type="success" size="small">get Data</n-button>&nbsp;
+  <n-button @click="setData" type="warning" size="small">set Data</n-button>&nbsp;
+  <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
+</template>
+```
+
+###  动态录入
+
+#### 1.单组件
 ```vue
 <script setup lang="ts">
   import {ref} from "vue";
@@ -69,7 +145,7 @@ pnpm add dynamicformdjx
 </template>
 ```
 
-### 级联基本使用
+#### 2.级联基本使用
 
 ```vue
 <script setup lang="ts">
