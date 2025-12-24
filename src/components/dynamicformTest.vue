@@ -11,6 +11,7 @@ import {
 import {MessageApi, NButton} from "naive-ui";
 import {DyFormItem} from "@/types/form.ts";
 import NaiDynamicForm from "@/naiveUi/NaiDynamicForm";
+import {FormRules} from "naive-ui/es/form/src/interface";
 
 type FormRow = {
   username: string
@@ -19,6 +20,13 @@ type FormRow = {
   description: string
   email: string
   birthday: string
+}
+const rules: FormRules = {
+  username: {
+    required: true,
+    message: '请输入',
+    trigger: ['blur']
+  },
 }
 const naiDynamicFormRef = ref<InstanceType<typeof NaiDynamicForm> | null>(null)
 const formItems: DyFormItem<FormRow>[] = [
@@ -47,7 +55,7 @@ const formItems: DyFormItem<FormRow>[] = [
     type: 'textarea',
     rows: 5,
     render2: f => renderInput(f.value, {...f}),
-    required: true
+    // required: true,
   }),
   shallowReactive({
     key: "sex",
@@ -65,6 +73,7 @@ const formItems: DyFormItem<FormRow>[] = [
     label: "爱好",
     labelField: 'fl',
     valueField: 'fv',
+    sort: 1,
     options: [
       {fl: '吃饭', fv: 0},
       {fl: '睡觉', fv: 1},
@@ -123,7 +132,7 @@ const formItems: DyFormItem<FormRow>[] = [
     key: "birthday",
     label: "生日",
     value: ref<number | null>(null),
-    render2: f => renderDatePicker(f.value,{type:'datetime'}),
+    render2: f => renderDatePicker(f.value, {type: 'datetime'}),
   }),
   shallowReactive({
     key: "birthdayT",
@@ -133,12 +142,12 @@ const formItems: DyFormItem<FormRow>[] = [
   }),
 ];
 const getData = () => {
-  naiDynamicFormRef.value?.validator().then((data) => {
+/*  naiDynamicFormRef.value?.validator().then((data) => {
     console.log(data)
   }).catch(r => {
     console.log(r)
-  })
-  // console.log(naiDynamicFormRef.value?.generatorResults())
+  })*/
+  console.log(naiDynamicFormRef.value?.getResult('ori'))
 }
 const setData = () => {
   formItems.forEach(it => {
@@ -148,7 +157,7 @@ const setData = () => {
 </script>
 
 <template>
-  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
+  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef" :rules="rules"/>
   <!--  <NaiDynamicForm :items="formItems" preset="grid"/>-->
   <n-button @click="getData" type="success">get Data</n-button>&nbsp;
   <n-button @click="setData" type="success">set Data</n-button>

@@ -53,7 +53,7 @@ export default defineComponent({
     },
     setup(props, {emit, expose}) {
         const dataForm = ref<FormInst | null>(null)
-        const itemsV = toRef(props, 'items')
+        const itemsV = computed(() => (props.items ?? []).filter(it => !it.hidden))
         const formModel = computed(() => {
             if (!itemsV.value) return {}
             return itemsV.value.reduce((pre: any, cur: DyFormItem) => {
@@ -61,6 +61,7 @@ export default defineComponent({
                 return pre
             }, {})
         })
+        // 合并rules
         const combineRules = computed(() => {
             const fRules = itemsV.value?.reduce((p, c) => {
                 let oRule = c.rule
@@ -76,7 +77,17 @@ export default defineComponent({
             }, {} as FormRules)
             return {...fRules, ...props.rules}
         })
+        // 排序
+        const sortedVisibleItems = computed(() => {
+            const arr = itemsV.value
+            return [...arr].sort((a, b) => {
+                const as = a.sort ?? Infinity
+                const bs = b.sort ?? Infinity
+                return Number(as) - Number(bs)
+            })
+        })
 
+        // func
         function reset() {
             if (!itemsV.value) return
             itemsV.value.forEach((it: DyFormItem) => {
@@ -102,7 +113,7 @@ export default defineComponent({
 
         expose({
             reset, validator,
-            getResult: () => formModel.value
+            getResult: (t: 'res' | 'ori' = 'res') => t === 'ori' ? itemsV.value : formModel.value
         })
 
         if (!props.items) throw new Error('prop items must be not null')
@@ -110,7 +121,7 @@ export default defineComponent({
             <NForm ref={dataForm} {...props.formConfig} model={formModel.value} rules={combineRules.value} v-slots={
                 {
                     default() {
-                        const options = props.items?.filter(it => !it.hidden)
+                        const options = sortedVisibleItems.value
                         return props.preset === 'grid'
                             ? h(
                                 NGrid,
@@ -156,11 +167,7 @@ export default defineComponent({
 function renderItem(formItem: DyFormItem) {
     return function () {
         if (formItem.render2) {
-            return formItem.required
-                ? [
-                    formItem.render2(formItem),
-                ]
-                : formItem.render2(formItem)
+            return formItem.render2(formItem)
         } else {
             return null
         }
