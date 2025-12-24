@@ -5,13 +5,14 @@ import {
   renderCheckbox,
   renderCheckboxGroup, renderDatePicker,
   renderInput, renderPopSelect,
-  renderRadioButtonGroup,
+  renderRadioButtonGroup, renderRadioGroup,
   renderSelect, renderSwitch, renderTimePicker, renderTreeSelect
 } from "@/naiveUi/hooks/renderForm";
 import {MessageApi, NButton} from "naive-ui";
 import {DyFormItem} from "@/types/form.ts";
 import NaiDynamicForm from "@/naiveUi/NaiDynamicForm";
 import {FormRules} from "naive-ui/es/form/src/interface";
+import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
 
 type FormRow = {
   username: string
@@ -29,46 +30,45 @@ const rules: FormRules = {
   },
 }
 const naiDynamicFormRef = ref<InstanceType<typeof NaiDynamicForm> | null>(null)
-const formItems: DyFormItem<FormRow>[] = [
-  shallowReactive({
+const formItems = useReactiveForm<FormRow>([
+  {
     key: "username",
     label: "姓名",
     value: ref<string | null>(null),
     clearable: true,
     placeholder: '请输入姓名',
     render2: f => renderInput(f.value, {...f}),
-  }),
-  shallowReactive({
+  },
+  {
     key: "password",
     label: "密码",
     value: ref<string | null>(null),
     clearable: true,
     type: 'password',
     placeholder: '请输入密码',
-    render2: f => renderInput(f.value, {...f, showPasswordOn: true}),
-  }),
-  shallowReactive({
+    render2: f => renderInput(f.value, {...f, showPasswordOn: 'click',}),
+  },
+  {
     key: "desc",
     label: "介绍",
     placeholder: "请输入介绍",
     value: ref<string | null>(null),
     type: 'textarea',
-    rows: 5,
+    rows: 3,
     render2: f => renderInput(f.value, {...f}),
-    // required: true,
-  }),
-  shallowReactive({
+  },
+  {
     key: "sex",
     label: "性别",
     labelField: 'label1',
     valueField: 'value1',
     value: ref<number | null>(null),
-    render2: f => renderRadioButtonGroup(f.value, [
+    render2: f => renderRadioGroup(f.value, [
       {label1: '男', value1: 0},
       {label1: '女', value1: 1},
     ], {...f}),
-  }),
-  shallowReactive({
+  },
+  {
     key: "favorite",
     label: "爱好",
     labelField: 'fl',
@@ -81,15 +81,15 @@ const formItems: DyFormItem<FormRow>[] = [
     ],
     value: ref<number[]>([]),
     render2: f => renderCheckboxGroup(f.value, [], {...f}),
-  }),
-  shallowReactive({
+  },
+  {
     key: "job",
     label: "职位",
     value: ref<number | null>(null),
     clearable: true,
     render2: f => renderSelect(f.value, ['前端', '后端'].map((label, value) => ({label, value})), {...f}),
-  }),
-  shallowReactive({
+  },
+  {
     key: "job2",
     label: "职位2",
     value: ref<number | null>(null),
@@ -99,8 +99,8 @@ const formItems: DyFormItem<FormRow>[] = [
       l: label,
       v: label
     })), {...f, trigger: 'click'}),
-  }),
-  shallowReactive({
+  },
+  {
     key: "job3",
     label: "职位3",
     value: ref<number | null>(null),
@@ -121,44 +121,41 @@ const formItems: DyFormItem<FormRow>[] = [
           },]
       }
     ], {...f}),
-  }),
-  shallowReactive({
+  },
+  {
     key: "admin",
     label: "管理员？",
     value: ref<number | null>(null),
     render2: f => renderSwitch(f.value,),
-  }),
-  shallowReactive({
+  },
+  {
     key: "birthday",
     label: "生日",
     value: ref<number | null>(null),
     render2: f => renderDatePicker(f.value, {type: 'datetime'}),
-  }),
-  shallowReactive({
+  },
+  {
     key: "birthdayT",
     label: "时间",
     value: ref<number | null>(null),
     render2: f => renderTimePicker(f.value),
-  }),
-];
+  },
+])
+const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
-/*  naiDynamicFormRef.value?.validator().then((data) => {
-    console.log(data)
-  }).catch(r => {
-    console.log(r)
-  })*/
-  console.log(naiDynamicFormRef.value?.getResult('ori'))
+  console.log(useForm.getValues())
 }
 const setData = () => {
-  formItems.forEach(it => {
-    it.disabled = true
+  // useForm.setHidden(true, ['username'])
+  useForm.setValues({
+    username: '1111',
+    password: '321321123'
   })
 }
 </script>
 
 <template>
-  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef" :rules="rules"/>
-  <!--  <NaiDynamicForm :items="formItems" preset="grid"/>-->
+  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
   <n-button @click="getData" type="success">get Data</n-button>&nbsp;
   <n-button @click="setData" type="success">set Data</n-button>
 </template>

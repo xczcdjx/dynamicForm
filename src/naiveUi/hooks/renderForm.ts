@@ -5,7 +5,7 @@ import {
     NCheckboxGroup,
     NDatePicker, NImage,
     NInput,
-    NPopselect,
+    NPopselect, NRadio,
     NRadioButton,
     NRadioGroup,
     NSelect,
@@ -13,7 +13,7 @@ import {
     NSwitch,
     NTag,
     NTimePicker,
-    NTreeSelect,
+    NTreeSelect, type RadioProps,
 
 } from "naive-ui";
 import type {
@@ -119,6 +119,47 @@ export function renderTreeSelect(
 }
 
 // 单复选
+export function renderRadioGroup(
+    value: Ref<string | number | null | undefined>,
+    options: RadioProps[],
+    optionProps: RadioGroupProps | AllowedComponentProps = {},
+) {
+    return h(
+        NRadioGroup,
+        {
+            value: value.value,
+            ...optionProps,
+            onUpdateValue: (newVal: string | number | null | undefined) => {
+                value.value = newVal;
+                // @ts-ignore
+                optionProps.onChange?.(newVal, optionProps, options);
+            }
+        },
+        {
+            default: () => {
+                //@ts-ignore
+                const opts = optionProps.options ?? options
+                return opts.map((it: RadioButtonProps) => {
+                    const opt = optionProps as DyFormItem
+                    const label = it[(opt?.labelField ?? 'label') as keyof RadioButtonProps] as string;
+                    const value = it[(opt?.valueField ?? 'value') as keyof RadioButtonProps] as string;
+                    return h(
+                        NRadio,
+                        {
+                            ...it,
+                            label,
+                            value
+                        },
+                        {
+                            default: () => it.label
+                        }
+                    );
+                });
+            }
+        }
+    );
+}
+
 export function renderRadioButtonGroup(
     value: Ref<string | number | null | undefined>,
     options: RadioButtonProps[],
