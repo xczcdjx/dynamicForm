@@ -91,7 +91,10 @@
     overflow: auto;
     display: grid;
     gap: 10px;
-    padding: 10px 5px;
+    padding: 0 5px 10px 5px;
+    &.noList{
+      padding: 0;
+    }
 
     .dItem {
       width: 100%;
@@ -181,6 +184,9 @@
     .centerFlex();
     margin-top: 5px;
     column-gap: 10px;
+    &.noList{
+      margin-top: 0;
+    }
   }
 
   .bt {

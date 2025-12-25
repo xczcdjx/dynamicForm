@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {h, ref} from "vue";
 import {NButton} from "naive-ui";
-import {useDyForm, useReactiveForm} from "../../dist";
-import {type naiDynamicFormRef, NaiDynamicForm, renderInput} from "../../dist/naiveUi";
-// import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
-// import {type naiDynamicFormRef, NaiDynamicForm, renderInput} from "@/naiveUi";
+// import {useDyForm, useReactiveForm} from "../../dist";
+// import {type naiDynamicFormRef, NaiDynamicForm, renderInput} from "../../dist/naiveUi";
+import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
+import {type naiDynamicFormRef, NaiDynamicForm, renderInput, NaiDynamicInput} from "@/naiveUi";
+
 type FormRow = {
   username: string
   password: string
@@ -29,13 +30,17 @@ const formItems = useReactiveForm<FormRow>([
     required: true,
     placeholder: '请输入密码',
     render2: f => renderInput(f.value, {showPasswordOn: 'click'}, f),
-  },
+  }
 ])
 const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
   // const res=useForm.getValues() // 或
   const res = naiDynamicFormRef.value?.getResult()
   console.log(res)
+}
+const resetData = () => {
+  // useForm.onReset() // 或
+  naiDynamicFormRef.value?.reset()
 }
 const setData = () => {
   // 隐藏username
@@ -60,11 +65,17 @@ const validatorData = () => {
 
 <template>
   <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
-  <n-button @click="getData" type="success" size="small">get Data</n-button>&nbsp;
-  <n-button @click="setData" type="warning" size="small">set Data</n-button>&nbsp;
-  <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
+  <div class="control">
+    <n-button @click="getData" type="success" size="small">get Data</n-button>
+    <n-button @click="setData" type="warning" size="small">set Data</n-button>
+    <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
+    <n-button @click="resetData" type="error" size="small">reset Data</n-button>
+  </div>
 </template>
 
 <style scoped>
-
+.control {
+  display: flex;
+  gap: 5px;
+}
 </style>

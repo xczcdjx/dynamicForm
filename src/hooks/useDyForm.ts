@@ -70,5 +70,11 @@ export function useDyForm<Row extends Record<string, any>>(
         }, {} as Partial<Pick<Row, K>> & Record<string, any>)
     }
 
-    return {setDisabled, setHidden, setValue, setValues, getValue, getValues}
+    const onReset = (value:any=null):void => {
+        getItems().forEach((it) => {
+            if (isRef(it.value)) it.value.value=value
+            else it.value=value
+        })
+    }
+    return {setDisabled, setHidden, setValue, setValues, getValue, getValues,onReset}
 }

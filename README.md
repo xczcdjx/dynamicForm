@@ -1,6 +1,6 @@
 # dynamicformdjx
 
-基于 **Vue 3** 的动态表单输入组件。
+基于 **Vue 3** 的动态表单。
 
 [文档](https://xczcdjx.github.io/dynamicFormDoc/)
 
@@ -24,7 +24,8 @@
 `DynamicForm` 一个灵活且动态的表单组件，使用数组，简化模版操作，提供多种hook快速操作表单等。
 
 - 简化template代码，快速处理表单
-- 提供render2函数，自定义处理表单项灵活性强
+- 提供render2函数渲染表单项，使用函数渲染值或自定义h函数
+- 提供多种hooks函数，快速处理数据值
 
 `DynamicInput` 组件是一个灵活且动态的表单输入组件，允许用户添加、修改和删除键值对。它提供了多种自定义选项，如按钮文本、表单布局和输入过滤
 
@@ -78,13 +79,17 @@ pnpm add dynamicformdjx
       required: true,
       placeholder: '请输入密码',
       render2: f => renderInput(f.value, {showPasswordOn: 'click'}, f),
-    },
+    }
   ])
   const useForm = useDyForm<FormRow>(formItems)
   const getData = () => {
     // const res=useForm.getValues() // 或
     const res = naiDynamicFormRef.value?.getResult()
     console.log(res)
+  }
+  const resetData = () => {
+    // useForm.onReset() // 或
+    naiDynamicFormRef.value?.reset()
   }
   const setData = () => {
     // 隐藏username
@@ -109,10 +114,152 @@ pnpm add dynamicformdjx
 
 <template>
   <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
-  <n-button @click="getData" type="success" size="small">get Data</n-button>&nbsp;
-  <n-button @click="setData" type="warning" size="small">set Data</n-button>&nbsp;
-  <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
+  <div class="control">
+    <n-button @click="getData" type="success" size="small">get Data</n-button>
+    <n-button @click="setData" type="warning" size="small">set Data</n-button>
+    <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
+    <n-button @click="resetData" type="error" size="small">reset Data</n-button>
+  </div>
 </template>
+
+<style scoped>
+  .control {
+    display: flex;
+    gap: 5px;
+  }
+</style>
+```
+#### 2.自定义表单 
+> (所有render2函数使用自定义)
+##### InputTest.vue
+```vue
+<script setup lang="ts">
+import {NInput} from "naive-ui";
+import {useAttrs} from "vue";
+const fv=defineModel()
+const attrs=useAttrs()
+</script>
+
+<template>
+<n-input v-model="fv" v-bind="attrs"/>
+</template>
+
+<style scoped>
+
+</style>
+```
+##### Render.vue
+```vue
+<script setup lang="ts">
+import {h, ref} from "vue";
+import {NButton, NInput} from "naive-ui";
+import {useDyForm, useReactiveForm} from "dynamicformdjx";
+import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef} from "dynamicformdjx/naiveUi";
+import type {FormItemRule, FormRules} from "naive-ui/es/form/src/interface";
+import InputTest from "./InputTest.vue";
+
+type FormRow = {
+  name: string
+  desc: string
+  json: object
+}
+const naiDynamicFormRef = ref<naiDynamicFormRef | null>(null)
+const naiDynamicInputRef = ref<naiDynamicInputRef | null>(null)
+const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
+  {
+    key: "name",
+    label: "姓名",
+    value: ref<string | null>(null),
+    clearable: true,
+    placeholder: '请输入姓名',
+    required: true,
+    render2: f => h(NInput, {
+      ...f,
+      value: f.value.value, "onUpdate:value"(v) {
+        f.value.value = v
+      }
+    }),
+  },
+  {
+    key: "desc",
+    label: "描述",
+    value: ref<string | null>(null),
+    clearable: true,
+    placeholder: '请输入姓名',
+    required: true,
+    type: 'textarea',
+    render2: f => h(InputTest, {
+      ...f,
+      value: f.value.value, "onUpdate:value"(v) {
+        f.value.value = v
+      }
+    }),
+  },
+  {
+    key: "json",
+    label: "Json",
+    value: ref<object>({}),
+    rule: {
+      required: true,
+      validator(_: FormItemRule, value: object) {
+        return Object.keys(value).length > 0
+      },
+      trigger: ['blur', 'change'],
+      message: 'json 不能为空'
+    },
+    render2: f => h(NaiDynamicInput, {
+      modelValue: f.value.value, "onUpdate:modelValue"(v) {
+        f.value.value = v
+      },
+      isController: true,
+      ref: naiDynamicInputRef
+    }),
+  },
+])
+const useForm = useDyForm<FormRow>(formItems)
+const getData = () => {
+  console.log(useForm.getValues())
+}
+const resetData = () => {
+  useForm.onReset()
+  naiDynamicInputRef.value?.onSet({})
+}
+const setData = () => {
+  useForm.setValues({
+    name: 'naive-ui',
+    desc:`A Vue 3 Component Library Fairly Complete, Theme Customizable, Uses TypeScript, Fast Kinda Interesting`
+  })
+  naiDynamicInputRef.value?.onSet({
+    question: 'how are you?',
+    answer: "I'm fine,Thank you"
+  })
+}
+const validatorData = () => {
+  // 校验
+  naiDynamicFormRef.value.validator().then(data => {
+    console.log(data)
+  }).catch(err => {
+    console.log(err)
+  })
+}
+</script>
+
+<template>
+  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
+  <div class="control">
+    <n-button @click="getData" type="success" size="small">get Data</n-button>
+    <n-button @click="setData" type="warning" size="small">set Data</n-button>
+    <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
+    <n-button @click="resetData" type="error" size="small">reset Data</n-button>
+  </div>
+</template>
+
+<style scoped>
+.control {
+  display: flex;
+  gap: 5px;
+}
+</style>
 ```
 
 ###  动态录入

@@ -86,7 +86,7 @@ export default defineComponent({
             },
         })
         return () => <div class={props.dyCls ?? `dynamicForm ${size}`}>
-            <div class="dyFormList" ref={dyFormListRef} style={{maxHeight: mc.maxHeight}}>
+            <div class={`dyFormList ${!renderM.value.length?'noList':''}`} ref={dyFormListRef} style={{maxHeight: mc.maxHeight}}>
                 {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
                     <div class="input">
                         <NInput size={size} value={r.key} class="key" onInput={(v) => {
@@ -148,7 +148,7 @@ export default defineComponent({
                 </div>)}
             </div>
             {
-                <div class='control'>
+                <div class={`control ${!renderM.value.length?'noList':''}`}>
                     {
                         !renderM.value.length && <NButton size={size} type="success" onClick={() => {
                             renderM.value.push({rId: props.randomFun(), key: '', value: ''})

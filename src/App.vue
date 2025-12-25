@@ -4,6 +4,7 @@ import SimpleData from "@/components/simpleData.vue";
 import CascadeData from "@/components/cascadeData.vue";
 import DynamicformTest from "@/components/dynamicformTest.vue";
 import SimpleDyFormTest from "@/components/simpleDyFormTest.vue";
+import CustomDyFormTest from "@/components/customDyFormTest.vue";
 </script>
 
 <template>
@@ -12,7 +13,8 @@ import SimpleDyFormTest from "@/components/simpleDyFormTest.vue";
 <!--      <simple-data/>-->
 <!--      <cascade-data/>-->
 <!--      <dynamicform-test/>-->
-      <simple-dy-form-test/>
+<!--      <simple-dy-form-test/>-->
+      <custom-dy-form-test/>
     </div>
   </n-message-provider>
 </template>
