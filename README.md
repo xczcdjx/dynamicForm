@@ -84,7 +84,7 @@ pnpm add dynamicformdjx
   const useForm = useDyForm<FormRow>(formItems)
   const getData = () => {
     // const res=useForm.getValues() // 或
-    const res = naiDynamicFormRef.value?.getResult()
+    const res = naiDynamicFormRef.value?.getResult?.()
     console.log(res)
   }
   const resetData = () => {
@@ -104,7 +104,7 @@ pnpm add dynamicformdjx
   }
   const validatorData = () => {
     // 校验
-    naiDynamicFormRef.value.validator().then(data => {
+    naiDynamicFormRef.value?.validator().then(data => {
       console.log(data)
     }).catch(err => {
       console.log(err)
@@ -173,6 +173,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     clearable: true,
     placeholder: '请输入姓名',
     required: true,
+    // @ts-ignore
     render2: f => h(NInput, {
       ...f,
       value: f.value.value, "onUpdate:value"(v) {
@@ -222,21 +223,21 @@ const getData = () => {
 }
 const resetData = () => {
   useForm.onReset()
-  naiDynamicInputRef.value?.onSet({})
+  naiDynamicInputRef.value?.onSet?.({})
 }
 const setData = () => {
   useForm.setValues({
     name: 'naive-ui',
     desc:`A Vue 3 Component Library Fairly Complete, Theme Customizable, Uses TypeScript, Fast Kinda Interesting`
   })
-  naiDynamicInputRef.value?.onSet({
+  naiDynamicInputRef.value?.onSet?.({
     question: 'how are you?',
     answer: "I'm fine,Thank you"
   })
 }
 const validatorData = () => {
   // 校验
-  naiDynamicFormRef.value.validator().then(data => {
+  naiDynamicFormRef.value?.validator().then(data => {
     console.log(data)
   }).catch(err => {
     console.log(err)

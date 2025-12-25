@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {h, ref} from "vue";
 import {NButton, NInput} from "naive-ui";
-// import {useDyForm, useReactiveForm} from "../../dist";
-// import {type naiDynamicFormRef, NaiDynamicForm, renderInput} from "../../dist/naiveUi";
-import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
-import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef} from "@/naiveUi";
+import {useDyForm, useReactiveForm} from "../../dist";
+import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef}  from "../../dist/naiveUi";
+// import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
+// import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef} from "@/naiveUi";
 import type {FormItemRule, FormRules} from "naive-ui/es/form/src/interface";
 import InputTest from "@/components/subside/InputTest.vue";
 
