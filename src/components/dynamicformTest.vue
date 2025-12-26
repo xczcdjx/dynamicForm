@@ -1,16 +1,18 @@
 <script setup lang="ts">
 
 import {h, ref, shallowReactive} from "vue";
+import {MessageApi, NButton} from "naive-ui";
+import {FormRules, FormItemRule} from "naive-ui/es/form/src/interface";
+
 import {
+  NaiDynamicForm,
   renderCheckboxGroup, renderDatePicker,
   renderInput, renderPopSelect,
   renderRadioButtonGroup, renderRadioGroup,
   renderSelect, renderSwitch, renderTimePicker, renderTreeSelect
-} from "@/naiveUi/hooks/renderForm";
-import {MessageApi, NButton} from "naive-ui";
-import NaiDynamicForm from "@/naiveUi/NaiDynamicForm";
-import {FormRules, FormItemRule} from "naive-ui/es/form/src/interface";
-import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
+} from "../../dist/naiveUi";
+
+import {useDyForm, useReactiveForm} from "../../dist";
 
 type FormRow = {
   username: string

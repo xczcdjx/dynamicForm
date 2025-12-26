@@ -1,36 +1,54 @@
 <script setup lang="ts">
 import {h, ref} from "vue";
 import {NButton} from "naive-ui";
-import {useDyForm, useReactiveForm} from "../../dist";
-import {type naiDynamicFormRef, NaiDynamicForm, renderInput} from "../../dist/naiveUi";
-// import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
-// import {type naiDynamicFormRef, NaiDynamicForm, renderInput, NaiDynamicInput} from "@/naiveUi";
+import {useDyForm} from "@/";
+import {
+  type naiDynamicFormRef,
+  NaiDynamicForm,
+  useDecorateForm,
+  renderDatePicker
+} from "@/naiveUi";
+/*import {useDyForm} from "@/hooks/useDyForm";
+import {
+  type naiDynamicFormRef,
+  NaiDynamicForm,
+  useDecorateForm, renderDatePicker,
+} from "@/naiveUi";*/
 
 type FormRow = {
-  username: string
   password: string
+  job: number
+  birthday: number
 }
 const naiDynamicFormRef = ref<naiDynamicFormRef | null>(null)
-const formItems = useReactiveForm<FormRow>([
-  {
-    key: "username",
-    label: "姓名",
-    value: ref<string | null>(null),
-    clearable: true,
-    placeholder: '请输入姓名',
-    required: true, // 是否必填 (简化rules规则)
-    render2: f => renderInput(f.value, {}, f),
-  },
+const formItems = useDecorateForm<FormRow>([
   {
     key: "password",
     label: "密码",
-    value: ref<string | null>(null),
+    value: null,
     clearable: true,
-    type: 'password',
-    required: true,
     placeholder: '请输入密码',
-    render2: f => renderInput(f.value, {showPasswordOn: 'click'}, f),
-  }
+    required: true,
+    type:'password',
+    renderType: 'renderInput',
+    renderProps:{
+      showPasswordOn:'click'
+    }
+  },
+  {
+    key: "job",
+    label: "职位",
+    value: null,
+    clearable: true,
+    options: ['前端', '后端'].map((label, value) => ({label, value})),
+    renderType: 'renderSelect',
+  },
+  {
+    key: "birthday",
+    label: "生日",
+    value: null,
+    render2: f => renderDatePicker(f.value, {type: 'datetime'}, f),
+  },
 ])
 const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
@@ -39,18 +57,13 @@ const getData = () => {
   console.log(res)
 }
 const resetData = () => {
-  // useForm.onReset() // 或
   naiDynamicFormRef.value?.reset()
 }
 const setData = () => {
-  // 隐藏username
-  // useForm.setHidden(true, ['username'])
-  // 设置username 为不可输入
-  // useForm.setDisabled(true, ['username'])
-  //  直接修改
   useForm.setValues({
     username: 'naive-ui',
-    password: '520'
+    job: 0,
+    birthday: Date.now(),
   })
 }
 const validatorData = () => {

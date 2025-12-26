@@ -35,7 +35,7 @@ import type {Value as DatePickerValue} from "naive-ui/lib/date-picker/src/interf
 import type {SelectGroupOption, Value as SelectValue} from "naive-ui/lib/select/src/interface";
 import type {TreeSelectOption, Value} from "naive-ui/lib/tree-select/src/interface";
 import {type AllowedComponentProps, computed, createVNode, h, type Ref, type VNode} from "vue";
-import type {DyFormItem} from "@/types/form.ts";
+import type {DyFormItem} from "../../types/form";
 
 // 输入
 export function renderInput(model: Ref<string>, optionProps: InputProps | AllowedComponentProps = {}, rf?: DyFormItem) {
