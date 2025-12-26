@@ -1,4 +1,5 @@
 import type {ValueType, DyCFormItem, DyRandomFun} from "@/types";
+import {isRef, ref, type Ref} from "vue";
 const tranArr = (obj: ValueType, arrayFun: DyRandomFun, splitSymbol: string) => Object.keys(obj).map((it, i) => {
     const v = obj[it]
     const isArray = Array.isArray(v)
@@ -111,11 +112,15 @@ const saferRepairColor = (colors: string[], i: number): string => {
     const c = colors[i - 1]
     return c ?? getDepthColor(i)
 }
+function ensureRef(v: any): Ref<any> {
+    return isRef(v) ? v : ref(v ?? null)
+}
 export {
     tranArr,
     resetObj,
     parseValue,
     formatNumberInput,
     getDepthColor,
-    saferRepairColor
+    saferRepairColor,
+    ensureRef
 }

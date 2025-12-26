@@ -1,11 +1,21 @@
 import {type Ref, shallowReactive} from "vue"
 import {unref, isRef} from "vue"
 import type {DyFormItem} from "@/types/form"
+import {ensureRef} from "../utils/tools.ts";
 
 type KeyOf<T> = Extract<keyof T, string>
 
-export function useReactiveForm<T extends Record<string, any>, U=any>(items: DyFormItem<T, U>[], isReactive: boolean = true) {
-    return (isReactive ? items.map(it => shallowReactive<DyFormItem<T, U>>(it)) : items) as DyFormItem<T, U>[]
+export type DyFormItemLike<Row extends Record<string, any>, RuleT = any> =
+    Omit<DyFormItem<Row, RuleT>, "value"> & {
+    value: DyFormItem<Row, RuleT>["value"] | any | null
+}
+export function useReactiveForm<T extends Record<string, any>, U = any>(items: DyFormItemLike<T, U>[], isReactive: boolean = true) {
+    return items.map(raw => {
+        const it = raw as any as DyFormItem<T, U>
+        it.value = ensureRef((raw as any).value)
+        return isReactive ? shallowReactive(it) : it
+    }) as DyFormItem<T, U>[]
+    // return (isReactive ? items.map(it => shallowReactive<DyFormItem<T, U>>(it)) : items) as DyFormItem<T, U>[]
 }
 
 export function useDyForm<Row extends Record<string, any>>(
@@ -70,11 +80,11 @@ export function useDyForm<Row extends Record<string, any>>(
         }, {} as Partial<Pick<Row, K>> & Record<string, any>)
     }
 
-    const onReset = (value:any=null):void => {
+    const onReset = (value: any = null): void => {
         getItems().forEach((it) => {
-            if (isRef(it.value)) it.value.value=value
-            else it.value=value
+            if (isRef(it.value)) it.value.value = value
+            else it.value = value
         })
     }
-    return {setDisabled, setHidden, setValue, setValues, getValue, getValues,onReset}
+    return {setDisabled, setHidden, setValue, setValues, getValue, getValues, onReset}
 }

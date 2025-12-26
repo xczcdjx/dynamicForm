@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {h, ref} from "vue";
 import {NButton, NInput} from "naive-ui";
-import {useDyForm, useReactiveForm} from "../../dist";
-import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef}  from "../../dist/naiveUi";
-// import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
-// import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef} from "@/naiveUi";
+// import {useDyForm, useReactiveForm} from "../../dist";
+// import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef}  from "../../dist/naiveUi";
+import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
+import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef} from "@/naiveUi";
 import type {FormItemRule, FormRules} from "naive-ui/es/form/src/interface";
 import InputTest from "@/components/subside/InputTest.vue";
 
@@ -19,7 +19,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
   {
     key: "name",
     label: "姓名",
-    value: ref<string | null>(null),
+    value: null,
     clearable: true,
     placeholder: '请输入姓名',
     required: true,
@@ -48,7 +48,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
   {
     key: "json",
     label: "Json",
-    value: ref<object>({}),
+    value: {},
     rule: {
       required: true,
       validator(_: FormItemRule, value: object) {

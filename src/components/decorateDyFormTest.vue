@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import {h, ref} from "vue";
 import {NButton} from "naive-ui";
-import {useDyForm} from "@/";
+/*import {useDyForm} from "@/";
 import {
   type naiDynamicFormRef,
   NaiDynamicForm,
   useDecorateForm,
   renderDatePicker
-} from "@/naiveUi";
-/*import {useDyForm} from "@/hooks/useDyForm";
+} from "@/naiveUi";*/
+import {useDyForm} from "../../dist";
 import {
   type naiDynamicFormRef,
   NaiDynamicForm,
-  useDecorateForm, renderDatePicker,
-} from "@/naiveUi";*/
+  useDecorateForm,
+  renderDatePicker
+} from "../../dist/naiveUi";
 
 type FormRow = {
   password: string
@@ -61,7 +62,7 @@ const resetData = () => {
 }
 const setData = () => {
   useForm.setValues({
-    username: 'naive-ui',
+    password: 'naive-ui',
     job: 0,
     birthday: Date.now(),
   })

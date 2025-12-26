@@ -15,8 +15,8 @@ import DecorateDyFormTest from "@/components/decorateDyFormTest.vue";
 <!--      <cascade-data/>-->
 <!--      <dynamicform-test/>-->
 <!--      <simple-dy-form-test/>-->
-<!--      <custom-dy-form-test/>-->
-      <decorate-dy-form-test/>
+      <custom-dy-form-test/>
+<!--      <decorate-dy-form-test/>-->
     </div>
   </n-message-provider>
 </template>

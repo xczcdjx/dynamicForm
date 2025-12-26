@@ -266,7 +266,7 @@ const validatorData = () => {
 > (可省略render2函数)
 ```vue
 <script setup lang="ts">
-import {h, ref} from "vue";
+import { ref} from "vue";
 import {NButton} from "naive-ui";
 import {useDyForm} from "dynamicformdjx";
 import {
@@ -318,7 +318,7 @@ const getData = () => {
   console.log(res)
 }
 const resetData = () => {
-  naiDynamicFormRef.value?.reset()
+  naiDynamicFormRef.value?.reset?.()
 }
 const setData = () => {
   useForm.setValues({

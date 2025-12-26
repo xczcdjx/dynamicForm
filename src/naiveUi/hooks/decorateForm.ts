@@ -1,5 +1,6 @@
 import {isRef, ref, shallowReactive, type Ref} from "vue"
 import type {DyFormItem} from "../../types/form"
+import {ensureRef} from "../../utils/tools.ts";
 
 import {
     renderInput,
@@ -31,10 +32,6 @@ export type DecorateDyFormItem<Row extends Record<string, any>, RuleT = any> =
     value: DyFormItem<Row, RuleT>["value"] | any | null
     renderType?: RenderType
     renderProps?: Record<string, any>
-}
-
-function ensureRef(v: any): Ref<any> {
-    return isRef(v) ? v : ref(v ?? null)
 }
 
 export function useDecorateForm<Row extends Record<string, any>, RuleT = any>(
