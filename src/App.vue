@@ -2,10 +2,10 @@
 import {NMessageProvider} from "naive-ui";
 import SimpleData from "@/components/simpleData.vue";
 import CascadeData from "@/components/cascadeData.vue";
-import DynamicformTest from "@/components/dynamicformTest.vue";
-import SimpleDyFormTest from "@/components/simpleDyFormTest.vue";
-import CustomDyFormTest from "@/components/customDyFormTest.vue";
-import DecorateDyFormTest from "@/components/decorateDyFormTest.vue";
+import DynamicformTest from "@/components/naiveUi/dynamicformTest.vue";
+import SimpleDyFormTest from "@/components/naiveUi/simpleDyFormTest.vue";
+import CustomDyFormTest from "@/components/naiveUi/customDyFormTest.vue";
+import DecorateDyFormTest from "@/components/naiveUi/decorateDyFormTest.vue";
 </script>
 
 <template>
@@ -14,8 +14,8 @@ import DecorateDyFormTest from "@/components/decorateDyFormTest.vue";
 <!--      <simple-data/>-->
 <!--      <cascade-data/>-->
 <!--      <dynamicform-test/>-->
-<!--      <simple-dy-form-test/>-->
-      <custom-dy-form-test/>
+      <simple-dy-form-test/>
+<!--      <custom-dy-form-test/>-->
 <!--      <decorate-dy-form-test/>-->
     </div>
   </n-message-provider>

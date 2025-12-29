@@ -1,6 +1,6 @@
 import {isRef, ref, shallowReactive, type Ref} from "vue"
-import type {DyFormItem} from "../../types/form"
-import {ensureRef} from "../../utils/tools.ts";
+import type {DyFormItem} from "@/types/form"
+import {ensureRef} from "../../utils/tools";
 
 import {
     renderInput,

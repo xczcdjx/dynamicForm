@@ -1,9 +1,8 @@
 import {
-
     NButton,
     NCheckbox,
     NCheckboxGroup,
-    NDatePicker, NImage,
+    NDatePicker,
     NInput,
     NPopselect, NRadio,
     NRadioButton,
@@ -13,10 +12,10 @@ import {
     NSwitch,
     NTag,
     NTimePicker,
-    NTreeSelect, type RadioProps,
-
+    NTreeSelect,
 } from "naive-ui";
 import type {
+    RadioProps,
     CheckboxGroupProps,
     CheckboxProps,
     DatePickerProps,
@@ -34,13 +33,14 @@ import type {
 import type {Value as DatePickerValue} from "naive-ui/lib/date-picker/src/interface";
 import type {SelectGroupOption, Value as SelectValue} from "naive-ui/lib/select/src/interface";
 import type {TreeSelectOption, Value} from "naive-ui/lib/tree-select/src/interface";
-import {type AllowedComponentProps, computed, createVNode, h, type Ref, type VNode} from "vue";
-import type {DyFormItem} from "../../types/form";
+import {type AllowedComponentProps, createVNode, h, type Ref, type VNode} from "vue";
+import type {DyFormItem} from "@/types/form";
 
 // 输入
 export function renderInput(model: Ref<string>, optionProps: InputProps | AllowedComponentProps = {}, rf?: DyFormItem) {
+    const {onChange, ...resetRf} = rf as DyFormItem
     return h(NInput, {
-        ...rf as any,
+        ...resetRf as any,
         value: model.value,
         onUpdateValue: (newVal: string) => {
             model.value = newVal;
@@ -57,8 +57,9 @@ export function renderSelect(
     optionProps: SelectProps | AllowedComponentProps = {},
     rf?: DyFormItem
 ) {
+    const {onChange, ...resetRf} = rf as DyFormItem
     return h(NSelect, {
-        ...rf as any,
+        ...resetRf as any,
         value: model.value,
         options,
         onUpdateValue: (newVal: any) => {
@@ -76,7 +77,7 @@ export function renderPopSelect(
     rf?: DyFormItem,
     defaultRender?: VNode
 ) {
-    const {value, labelField, valueField, ...resetProps} = rf as DyFormItem
+    const {value, labelField, valueField, onChange, ...resetProps} = rf as DyFormItem
     const labelF = labelField ?? 'label'
     const valueF = valueField ?? 'value'
     const mOptions = resetProps.options ?? options
@@ -106,7 +107,7 @@ export function renderTreeSelect(
     optionProps: TreeSelectProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
-    const {valueField = 'value', ...resetProps} = rf as DyFormItem
+    const {valueField = 'value', onChange, ...resetProps} = rf as DyFormItem
     return h(NTreeSelect, {
         ...resetProps as any,
         value: model.value,
@@ -127,10 +128,11 @@ export function renderRadioGroup(
     optionProps: RadioGroupProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
+    const {onChange, ...resetRf} = rf as DyFormItem
     return h(
         NRadioGroup,
         {
-            ...rf as any,
+            ...resetRf as any,
             value: value.value,
             onUpdateValue: (newVal: string | number | null | undefined) => {
                 value.value = newVal;
@@ -168,10 +170,11 @@ export function renderRadioButtonGroup(
     optionProps: RadioGroupProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
+    const {onChange, ...resetRf} = rf as DyFormItem
     return createVNode(
         NRadioGroup,
         {
-            ...rf as any,
+            ...resetRf as any,
             value: value.value,
             onUpdateValue: (newVal: string | number | null | undefined) => {
                 value.value = newVal;
@@ -209,10 +212,11 @@ export function renderCheckboxGroup(
     optionProps: CheckboxGroupProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
+    const {onChange, ...resetRf} = rf as DyFormItem
     return h(
         NCheckboxGroup,
         {
-            ...rf as any,
+            ...resetRf as any,
             value: model.value,
             onUpdateValue: (newVal) => {
                 model.value = newVal;
@@ -253,8 +257,9 @@ export function renderSwitch(
     optionProps: SwitchProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
+    const {onChange, ...resetRf} = rf as DyFormItem
     return h(NSwitch, {
-        ...rf as any,
+        ...resetRf as any,
         value: value.value,
         onUpdateValue: (newVal: boolean) => {
             value.value = newVal;
@@ -270,8 +275,9 @@ export function renderDatePicker(
     optionProps: DatePickerProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
+    const {onChange, ...resetRf} = rf as DyFormItem
     return h(NDatePicker, {
-        ...rf as any,
+        ...resetRf as any,
         value: value.value,
         onUpdateValue: (newVal: any) => {
             value.value = newVal;
@@ -285,8 +291,9 @@ export function renderTimePicker(
     value: Ref<number | null>,
     optionProps: TimePickerProps = {},
     rf?: DyFormItem,) {
+    const {onChange, ...resetRf} = rf as DyFormItem
     return h(NTimePicker, {
-        ...rf as any,
+        ...resetRf as any,
         value: value.value,
         onUpdateValue: (newVal: number | null) => {
             value.value = newVal;

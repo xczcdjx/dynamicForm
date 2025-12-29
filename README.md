@@ -53,13 +53,16 @@ pnpm add dynamicformdjx
   import {ref} from "vue";
   import {NButton} from "naive-ui";
   import {useDyForm, useReactiveForm} from "dynamicformdjx";
-  import {type naiDynamicFormRef, NaiDynamicForm, renderInput} from "dynamicformdjx/naiveUi";
+  import {type naiDynamicFormRef, NaiDynamicForm, renderInput, renderRadioGroup} from "dynamicformdjx/naiveUi";
+  import type {PresetType} from "dynamicformdjx/types/index";
 
   type FormRow = {
     username: string
     password: string
+    preset: PresetType
   }
   const naiDynamicFormRef = ref<naiDynamicFormRef | null>(null)
+  const presetType = ref<PresetType>('fullRow')
   const formItems = useReactiveForm<FormRow>([
     {
       key: "username",
@@ -69,6 +72,7 @@ pnpm add dynamicformdjx
       placeholder: '请输入姓名',
       required: true, // 是否必填 (简化rules规则)
       render2: f => renderInput(f.value, {}, f),
+      span: 6
     },
     {
       key: "password",
@@ -79,7 +83,22 @@ pnpm add dynamicformdjx
       required: true,
       placeholder: '请输入密码',
       render2: f => renderInput(f.value, {showPasswordOn: 'click'}, f),
-    }
+      span: 6,
+      requiredHint:l=>`${l} is not empty`
+    },
+    {
+      key: "preset",
+      label: "表格预设",
+      value: ref<PresetType | null>(presetType.value),
+      render2: f => renderRadioGroup(f.value, [
+        {label: '整行', value: 'fullRow'},
+        {label: '表格', value: 'grid'},
+      ], {name: 'preset'}, f),
+      onChange: (v) => {
+        console.log(v)
+        presetType.value = v
+      }
+    },
   ])
   const useForm = useDyForm<FormRow>(formItems)
   const getData = () => {
@@ -89,7 +108,7 @@ pnpm add dynamicformdjx
   }
   const resetData = () => {
     // useForm.onReset() // 或
-    naiDynamicFormRef.value?.reset()
+    naiDynamicFormRef.value?.reset?.()
   }
   const setData = () => {
     // 隐藏username
@@ -113,16 +132,26 @@ pnpm add dynamicformdjx
 </script>
 
 <template>
-  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
-  <div class="control">
-    <n-button @click="getData" type="success" size="small">get Data</n-button>
-    <n-button @click="setData" type="warning" size="small">set Data</n-button>
-    <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
-    <n-button @click="resetData" type="error" size="small">reset Data</n-button>
-  </div>
+  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef" :preset="presetType">
+    <template #header>
+      <h3>基本表单</h3>
+    </template>
+    <template #footer>
+      <div class="control">
+        <n-button @click="getData" type="success" size="small">get Data</n-button>
+        <n-button @click="setData" type="warning" size="small">set Data</n-button>
+        <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
+        <n-button @click="resetData" type="error" size="small">reset Data</n-button>
+      </div>
+    </template>
+  </NaiDynamicForm>
 </template>
 
 <style scoped>
+  h3{
+    text-align: center;
+    margin:0 0 10px 0;
+  }
   .control {
     display: flex;
     gap: 5px;

@@ -1,6 +1,6 @@
 {
   "name": "dynamicformdjx",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "type": "module",
   "author": "xczcdjx",
   "license": "MIT",
@@ -21,6 +21,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./types/*": {
+      "types": "./dist/types/*.d.ts"
     },
     "./naiveUi": {
       "types": "./dist/naiveUi/index.d.ts",

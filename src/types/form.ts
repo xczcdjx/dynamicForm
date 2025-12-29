@@ -23,9 +23,10 @@ export interface DyFormItem<K = any, RuleT = any> extends BaseDyFormItem<K> {
     path?: string
     hidden?: boolean
     render2?: (formItem: DyFormItem) => VNode
-    reset?: (formItem: DyFormItem) => void
+    // reset?: (formItem: DyFormItem) => void
     rule?: RuleT
     required?: boolean
+    requiredHint?: (label:string)=>string
     disabled?: Ref<boolean> | boolean
     clearable?: boolean
     // 以下是简化类型

@@ -1,5 +1,6 @@
 import type {DyFormItem} from "./form.ts";
-
+import type {VNode} from "vue";
+export * from './form.ts'
 export type DyCFormItem = {
     rId: string;
     key: string;
@@ -47,8 +48,13 @@ export type ExposeType = {
     getResult?: (t?: 'res' | 'ori') => DyCFormItem[] | object
 }
 // DynamicForm type
+export type PresetType='fullRow' | 'grid'
 export type ExposeDyFType = {
     reset?: (v?: any) => void
     validator: () => Promise<object>
     getResult?: (t?: 'res' | 'ori') => DyFormItem[] | object
+}
+export interface DynamicFormSlots {
+    header?: () => VNode[]
+    footer?: () => VNode[]
 }

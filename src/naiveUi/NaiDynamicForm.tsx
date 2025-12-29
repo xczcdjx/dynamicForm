@@ -1,4 +1,4 @@
-import {computed, defineComponent, h, type PropType, ref, toRef} from "vue";
+import {computed, defineComponent, h, type PropType, ref, type SlotsType} from "vue";
 import {
     type FormInst,
     type FormProps,
@@ -10,6 +10,7 @@ import {
 } from 'naive-ui'
 import type {DyFormItem} from "@/types/form";
 import type {FormRules} from "naive-ui/es/form/src/interface";
+import type {DynamicFormSlots, PresetType} from "@/types";
 
 export default defineComponent({
     name: 'NaiDynamicForm',
@@ -33,7 +34,7 @@ export default defineComponent({
             type: Object as PropType<FormRules>
         },
         preset: {
-            type: String as PropType<'fullRow' | 'grid'>,
+            type: String as PropType<PresetType>,
             default: 'fullRow',
             validator: (value: string) => {
                 if (!['fullRow', 'grid'].includes(value)) {
@@ -50,7 +51,8 @@ export default defineComponent({
             require: true,
         }
     },
-    setup(props, {emit, expose}) {
+    slots: Object as SlotsType<DynamicFormSlots>,
+    setup(props, {expose, slots}) {
         const dataForm = ref<FormInst | null>(null)
         const itemsV = computed(() => (props.items ?? []).filter(it => !it.hidden))
         const formModel = computed(() => {
@@ -67,7 +69,7 @@ export default defineComponent({
                 if (c.required && !c.rule) {
                     oRule = {
                         required: true,
-                        message: `${c.label}不能为空`,
+                        message: c.requiredHint?.(c.label) ?? `${c.label}不能为空`,
                         trigger: ['blur']
                     }
                 }
@@ -87,14 +89,10 @@ export default defineComponent({
         })
 
         // func
-        function reset(v:any=null) {
+        function reset(v: any = null) {
             if (!itemsV.value) return
             itemsV.value.forEach((it: DyFormItem) => {
-                if (it.reset) {
-                    it.reset(it)
-                } else {
-                    it.value.value = v
-                }
+                it.value.value = v
             })
         }
 
@@ -117,6 +115,11 @@ export default defineComponent({
 
         if (!props.items) throw new Error('prop items must be not null')
         return () => <div class={'naiDynamicForm'}>
+            {
+                slots.header && <div class="header">
+                    {slots.header?.()}
+                </div>
+            }
             <NForm ref={dataForm} {...props.formConfig} model={formModel.value} rules={combineRules.value} v-slots={
                 {
                     default() {
@@ -159,6 +162,9 @@ export default defineComponent({
                     }
                 }
             }/>
+            {
+                slots.footer && h('div', {class: 'footer'}, slots.footer?.())
+            }
         </div>
     }
 })
