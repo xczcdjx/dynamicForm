@@ -83,7 +83,8 @@ pnpm add dynamicformdjx
       required: true,
       placeholder: '请输入密码',
       render2: f => renderInput(f.value, {showPasswordOn: 'click'}, f),
-      span: 6,
+      span: 8,
+      offset: 2,
       requiredHint:l=>`${l} is not empty`
     },
     {
@@ -95,7 +96,6 @@ pnpm add dynamicformdjx
         {label: '表格', value: 'grid'},
       ], {name: 'preset'}, f),
       onChange: (v) => {
-        console.log(v)
         presetType.value = v
       }
     },

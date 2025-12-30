@@ -5,7 +5,7 @@ import {NButton} from "naive-ui";
 // import {type naiDynamicFormRef, NaiDynamicForm, renderInput,renderRadioGroup} from "../../../dist/naiveUi";
 // import {PresetType} from "../../../dist/types";
 import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
-import {type naiDynamicFormRef, NaiDynamicForm, renderInput, NaiDynamicInput, renderRadioGroup} from "@/naiveUi";
+import {type naiDynamicFormRef, NaiDynamicForm, renderInput, renderRadioGroup} from "@/naiveUi";
 import {PresetType} from "@/types";
 
 type FormRow = {
@@ -24,7 +24,7 @@ const formItems = useReactiveForm<FormRow>([
     placeholder: '请输入姓名',
     required: true, // 是否必填 (简化rules规则)
     render2: f => renderInput(f.value, {}, f),
-    span: 6
+    span: 8,
   },
   {
     key: "password",
@@ -35,8 +35,9 @@ const formItems = useReactiveForm<FormRow>([
     required: true,
     placeholder: '请输入密码',
     render2: f => renderInput(f.value, {showPasswordOn: 'click'}, f),
-    span: 6,
-    requiredHint:l=>`${l} is not empty`
+    requiredHint: l => `${l} is not empty`,
+    span: 8,
+    offset: 2
   },
   {
     key: "preset",
@@ -99,10 +100,11 @@ const validatorData = () => {
 </template>
 
 <style scoped>
-h3{
+h3 {
   text-align: center;
-  margin:0 0 10px 0;
+  margin: 0 0 10px 0;
 }
+
 .control {
   display: flex;
   gap: 5px;

@@ -16,6 +16,7 @@ export interface BaseDyFormItem<T = any> {
     options?: SelectOptionItem[] | any[]
     onChange?: (value: any, associationItem: DyFormItem, options?: SelectOptionItem[] | any[]) => void
     span?: number
+    offset?: number
     sort?: number
 }
 

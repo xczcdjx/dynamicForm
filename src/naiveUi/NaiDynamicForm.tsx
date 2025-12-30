@@ -26,7 +26,7 @@ export default defineComponent({
             type: Object as PropType<GridProps>,
             default: () => ({
                 responsive: 'screen',
-                cols: 'xs:1 s:2 m:3 l:3 xl:4 2xl:4',
+                cols: 'xs:24 s:24 m:24 l:24 xl:24 2xl:24',
                 xGap: 10,
             }),
         },
@@ -138,6 +138,8 @@ export default defineComponent({
                                                 {
                                                     label: it.label,
                                                     path: it.path || (it.key as string),
+                                                    span: it.span ?? 24,
+                                                    offset: it.offset ?? 0
                                                 },
                                                 {
                                                     default: renderItem(it),
