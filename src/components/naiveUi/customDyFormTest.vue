@@ -35,7 +35,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     label: "描述",
     value: ref<string | null>(null),
     clearable: true,
-    placeholder: '请输入姓名',
+    placeholder: '请输入描述',
     required: true,
     type: 'textarea',
     render2: f => h(InputTest, {
@@ -72,21 +72,21 @@ const getData = () => {
 }
 const resetData = () => {
   useForm.onReset()
-  naiDynamicInputRef.value?.onSet({})
+  naiDynamicInputRef.value?.onSet?.({})
 }
 const setData = () => {
   useForm.setValues({
     name: 'naive-ui',
     desc:`A Vue 3 Component Library Fairly Complete, Theme Customizable, Uses TypeScript, Fast Kinda Interesting`
   })
-  naiDynamicInputRef.value?.onSet({
+  naiDynamicInputRef.value?.onSet?.({
     question: 'how are you?',
     answer: "I'm fine,Thank you"
   })
 }
 const validatorData = () => {
   // 校验
-  naiDynamicFormRef.value.validator().then(data => {
+  naiDynamicFormRef.value?.validator().then(data => {
     console.log(data)
   }).catch(err => {
     console.log(err)

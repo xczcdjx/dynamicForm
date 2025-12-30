@@ -7,6 +7,7 @@ import SimpleDyFormTest from "@/components/naiveUi/simpleDyFormTest.vue";
 import CustomDyFormTest from "@/components/naiveUi/customDyFormTest.vue";
 import DecorateDyFormTest from "@/components/naiveUi/decorateDyFormTest.vue";
 import EleSimpleDyFormTest from "@/components/elementUi/eleSimpleDyFormTest.vue";
+import EleCustomDyFormTest from "@/components/elementUi/eleCustomDyFormTest.vue";
 </script>
 
 <template>
@@ -20,7 +21,8 @@ import EleSimpleDyFormTest from "@/components/elementUi/eleSimpleDyFormTest.vue"
 <!--      <custom-dy-form-test/>-->
 <!--      <decorate-dy-form-test/>-->
 <!--      element-plus-->
-      <ele-simple-dy-form-test/>
+<!--      <ele-simple-dy-form-test/>-->
+      <ele-custom-dy-form-test/>
     </div>
   </n-message-provider>
 </template>

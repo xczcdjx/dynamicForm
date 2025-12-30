@@ -215,7 +215,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     label: "描述",
     value: ref<string | null>(null),
     clearable: true,
-    placeholder: '请输入姓名',
+    placeholder: '请输入描述',
     required: true,
     type: 'textarea',
     render2: f => h(InputTest, {
