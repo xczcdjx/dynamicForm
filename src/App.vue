@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import {NMessageProvider} from "naive-ui";
-import SimpleData from "@/components/simpleData.vue";
+/*import SimpleData from "@/components/simpleData.vue";
 import CascadeData from "@/components/cascadeData.vue";
 import DynamicformTest from "@/components/naiveUi/dynamicformTest.vue";
 import SimpleDyFormTest from "@/components/naiveUi/simpleDyFormTest.vue";
 import CustomDyFormTest from "@/components/naiveUi/customDyFormTest.vue";
 import DecorateDyFormTest from "@/components/naiveUi/decorateDyFormTest.vue";
 import EleSimpleDyFormTest from "@/components/elementUi/eleSimpleDyFormTest.vue";
-import EleCustomDyFormTest from "@/components/elementUi/eleCustomDyFormTest.vue";
+import EleCustomDyFormTest from "@/components/elementUi/eleCustomDyFormTest.vue";*/
+import EleDynamicformTest from "@/components/elementUi/eleDynamicformTest.vue";
 </script>
 
 <template>
@@ -22,7 +23,8 @@ import EleCustomDyFormTest from "@/components/elementUi/eleCustomDyFormTest.vue"
 <!--      <decorate-dy-form-test/>-->
 <!--      element-plus-->
 <!--      <ele-simple-dy-form-test/>-->
-      <ele-custom-dy-form-test/>
+<!--      <ele-custom-dy-form-test/>-->
+      <ele-dynamicform-test/>
     </div>
   </n-message-provider>
 </template>

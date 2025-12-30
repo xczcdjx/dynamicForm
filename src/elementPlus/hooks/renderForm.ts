@@ -32,8 +32,6 @@ function getField<T extends BasicOption>(opt: T, field: string, fallback: any) {
 }
 
 function isGroupOption(opt: any) {
-    // 兼容 Naive 的 SelectGroupOption: { type:'group', label, children:[] }
-    // 也兼容常见结构: { label, options:[] }
     return !!opt && (opt.type === "group" || Array.isArray(opt.children) || Array.isArray(opt.options));
 }
 
@@ -72,7 +70,7 @@ export function renderInput(
     optionProps: InputProps | AllowedComponentProps = {},
     rf?: DyFormItem
 ) {
-    const {onChange,value, ...restRf} = rf as DyFormItem;
+    const {onChange, value, ...restRf} = rf as DyFormItem;
     return h(ElInput, {
         ...(restRf as any),
         modelValue: model.value,
@@ -149,14 +147,14 @@ export function renderSelect(
  * - 多选（model 是数组）：ElPopover + ElCheckboxGroup
  */
 
-/*export function renderPopSelect(
+export function renderPopSelect(
     model: Ref<string | number | Array<string | number> | null>,
     options: Array<any>,
     optionProps: AnyProps = {},
     rf?: DyFormItem,
     defaultRender?: VNode
 ) {
-    const { labelField, valueField, options: rfOptions, onChange, ...restProps } = (rf ?? {}) as any;
+    const {labelField, valueField, options: rfOptions, onChange, ...restProps} = (rf ?? {}) as any;
     const labelF = labelField ?? "label";
     const valueF = valueField ?? "value";
     const mOptions = rfOptions ?? options;
@@ -172,7 +170,7 @@ export function renderSelect(
                     ? (getLabelByValue(model.value, mOptions, labelF, valueF) || String(model.value))
                     : "请选择";
 
-        return h(ElButton, null, { default: () => text });
+        return h(ElButton, null, {default: () => text});
     };
 
     // 多选：popover + checkbox group
@@ -190,7 +188,7 @@ export function renderSelect(
                     h(
                         ElCheckboxGroup,
                         {
-                            modelValue: model.value,
+                            modelValue: model.value as any,
                             "onUpdate:modelValue": (newVal: Array<string | number>) => {
                                 model.value = newVal;
                                 rf?.onChange?.(newVal, rf, opts);
@@ -200,7 +198,7 @@ export function renderSelect(
                             default: () =>
                                 h(
                                     ElSpace,
-                                    { wrap: true },
+                                    {wrap: true},
                                     {
                                         default: () =>
                                             opts.flatMap((it: any, idx: number) => {
@@ -210,8 +208,12 @@ export function renderSelect(
                                                     const value = getField(x, valueF, x.value);
                                                     return h(
                                                         ElCheckbox,
-                                                        { key: x.key ?? `${idx}-${j}`, label: value, disabled: x.disabled },
-                                                        { default: () => label }
+                                                        {
+                                                            key: x.key ?? `${idx}-${j}`,
+                                                            label: value,
+                                                            disabled: x.disabled
+                                                        },
+                                                        {default: () => label}
                                                     );
                                                 });
                                             }),
@@ -247,15 +249,15 @@ export function renderSelect(
                                 const value = getField(x, valueF, x.value);
                                 return h(
                                     ElDropdownItem,
-                                    { key: x.key ?? `${idx}-${j}`, command: value, disabled: x.disabled },
-                                    { default: () => label }
+                                    {key: x.key ?? `${idx}-${j}`, command: value, disabled: x.disabled},
+                                    {default: () => label}
                                 );
                             });
                         }),
                 }),
         }
     );
-}*/
+}
 
 export function renderTreeSelect(
     model: Ref<any>,
@@ -465,7 +467,7 @@ export function renderTimePicker(
 }
 
 // otherRender：单个 checkbox
-/*function renderCheckbox(
+function renderCheckbox(
     value: Ref<boolean>,
     label: string,
     optionProps: AnyProps = {}
@@ -474,7 +476,7 @@ export function renderTimePicker(
         ElCheckbox,
         {
             modelValue: value.value,
-            "onUpdate:modelValue": (newVal: boolean) => {
+            "onUpdate:modelValue": (newVal: any) => {
                 value.value = newVal;
                 (optionProps as any).onChange?.(newVal, optionProps);
             },
@@ -486,5 +488,5 @@ export function renderTimePicker(
 
 // tag
 function renderTag(label: string, optionProps: AnyProps = {}) {
-    return h(ElTag, optionProps, { default: () => label });
-}*/
+    return h(ElTag, optionProps, {default: () => label});
+}

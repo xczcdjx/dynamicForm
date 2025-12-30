@@ -1,18 +1,12 @@
 <script setup lang="ts">
-
-import {h, ref, shallowReactive} from "vue";
-import {MessageApi, NButton} from "naive-ui";
-import {FormRules, FormItemRule} from "naive-ui/es/form/src/interface";
-
-import {
-  NaiDynamicForm,
-  renderCheckboxGroup, renderDatePicker,
-  renderInput, renderPopSelect,
+import {h, ref} from "vue";
+import {ElButton, ElInput} from "element-plus";
+import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
+import {type eleDynamicFormRef, EleDynamicForm, renderInput,renderCheckboxGroup, renderDatePicker,
+  renderPopSelect,
   renderRadioButtonGroup, renderRadioGroup,
-  renderSelect, renderSwitch, renderTimePicker, renderTreeSelect
-} from "../../dist/naiveUi";
-
-import {useDyForm, useReactiveForm} from "../../dist";
+  renderSelect, renderSwitch, renderTimePicker, renderTreeSelect} from "@/elementPlus";
+import type {FormItemRule, FormRules} from "element-plus";
 
 type FormRow = {
   username: string
@@ -26,12 +20,11 @@ const rules: FormRules = {
   username: {
     required: true,
     message: '请输入',
-    trigger: ['blur']
+    trigger: 'blur'
   },
 }
-const naiDynamicFormRef = ref<InstanceType<typeof NaiDynamicForm> | null>(null)
-const formItems = useReactiveForm<FormRow, FormRules | FormItemRule | FormItemRule[]>(
-    [
+const eleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
+const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
   {
     key: "username",
     label: "姓名",
@@ -135,13 +128,13 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule | FormItemRu
   {
     key: "birthday",
     label: "生日",
-    value: ref<number | null>(null),
+    value: ref<Date>(new Date()),
     render2: f => renderDatePicker(f.value, {type: 'datetime'}, f),
   },
   {
     key: "birthdayT",
     label: "时间",
-    value: ref<number | null>(null),
+    value: ref<Date>(new Date()),
     render2: f => renderTimePicker(f.value, {}, f),
   },
 ])
@@ -149,25 +142,38 @@ const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
   console.log(useForm.getValues())
 }
+const resetData = () => {
+  useForm.onReset()
+}
 const setData = () => {
-  // useForm.setHidden(true, ['username'])
   useForm.setValues({
     username: '1111',
     password: '321321123'
   })
 }
-const setDisabled = () => {
-  useForm.setDisabled(true)
+const validatorData = () => {
+  // 校验
+  eleDynamicFormRef.value.validator().then(data => {
+    console.log(data)
+  }).catch(err => {
+    console.log(err)
+  })
 }
 </script>
 
 <template>
-  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
-  <n-button @click="getData" type="success">get Data</n-button>&nbsp;
-  <n-button @click="setData" type="success">set Data</n-button>&nbsp;
-  <n-button @click="setDisabled" type="default">set Disabled</n-button>
+  <EleDynamicForm :items="formItems" ref="eleDynamicFormRef" :rules="rules"/>
+  <div class="control">
+    <el-button @click="getData" type="success" size="small">get Data</el-button>
+    <el-button @click="setData" type="warning" size="small">set Data</el-button>
+    <el-button @click="validatorData" type="default" size="small">validate Data</el-button>
+    <el-button @click="resetData" type="danger" size="small">reset Data</el-button>
+  </div>
 </template>
 
 <style scoped>
-
+.control {
+  display: flex;
+  gap: 5px;
+}
 </style>
