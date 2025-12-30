@@ -2,10 +2,12 @@
 import {h, ref} from "vue";
 import {ElButton, ElInput} from "element-plus";
 import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
-import {type eleDynamicFormRef, EleDynamicForm, renderInput,renderCheckboxGroup, renderDatePicker,
+import {
+  type eleDynamicFormRef, EleDynamicForm, renderInput, renderCheckboxGroup, renderDatePicker,
   renderPopSelect,
   renderRadioButtonGroup, renderRadioGroup,
-  renderSelect, renderSwitch, renderTimePicker, renderTreeSelect} from "@/elementPlus";
+  renderSelect, renderSwitch, renderTimePicker, renderTreeSelect
+} from "@/elementPlus";
 import type {FormItemRule, FormRules} from "element-plus";
 
 type FormRow = {
@@ -16,7 +18,7 @@ type FormRow = {
   email: string
   birthday: string
 }
-const rules: FormRules = {
+const rules: FormRules<FormRow> = {
   username: {
     required: true,
     message: '请输入',

@@ -23,16 +23,7 @@ const formItems = useReactiveForm<FormRow>([
     clearable: true,
     placeholder: '请输入姓名',
     required: true, // 是否必填 (简化rules规则)
-    render2: f => {
-      return renderInput(f.value, {}, f)
-      /*const {value,...restF}=f
-      return h(ElInput, {
-        ...restF,
-        modelValue: f.value.value, "onUpdate:modelValue"(v) {
-          f.value.value = v
-        }
-      })*/
-    },
+    render2: f => renderInput(f.value, {}, f),
     span: 8
   },
   {
