@@ -49,6 +49,17 @@ export type ExposeType = {
 }
 // DynamicForm type
 export type PresetType='fullRow' | 'grid'
+export type RenderType =
+    | "renderInput"
+    | "renderSelect"
+    | "renderPopSelect"
+    | "renderTreeSelect"
+    | "renderRadioGroup"
+    | "renderRadioButtonGroup"
+    | "renderCheckboxGroup"
+    | "renderSwitch"
+    | "renderDatePicker"
+    | "renderTimePicker"
 export type ExposeDyFType = {
     reset?: (v?: any) => void
     validator: () => Promise<object>
@@ -57,4 +68,22 @@ export type ExposeDyFType = {
 export interface DynamicFormSlots {
     header?: () => VNode[]
     footer?: () => VNode[]
+}
+export type DecorateDyFormItem<Row extends Record<string, any>, RuleT = any> =
+    Omit<DyFormItem<Row, RuleT>, "value"> & {
+    value: DyFormItem<Row, RuleT>["value"] | any | null
+    renderType?: RenderType
+    renderProps?: Record<string, any>
+}
+export type Renderers<Row extends Record<string, any>, RuleT = any> = {
+    renderInput: (value: any, props: any, it: any) => any
+    renderSelect: (value: any, options: any[], props: any, it: any) => any
+    renderPopSelect: (value: any, options: any[], props: any, it: any) => any
+    renderTreeSelect: (value: any, options: any[], props: any, it: any) => any
+    renderRadioGroup: (value: any, options: any[], props: any, it: any) => any
+    renderRadioButtonGroup: (value: any, options: any[], props: any, it: any) => any
+    renderCheckboxGroup: (value: any, options: any[], props: any, it: any) => any
+    renderSwitch: (value: any, props: any, it: any) => any
+    renderDatePicker: (value: any, props: any, it: any) => any
+    renderTimePicker: (value: any, props: any, it: any) => any
 }

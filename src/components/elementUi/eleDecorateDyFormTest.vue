@@ -1,27 +1,20 @@
 <script setup lang="ts">
-import {h, ref} from "vue";
-import {NButton} from "naive-ui";
+import {ref} from "vue";
+import {ElButton} from "element-plus";
 import {useDyForm} from "@/";
 import {
-  type naiDynamicFormRef,
-  NaiDynamicForm,
+  type eleDynamicFormRef,
+  EleDynamicForm,
   useDecorateForm,
   renderDatePicker
-} from "@/naiveUi";
-/*import {useDyForm} from "../../dist";
-import {
-  type naiDynamicFormRef,
-  NaiDynamicForm,
-  useDecorateForm,
-  renderDatePicker
-} from "../../dist/naiveUi";*/
+} from "@/elementPlus";
 
 type FormRow = {
   password: string
   job: number
   birthday: number
 }
-const naiDynamicFormRef = ref<naiDynamicFormRef | null>(null)
+const eleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
 const formItems = useDecorateForm<FormRow>([
   {
     key: "password",
@@ -33,7 +26,7 @@ const formItems = useDecorateForm<FormRow>([
     type: 'password',
     renderType: 'renderInput',
     renderProps: {
-      showPasswordOn: 'click'
+      showPassword: 'click'
     }
   },
   {
@@ -53,23 +46,18 @@ const formItems = useDecorateForm<FormRow>([
 ])
 const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
-  // const res=useForm.getValues() // 或
-  const res = naiDynamicFormRef.value?.getResult()
+  const res = eleDynamicFormRef.value?.getResult?.()
   console.log(res)
 }
-const resetData = () => {
-  naiDynamicFormRef.value?.reset()
-}
-const setData = () => {
-  useForm.setValues({
-    password: 'naive-ui',
-    job: 0,
-    birthday: Date.now(),
-  })
-}
+const resetData = () => eleDynamicFormRef.value?.reset?.()
+const setData = () => useForm.setValues({
+  password: 'element-plus',
+  job: 0,
+  birthday: new Date(),
+})
 const validatorData = () => {
   // 校验
-  naiDynamicFormRef.value.validator().then(data => {
+  eleDynamicFormRef.value?.validator().then(data => {
     console.log(data)
   }).catch(err => {
     console.log(err)
@@ -78,12 +66,12 @@ const validatorData = () => {
 </script>
 
 <template>
-  <NaiDynamicForm :items="formItems" ref="naiDynamicFormRef"/>
+  <EleDynamicForm :items="formItems" ref="eleDynamicFormRef"/>
   <div class="control">
-    <n-button @click="getData" type="success" size="small">get Data</n-button>
-    <n-button @click="setData" type="warning" size="small">set Data</n-button>
-    <n-button @click="validatorData" type="default" size="small">validate Data</n-button>
-    <n-button @click="resetData" type="error" size="small">reset Data</n-button>
+    <el-button @click="getData" type="success" size="small">get Data</el-button>
+    <el-button @click="setData" type="warning" size="small">set Data</el-button>
+    <el-button @click="validatorData" type="default" size="small">validate Data</el-button>
+    <el-button @click="resetData" type="danger" size="small">reset Data</el-button>
   </div>
 </template>
 

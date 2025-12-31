@@ -34,7 +34,7 @@ const formItems = useReactiveForm<FormRow>([
     type: 'password',
     required: true,
     placeholder: '请输入密码',
-    render2: f => renderInput(f.value, {showPasswordOn: 'click'}, f),
+    render2: f => renderInput(f.value, {showPassword: true}, f),
     span: 8,
     offset: 2,
     requiredHint: l => `${l} is not empty`
