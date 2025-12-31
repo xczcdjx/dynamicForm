@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {ElButton} from "element-plus";
-import {useDyForm} from "@/";
+import {useDyForm} from "../../../dist";
 import {
   type eleDynamicFormRef,
   EleDynamicForm,
   useDecorateForm,
   renderDatePicker
-} from "@/elementPlus";
+} from "../../../dist/elementPlus";
 
 type FormRow = {
   password: string
   job: number
-  birthday: number
+  birthday: number | Date
 }
 const eleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
 const formItems = useDecorateForm<FormRow>([

@@ -1,23 +1,34 @@
 # dynamicformdjx
 
-基于 **Vue 3** 的动态表单。
+基于 **Vue 3** 的动态表单及录入。
 
 [文档](https://xczcdjx.github.io/dynamicFormDoc/)
+> 1.当前为0.41版本，已完成所有配合element plus 或naive ui表单的适配
+
+> 2.其中简单表单，自定义表单，装饰表单均可使用
+
+> 3.文档还在完善中，可参考源码中的components组件查看具体使用
 
 [Vue2 版本](https://www.npmjs.com/package/dynamicformdjx-vue2) 
 
 [React 版本](https://www.npmjs.com/package/dynamicformdjx-react) 
 
-### 组件版本说明
-- **v0.2 及以上版本**
-- Form字段改为Input, ElementPlus缩短为Ele, NaiveUi缩短为Nai
-- 请使用：`DynamicInput`, `DynamicCascadeInput`，`EleDynamicInput`,`NaiDynamicInput` 等导入
+[//]: # (### 组件版本说明)
+
+[//]: # (- **v0.2 及以上版本**)
+
+[//]: # (- Form字段改为Input, ElementPlus缩短为Ele, NaiveUi缩短为Nai)
+
+[//]: # (- 请使用：`DynamicInput`, `DynamicCascadeInput`，`EleDynamicInput`,`NaiDynamicInput` 等导入)
 
 
-| 版本范围 | 组件导入方式 |
-|---------|--------------|
-| ≥ 0.2   | DynamicInput, DynamicCascadeInput |
-| < 0.2   | DynamicForm, DynamicCascadeForm |
+[//]: # (| 版本范围 | 组件导入方式 |)
+
+[//]: # (|---------|--------------|)
+
+[//]: # (| ≥ 0.2   | DynamicInput, DynamicCascadeInput |)
+
+[//]: # (| < 0.2   | DynamicForm, DynamicCascadeForm |)
 
 ## 概述
 

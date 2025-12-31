@@ -2,9 +2,10 @@ import NaiDynamicInput from "./NaiDynamicInput";
 import NaiDynamicCascadeInput from "./NaiDynamicCascadeInput";
 import NaiDynamicForm from "./NaiDynamicForm";
 import type {ExposeDyFType, ExposeType} from "@/types";
+import {useDecorateForm} from './hooks/decorateForm'
+export {useDecorateForm}
 import '../index.less'
 export * from './hooks/renderForm'
-export * from './hooks/decorateForm'
 export type naiDynamicInputRef = InstanceType<typeof NaiDynamicInput> & ExposeType
 export type naiDynamicCascadeInputRef = InstanceType<typeof NaiDynamicCascadeInput> & ExposeType
 export type naiDynamicFormRef = InstanceType<typeof NaiDynamicForm> & ExposeDyFType

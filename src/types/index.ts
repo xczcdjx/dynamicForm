@@ -1,6 +1,5 @@
 import type {DyFormItem} from "./form.ts";
 import type {VNode} from "vue";
-export * from './form.ts'
 export type DyCFormItem = {
     rId: string;
     key: string;
