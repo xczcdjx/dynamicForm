@@ -17,6 +17,9 @@ export default defineConfig({
         }),
         libInjectCss(),
     ],
+    server:{
+      port:5800
+    },
     resolve: {
         alias: [{ find: '@', replacement: path.join(__dirname, './src') }],
         extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
