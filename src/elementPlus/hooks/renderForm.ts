@@ -32,13 +32,13 @@ import type {TreeComponentProps} from "element-plus/es/components/tree/src/tree.
 
 type AnyProps = Record<string, any> & AllowedComponentProps;
 type BasicOption = Record<string, any>;
-export type SelectOption = Omit<SelectOptionItem, 'class' | 'style'>
+export type SelectOption = Omit<SelectOptionItem, 'class' | 'style'>|Record<string, any>
 export type TreeSelectOption = {
     label?: string
     value: any
     disabled?: boolean
     children?: TreeSelectOption[]
-}
+}|Record<string, any>
 type OptionsType<T> = Partial<T> & AllowedComponentProps
 
 function getField<T extends BasicOption>(opt: T, field: string, fallback: any) {
