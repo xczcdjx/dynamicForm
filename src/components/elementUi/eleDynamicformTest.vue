@@ -45,7 +45,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     clearable: true,
     type: 'password',
     placeholder: '请输入密码',
-    render2: f => renderInput(f.value, {showPasswordOn: 'click',}, f),
+    render2: f => renderInput(f.value, {showPassword: true}, f),
   },
   {
     key: "desc",
@@ -86,7 +86,9 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     label: "职位",
     value: ref<number | null>(null),
     clearable: true,
-    render2: f => renderSelect(f.value, ['前端', '后端'].map((label, value) => ({label, value})), {}, f),
+    render2: f => renderSelect(f.value, ['前端', '后端'].map((label, value) => ({label, value})), {
+
+    }, f),
   },
   {
     key: "job2",
@@ -131,7 +133,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     key: "birthday",
     label: "生日",
     value: ref<Date>(new Date()),
-    render2: f => renderDatePicker(f.value, {type: 'datetime'}, f),
+    render2: f => renderDatePicker(f.value, {type:'datetime'}, f),
   },
   {
     key: "birthdayT",

@@ -1,7 +1,7 @@
 import type {CSSProperties, Ref, VNode} from "vue";
 
 export interface SelectOptionItem {
-    label: string
+    label?: string
     value: any
     class?: string;
     style?: string | CSSProperties;
@@ -10,7 +10,7 @@ export interface SelectOptionItem {
 
 export interface BaseDyFormItem<T = any> {
     key: keyof T
-    label: string
+    label?: string
     value: Ref<any>
     placeholder?: string
     options?: SelectOptionItem[] | any[]

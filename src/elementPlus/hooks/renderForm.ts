@@ -20,12 +20,26 @@ import {
     ElTimePicker,
     ElTreeSelect,
 } from "element-plus";
-import type {InputProps} from 'element-plus'
-import {createVNode, h, type Ref, type VNode, type AllowedComponentProps} from "vue";
-import type {DyFormItem} from "@/types/form";
+import {createVNode, h, type Ref, type VNode, type AllowedComponentProps, type VNodeProps} from "vue";
+import type {InputProps, SelectProps} from 'element-plus'
+import type {DyFormItem, SelectOptionItem} from "@/types/form";
+import type {RadioGroupProps} from "element-plus/es/components/radio/src/radio-group";
+import type {CheckboxGroupProps} from "element-plus/es/components/checkbox/src/checkbox-group";
+import type {SwitchProps} from "element-plus/es/components/switch/src/switch";
+import type {DatePickerProps} from "element-plus/es/components/date-picker/src/props";
+import type {TimePickerDefaultProps} from "element-plus/es/components/time-picker/src/common/props";
+import type {TreeComponentProps} from "element-plus/es/components/tree/src/tree.type";
 
 type AnyProps = Record<string, any> & AllowedComponentProps;
 type BasicOption = Record<string, any>;
+export type SelectOption = Omit<SelectOptionItem, 'class' | 'style'>
+export type TreeSelectOption = {
+    label?: string
+    value: any
+    disabled?: boolean
+    children?: TreeSelectOption[]
+}
+type OptionsType<T> = Partial<T> & AllowedComponentProps
 
 function getField<T extends BasicOption>(opt: T, field: string, fallback: any) {
     return opt?.[field] ?? fallback;
@@ -67,7 +81,7 @@ function getLabelByValue(
 // 输入
 export function renderInput(
     model: Ref<string>,
-    optionProps: InputProps | AllowedComponentProps = {},
+    optionProps: OptionsType<InputProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, value, ...restRf} = rf as DyFormItem;
@@ -85,8 +99,8 @@ export function renderInput(
 // 下拉
 export function renderSelect(
     model: Ref<any>,
-    options: any[],
-    optionProps: AnyProps = {},
+    options: SelectOption[],
+    optionProps: OptionsType<SelectProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, labelField, valueField, options: rfOptions, ...restRf} = (rf ?? {}) as any;
@@ -146,10 +160,10 @@ export function renderSelect(
  * - 单选：ElDropdown（点击项立即选中）
  * - 多选（model 是数组）：ElPopover + ElCheckboxGroup
  */
-
+// optionProps 暂未处理
 export function renderPopSelect(
     model: Ref<string | number | Array<string | number> | null>,
-    options: Array<any>,
+    options: Array<SelectOption>,
     optionProps: AnyProps = {},
     rf?: DyFormItem,
     defaultRender?: VNode
@@ -261,8 +275,8 @@ export function renderPopSelect(
 
 export function renderTreeSelect(
     model: Ref<any>,
-    options: any[],
-    optionProps: AnyProps = {},
+    options: TreeSelectOption[],
+    optionProps: OptionsType<TreeComponentProps> = {},
     rf?: DyFormItem
 ) {
     const {
@@ -297,8 +311,8 @@ export function renderTreeSelect(
 // 单选：RadioGroup（普通 radio）
 export function renderRadioGroup(
     value: Ref<string | number | null | undefined>,
-    options: BasicOption[],
-    optionProps: AnyProps = {},
+    options: SelectOption[],
+    optionProps: OptionsType<RadioGroupProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, labelField, valueField, options: rfOptions, ...restRf} = (rf ?? {}) as any;
@@ -331,8 +345,8 @@ export function renderRadioGroup(
 // 单选：RadioButtonGroup
 export function renderRadioButtonGroup(
     value: Ref<string | number | null | undefined>,
-    options: BasicOption[],
-    optionProps: AnyProps = {},
+    options: SelectOption[],
+    optionProps: OptionsType<RadioGroupProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, labelField, valueField, options: rfOptions, ...restRf} = (rf ?? {}) as any;
@@ -369,8 +383,8 @@ export function renderRadioButtonGroup(
 // 复选：CheckboxGroup
 export function renderCheckboxGroup(
     model: Ref<(string | number)[]>,
-    options: BasicOption[],
-    optionProps: AnyProps = {},
+    options: SelectOption[],
+    optionProps: OptionsType<CheckboxGroupProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, labelField, valueField, options: rfOptions, ...restRf} = (rf ?? {}) as any;
@@ -414,7 +428,7 @@ export function renderCheckboxGroup(
 // 开关
 export function renderSwitch(
     value: Ref<boolean>,
-    optionProps: AnyProps = {},
+    optionProps: OptionsType<CheckboxGroupProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, ...restRf} = (rf ?? {}) as any;
@@ -430,10 +444,9 @@ export function renderSwitch(
 }
 
 // 日期/时间（Element Plus：ElDatePicker）
-// 你需要在 optionProps 里传 type：date / daterange / datetime / datetimerange 等
 export function renderDatePicker(
     value: Ref<any>,
-    optionProps: AnyProps = {},
+    optionProps: OptionsType<DatePickerProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, ...restRf} = (rf ?? {}) as any;
@@ -451,7 +464,7 @@ export function renderDatePicker(
 // 时间（Element Plus：ElTimePicker）
 export function renderTimePicker(
     value: Ref<any>,
-    optionProps: AnyProps = {},
+    optionProps: OptionsType<TimePickerDefaultProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, ...restRf} = (rf ?? {}) as any;

@@ -61,7 +61,7 @@ export default defineComponent({
                 if (c.required && !c.rule) {
                     oRule = {
                         required: true,
-                        message: c.requiredHint?.(c.label) ?? `${c.label}不能为空`,
+                        message: c.requiredHint?.(c.label??'') ?? `${c.label}不能为空`,
                         trigger: 'blur'
                     }
                 }
