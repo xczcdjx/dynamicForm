@@ -113,7 +113,7 @@
 
           &.nativeInput {
             border: 1px solid #d2d6dd;
-            padding: 0.5em 0.4em;
+            padding: 0.35em 0.4em;
             border-radius: 3px;
             &:focus{
               outline: none;
@@ -125,7 +125,7 @@
         .vInput {
           width: 100%;
           border: 1px solid #d2d6dd;
-          padding: 0.2em 0.4em;
+          padding: 0.3em 0.4em;
           border-radius: 3px;
           display: flex;
           column-gap: 5px;
@@ -136,6 +136,7 @@
 
             &.nativeV {
               letter-spacing: 3px;
+              padding: 0;
               &:focus{
                 outline: none;
                 //box-shadow: 0 0 5px rgba(0, 123, 255, 0.3)
@@ -145,11 +146,12 @@
 
           .slot {
             white-space: nowrap;
-
+            display: flex;
+            gap: 5px;
             > button {
               font-weight: normal;
               border-radius: 3px;
-              font-size: 0.8em;
+              font-size: 0.7em;
             }
           }
         }

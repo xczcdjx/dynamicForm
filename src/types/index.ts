@@ -1,5 +1,6 @@
 import type {DyFormItem} from "./form.ts";
 import type {VNode} from "vue";
+
 export type DyCFormItem = {
     rId: string;
     key: string;
@@ -25,6 +26,9 @@ export type DyConfig = {
     autoScroll?: boolean;
     // 允许输入过滤  (默认true)
     allowFilter?: boolean;
+    // 控制按钮
+    hideArrayBtn?: boolean;
+    hideNumberBtn?: boolean;
     // ...
 }
 export type DyCasConfig = {
@@ -38,6 +42,30 @@ export type DyListConfig = {
     arraySplitSymbol: string
     // ...
 }
+type ScopeType = {
+    row: {
+        rId: string
+        key: string
+        value: string
+        isArray?: boolean | undefined
+        isNumber?: boolean | undefined
+    }
+    index: number
+    isLast: boolean
+    addItem: () => void
+    removeItem: () => void
+    toggleArray: () => boolean
+    toggleNumber: () => boolean
+}
+
+export interface DynamicInputSlots {
+    newBtn?: ({newItem}: { newItem: () => void }) => VNode[]
+    resetBtn?: ({reset}: { reset: () => void }) => VNode[]
+    mergeBtn?: ({merge}: { merge: () => void }) => VNode[]
+    typeTools?: (row:ScopeType) => VNode[]
+    rowActions?: (row:ScopeType) => VNode[]
+}
+
 export type ValueType = Record<string, any>
 // 内部新建键值对id
 export type DyRandomFun = (id?: number | string) => string
@@ -47,7 +75,7 @@ export type ExposeType = {
     getResult?: (t?: 'res' | 'ori') => DyCFormItem[] | object
 }
 // DynamicForm type
-export type PresetType='fullRow' | 'grid'
+export type PresetType = 'fullRow' | 'grid'
 export type RenderType =
     | "renderInput"
     | "renderSelect"
@@ -64,10 +92,12 @@ export type ExposeDyFType = {
     validator: () => Promise<object>
     getResult?: (t?: 'res' | 'ori') => DyFormItem[] | object
 }
+
 export interface DynamicFormSlots {
     header?: () => VNode[]
     footer?: () => VNode[]
 }
+
 export type DecorateDyFormItem<Row extends Record<string, any>, RuleT = any> =
     Omit<DyFormItem<Row, RuleT>, "value"> & {
     value: DyFormItem<Row, RuleT>["value"] | any | null

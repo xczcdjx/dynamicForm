@@ -15,10 +15,10 @@ import EleDecorateDyFormTest from "@/components/elementUi/eleDecorateDyFormTest.
 <template>
   <n-message-provider>
     <div class="app">
-<!--      <simple-data/>-->
+      <simple-data/>
 <!--      <cascade-data/>-->
 <!--      naive ui-->
-      <dynamicform-test/>
+<!--      <dynamicform-test/>-->
 <!--      <simple-dy-form-test/>-->
 <!--      <custom-dy-form-test/>-->
 <!--      <decorate-dy-form-test/>-->
