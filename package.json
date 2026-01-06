@@ -1,6 +1,6 @@
 {
   "name": "dynamicformdjx",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "type": "module",
   "author": "xczcdjx",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "type": "git",
     "url": "https://github.com/xczcdjx/dynamicForm"
   },
-  "homepage": "https://github.com/xczcdjx/dynamicForm#readme",
+  "homepage": "https://xczcdjx.github.io/dynamicFormDoc",
   "bugs": {
     "url": "https://github.com/xczcdjx/dynamicForm/issues"
   },

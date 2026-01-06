@@ -2,12 +2,7 @@
 
 基于 **Vue 3** 的动态表单及录入。
 
-[文档](https://xczcdjx.github.io/dynamicFormDoc/)
-> 1.当前为0.41版本，已完成所有配合element plus 或naive ui表单的适配
-
-> 2.其中简单表单，自定义表单，装饰表单均可使用
-
-> 3.文档还在完善中，可参考源码中的components组件查看具体使用
+[Document](https://xczcdjx.github.io/dynamicFormDoc/v3/install.html)
 
 [Vue2 版本](https://www.npmjs.com/package/dynamicformdjx-vue2) 
 

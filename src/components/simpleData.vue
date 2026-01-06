@@ -27,7 +27,10 @@ const setData = () => {
     <template #mergeBtn="{merge}">
       <button @click="merge">合并</button>
     </template>
-
+    <template #typeTools="{row,toggleArray,toggleNumber}">
+      <button @click="toggleArray" :class="row.isArray?'act':''">Array</button>&nbsp;
+      <button @click="toggleNumber" :class="row.isNumber?'act':''">Number</button>
+    </template>
     <template #rowActions="{isLast,addItem,removeItem}">
       <button @click="addItem" :disabled="!isLast">+</button>
       <button @click="removeItem">-</button>
