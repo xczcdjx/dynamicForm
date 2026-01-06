@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {DynamicInput, type dynamicInputRef} from "@/";
+import {NaiDynamicInput} from "@/naiveUi";
+import {EleDynamicInput} from "@/elementPlus";
 
 const test = ref<{ a: string, b: number, c: number[] }>({
   a: 'Hello world',
@@ -15,19 +17,22 @@ const setData = () => {
 
 <template>
   <p>DynamicInput</p>
-  <DynamicInput v-model="test" ref="dyRef" is-controller>
+  <EleDynamicInput v-model="test" ref="dyRef" :configs="{hideArrayBtn:true,hideNumberBtn:true}" is-controller>
     <template #newBtn="{newItem}">
       <button @click="newItem">新</button>
     </template>
-<!--    <template #typeTools="{row,toggleArray,toggleNumber}">
-      <button @click="toggleArray" :class="row.isArray?'act':''">Array</button>
-      <button @click="toggleNumber" :class="row.isNumber?'act':''">Number</button>
-    </template>-->
+    <template #resetBtn="{reset}">
+      <button @click="reset">重置</button>
+    </template>
+    <template #mergeBtn="{merge}">
+      <button @click="merge">合并</button>
+    </template>
+
     <template #rowActions="{isLast,addItem,removeItem}">
       <button @click="addItem" :disabled="!isLast">+</button>
       <button @click="removeItem">-</button>
     </template>
-  </DynamicInput>
+  </EleDynamicInput>
   <p>Result</p>
   <pre>{{ test }}</pre>
   <div>

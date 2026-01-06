@@ -1,8 +1,17 @@
-import {defineComponent, nextTick, ref, toRaw, watch} from "vue";
+import {defineComponent, nextTick, ref, type SlotsType, toRaw, watch} from "vue";
 import type {PropType} from 'vue'
 import {formatNumberInput, resetObj, tranArr} from "@/utils/tools.ts";
 import {ElButton, ElInput} from "element-plus";
-import type {FSize, ValueType, DyRandomFun, DyBtnConfig, DyListConfig, DyConfig, DyCFormItem} from "@/types";
+import type {
+    FSize,
+    ValueType,
+    DyRandomFun,
+    DyBtnConfig,
+    DyListConfig,
+    DyConfig,
+    DyCFormItem,
+    DynamicInputSlots
+} from "@/types";
 
 export default defineComponent({
     name: "EleDynamicInput",
@@ -39,7 +48,8 @@ export default defineComponent({
         onReset: () => true,
         onMerge: (v: ValueType, ori: DyCFormItem[]) => true,
     },
-    setup(props, {emit, expose}) {
+    slots: Object as SlotsType<DynamicInputSlots>,
+    setup(props, {emit, expose, slots}) {
         // config
         const mb: DyBtnConfig = {
             resetTxt: "重置",
@@ -52,6 +62,8 @@ export default defineComponent({
             maxHeight: "300px",
             autoScroll: true,
             allowFilter: true,
+            hideArrayBtn: false,
+            hideNumberBtn: false,
             ...props.configs,
         }
         const ml: DyListConfig = {
@@ -84,90 +96,107 @@ export default defineComponent({
                 return t === 'ori' ? toRaw(renderM.value) : resetObj(renderM.value, ml.arraySplitSymbol)
             },
         })
+        // function
+        const newItem = () => renderM.value.push({rId: props.randomFun(), key: '', value: ''})
+        const reset = () => {
+            renderM.value = tranArr(props.modelValue, props.randomFun, ml.arraySplitSymbol)
+            emit('onReset')
+        }
+        const merge = () => {
+            renderM.value.sort((a, b) => +a.rId - +b.rId)
+            const obj = resetObj(renderM.value, ml.arraySplitSymbol)
+            emit("update:modelValue", obj)
+            emit('onMerge', obj, toRaw(renderM.value))
+            renderM.value = tranArr(obj, props.randomFun, ml.arraySplitSymbol)
+        }
         return () => <div class={props.dyCls ?? `dynamicForm ${size}`} style={{maxHeight: mc.maxHeight}}>
-            <div class={`dyFormList ${!renderM.value.length?'noList':''}`} ref={dyFormListRef}>
-                {renderM.value.map((r, i, arr) => <div class="dItem" key={r.rId}>
-                    <div class="input">
-                        <ElInput size={size} modelValue={r.key} class="key" onInput={(v) => {
-                            r.key = v
-                        }}/>:
-                        <ElInput size={size} modelValue={r.value} class='value' onInput={(v) => {
-                            if (!mc.allowFilter) {
-                                r.value = v
-                            } else {
-                                if (r.isNumber) {
-                                    r.value = formatNumberInput(
-                                        v,
-                                        r.isArray,
-                                        ml.arraySplitSymbol
-                                    )
-                                } else {
-                                    r.value = v
+            <div class={`dyFormList ${!renderM.value.length ? 'noList' : ''}`} ref={dyFormListRef}>
+                {renderM.value.map((r, i, arr) => {
+                        const scope = {
+                            row: r,
+                            index: i,
+                            isLast: i === arr.length - 1,
+                            addItem: () => {
+                                renderM.value.push({rId: props.randomFun(), key: '', value: ''})
+                                if (mc.autoScroll) {
+                                    nextTick(() => {
+                                        const el = dyFormListRef.value
+                                        el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
+                                    })
                                 }
-                            }
-                        }} v-slots={{
-                            prefix: () => <>
-                                <ElButton
-                                    class='typeBtn'
-                                    type={r.isArray ? "success" : "default"}
-                                    size="small"
-                                    onClick={() => {
-                                        r.isArray = !r.isArray
-                                    }}
-                                >
-                                    Array
-                                </ElButton>
-                                &nbsp;
-                                <ElButton
-                                    class='typeBtn'
-                                    type={r.isNumber ? "success" : "default"}
-                                    size="small"
-                                    onClick={() => {
-                                        r.isNumber = !r.isNumber
-                                    }}
-                                >
-                                    Number
-                                </ElButton>
-                            </>
-                        }
-                        }/>
-                    </div>
-                    <div class="btn">
-                        <ElButton type="success" size={size} disabled={i !== arr.length - 1} onClick={() => {
-                            renderM.value.push({rId: props.randomFun(), key: '', value: ''})
-                            if (mc.autoScroll) {
-                                nextTick(() => {
-                                    const el = dyFormListRef.value
-                                    el?.scrollTo({top: el.scrollHeight, behavior: 'smooth'})
-                                })
-                            }
-                        }}>+</ElButton>
-                        <ElButton size={size} type="danger" onClick={() => {
-                            renderM.value = renderM.value.filter(it => it.rId !== r.rId)
-                        }}>-</ElButton>
-                    </div>
-                </div>)}
+                            },
+                            removeItem: () => {
+                                renderM.value = renderM.value.filter(it => it.rId !== r.rId)
+                            },
+                            toggleArray: () => (r.isArray = !r.isArray),
+                            toggleNumber: () => (r.isNumber = !r.isNumber),
+                        };
+                        return <div class="dItem" key={r.rId}>
+                            <div class="input">
+                                <ElInput size={size} modelValue={r.key} class="key" onInput={(v) => {
+                                    r.key = v
+                                }}/>:
+                                <ElInput size={size} modelValue={r.value} class='value' onInput={(v) => {
+                                    if (!mc.allowFilter) {
+                                        r.value = v
+                                    } else {
+                                        if (r.isNumber) {
+                                            r.value = formatNumberInput(
+                                                v,
+                                                r.isArray,
+                                                ml.arraySplitSymbol
+                                            )
+                                        } else {
+                                            r.value = v
+                                        }
+                                    }
+                                }} v-slots={{
+                                    prefix: () => slots.typeTools
+                                        ? slots.typeTools(scope)
+                                        : <>
+                                            {!mc.hideArrayBtn &&
+                                                <ElButton
+                                                    class='typeBtn'
+                                                    type={r.isArray ? "success" : "default"}
+                                                    size="small"
+                                                    onClick={scope.toggleArray}
+                                                >
+                                                    Array
+                                                </ElButton>}
+                                            {!mc.hideNumberBtn && <ElButton
+                                                class='typeBtn'
+                                                type={r.isNumber ? "success" : "default"}
+                                                size="small"
+                                                onClick={scope.toggleNumber}
+                                            >
+                                                Number
+                                            </ElButton>}
+                                        </>
+                                }
+                                }/>
+                            </div>
+                            <div class="btn">
+                                {slots.rowActions ? slots.rowActions(scope) : <><ElButton type="success" size={size}
+                                                                                          disabled={!scope.isLast}
+                                                                                          onClick={scope.addItem}>+</ElButton>
+                                    <ElButton size={size} type="danger" onClick={scope.removeItem}>-</ElButton></>}
+                            </div>
+                        </div>
+                    }
+                )}
             </div>
             {
-                <div class={`control ${!renderM.value.length?'noList':''}`}>
+                <div class={`control ${!renderM.value.length ? 'noList' : ''}`}>
                     {
-                        !renderM.value.length && <ElButton size={size} type="success" onClick={() => {
-                            renderM.value.push({rId: props.randomFun(), key: '', value: ''})
-                        }}>{mb.newTxt}</ElButton>
+                        !renderM.value.length && (slots.newBtn ? slots.newBtn({newItem}) :
+                            <ElButton size={size} type="success" onClick={newItem}>{mb.newTxt}</ElButton>)
                     }
                     {
                         !props.isController && <>
-                            {!mc.hideReset && <ElButton size={size} type="default" onClick={() => {
-                                renderM.value = tranArr(props.modelValue, props.randomFun, ml.arraySplitSymbol)
-                                emit('onReset')
-                            }}>{mb.resetTxt}</ElButton>}
-                            <ElButton size={size} type="info" onClick={() => {
-                                renderM.value.sort((a, b) => +a.rId - +b.rId)
-                                const obj = resetObj(renderM.value, ml.arraySplitSymbol)
-                                emit("update:modelValue", obj)
-                                emit('onMerge', obj, toRaw(renderM.value))
-                                renderM.value = tranArr(obj, props.randomFun, ml.arraySplitSymbol)
-                            }}>{mb.mergeTxt}</ElButton>
+                            {!mc.hideReset && (slots.resetBtn ? slots.resetBtn({reset}) :
+                                <ElButton size={size} type="default" onClick={reset}>{mb.resetTxt}</ElButton>)}
+                            {slots.mergeBtn ? slots.mergeBtn({merge}) :
+                                <ElButton size={size} type="info" onClick={merge}>{mb.mergeTxt}</ElButton>}
                         </>
                     }
                 </div>

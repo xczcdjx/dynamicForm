@@ -108,8 +108,9 @@ export default defineComponent({
             emit('onMerge', obj, toRaw(renderM.value))
             renderM.value = tranArr(obj, props.randomFun, ml.arraySplitSymbol)
         }
-        return () => <div class={props.dyCls ?? `dynamicForm ${size}`}>
-            <div class="dyFormList" ref={dyFormListRef} style={{maxHeight: mc.maxHeight}}>
+        return () => <div class={`dynamicForm ${size} ${props.dyCls}`}>
+            <div class={`dyFormList ${!renderM.value.length ? 'noList' : ''}`} ref={dyFormListRef}
+                 style={{maxHeight: mc.maxHeight}}>
                 {renderM.value.map((r, i, arr) => {
                         const scope = {
                             row: r,
@@ -172,7 +173,7 @@ export default defineComponent({
                             </div>
                             <div class="btn">
                                 {slots.rowActions ? slots.rowActions(scope) : <>
-                                    <button class={[size, 'success', 'bt']} disabled={scope.isLast}
+                                    <button class={[size, 'success', 'bt']} disabled={!scope.isLast}
                                             onClick={scope.addItem}>+
                                     </button>
                                     <button class={[
@@ -188,7 +189,7 @@ export default defineComponent({
                 )}
             </div>
             {
-                <div class='control'>
+                <div class={`control ${!renderM.value.length ? 'noList' : ''}`}>
                     {
                         !renderM.value.length && (slots.newBtn ? slots.newBtn({newItem}) : (<button class={[
                             "success",
@@ -197,10 +198,10 @@ export default defineComponent({
                     }
                     {
                         !props.isController && <>
-                            {!mc.hideReset && slots.resetBtn ? slots.resetBtn({reset}) : <button class={[
+                            {!mc.hideReset && (slots.resetBtn ? slots.resetBtn({reset}) : <button class={[
                                 "default",
                                 size, 'bt'
-                            ]} onClick={reset}>{mb.resetTxt}</button>}
+                            ]} onClick={reset}>{mb.resetTxt}</button>)}
                             {slots.mergeBtn ? slots.mergeBtn({merge}) : <button class={[
                                 "info",
                                 size, 'bt'
