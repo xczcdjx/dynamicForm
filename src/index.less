@@ -242,7 +242,12 @@
   .dynamicForm();
 
   .dyFormList {
-
+    &.noObj{
+      padding: 0;
+      .depth-1{
+        display: none;
+      }
+    }
     .dItem {
       width: inherit;
       .vInput{
@@ -331,6 +336,11 @@
     }
     .no-pad{
       padding: 0 !important;
+    }
+  }
+  .control{
+    &.noObj{
+      margin: 0;
     }
   }
 }

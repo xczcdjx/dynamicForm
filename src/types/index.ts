@@ -42,7 +42,7 @@ export type DyListConfig = {
     arraySplitSymbol: string
     // ...
 }
-type ScopeType = {
+export type ScopeType = {
     row: {
         rId: string
         key: string
@@ -57,13 +57,19 @@ type ScopeType = {
     toggleArray: () => boolean
     toggleNumber: () => boolean
 }
-
+export type CasScopeType=ScopeType & { addChild: () => void }
 export interface DynamicInputSlots {
     newBtn?: ({newItem}: { newItem: () => void }) => VNode[]
     resetBtn?: ({reset}: { reset: () => void }) => VNode[]
     mergeBtn?: ({merge}: { merge: () => void }) => VNode[]
-    typeTools?: (row:ScopeType) => VNode[]
-    rowActions?: (row:ScopeType) => VNode[]
+    typeTools?: (row: ScopeType) => VNode[]
+    rowActions?: (row: ScopeType) => VNode[]
+}
+
+export interface DynamicCasInputSlots extends Omit<DynamicInputSlots, 'rowActions'|'typeTools'> {
+    typeTools?: (row: CasScopeType) => VNode[]
+    rowActions?: (row: CasScopeType) => VNode[]
+    newChild?: (row: CasScopeType) => VNode[]
 }
 
 export type ValueType = Record<string, any>
