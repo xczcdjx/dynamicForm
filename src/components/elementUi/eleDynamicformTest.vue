@@ -6,7 +6,8 @@ import {
   type eleDynamicFormRef, EleDynamicForm, renderInput, renderCheckboxGroup, renderDatePicker,
   renderPopSelect,
   renderRadioButtonGroup, renderRadioGroup,
-  renderSelect, renderSwitch, renderTimePicker, renderTreeSelect
+  renderSelect, renderSwitch, renderTimePicker, renderTreeSelect,
+  renderCheckbox, renderInputNumber, renderSlider
 } from "@/elementPlus";
 import type {FormItemRule, FormRules} from "element-plus";
 
@@ -140,6 +141,24 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     label: "时间",
     value: ref<Date>(new Date()),
     render2: f => renderTimePicker(f.value, {}, f),
+  },
+  {
+    key: "checkbox",
+    label: "复选",
+    value: ref<boolean | null>(null),
+    render2: f => renderCheckbox(f.value, {}, f),
+  },
+  {
+    key: "slider",
+    label: "滑块",
+    value: ref<number | number[]>(0),
+    render2: f => renderSlider(f.value, {}, f),
+  },
+  {
+    key: "inputNumber",
+    label: "滑块",
+    value: ref<number | null>(0),
+    render2: f => renderInputNumber(f.value, {}, f),
   },
 ])
 const useForm = useDyForm<FormRow>(formItems)

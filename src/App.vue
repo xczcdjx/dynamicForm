@@ -24,8 +24,8 @@ import EleDecorateDyFormTest from "@/components/elementUi/eleDecorateDyFormTest.
 <!--      <decorate-dy-form-test/>-->
 <!--      element-plus-->
 <!--      <ele-simple-dy-form-test/>-->
-      <ele-custom-dy-form-test/>
-<!--      <ele-dynamicform-test/>-->
+<!--      <ele-custom-dy-form-test/>-->
+      <ele-dynamicform-test/>
 <!--      <ele-decorate-dy-form-test/>-->
     </div>
   </n-message-provider>

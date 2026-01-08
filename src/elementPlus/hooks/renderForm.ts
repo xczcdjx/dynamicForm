@@ -6,21 +6,25 @@ import {
     ElDropdown,
     ElDropdownItem,
     ElDropdownMenu,
-    ElInput,
+    ElInput, ElInputNumber,
     ElOption,
     ElOptionGroup,
     ElPopover,
     ElRadio,
     ElRadioButton,
     ElRadioGroup,
-    ElSelect,
+    ElSelect, ElSlider,
     ElSpace,
     ElSwitch,
     ElTag,
     ElTimePicker,
     ElTreeSelect,
 } from "element-plus";
-import {createVNode, h, type Ref, type VNode, type AllowedComponentProps, type VNodeProps} from "vue";
+import {
+    createVNode,
+    h,
+} from "vue";
+import type {Ref, VNode, AllowedComponentProps} from 'vue'
 import type {InputProps, SelectProps} from 'element-plus'
 import type {DyFormItem, SelectOptionItem} from "@/types/form";
 import type {RadioGroupProps} from "element-plus/es/components/radio/src/radio-group";
@@ -29,16 +33,19 @@ import type {SwitchProps} from "element-plus/es/components/switch/src/switch";
 import type {DatePickerProps} from "element-plus/es/components/date-picker/src/props";
 import type {TimePickerDefaultProps} from "element-plus/es/components/time-picker/src/common/props";
 import type {TreeComponentProps} from "element-plus/es/components/tree/src/tree.type";
+import type {CheckboxProps} from "element-plus/es/components/checkbox/src/checkbox";
+import type {SliderProps} from "element-plus/es/components/slider/src/slider";
+import type {InputNumberProps} from "element-plus/es/components/input-number/src/input-number";
 
 type AnyProps = Record<string, any> & AllowedComponentProps;
 type BasicOption = Record<string, any>;
-export type SelectOption = Omit<SelectOptionItem, 'class' | 'style'>|Record<string, any>
+export type SelectOption = Omit<SelectOptionItem, 'class' | 'style'> | Record<string, any>
 export type TreeSelectOption = {
     label?: string
     value: any
     disabled?: boolean
     children?: TreeSelectOption[]
-}|Record<string, any>
+} | Record<string, any>
 type OptionsType<T> = Partial<T> & AllowedComponentProps
 
 function getField<T extends BasicOption>(opt: T, field: string, fallback: any) {
@@ -428,7 +435,7 @@ export function renderCheckboxGroup(
 // 开关
 export function renderSwitch(
     value: Ref<boolean>,
-    optionProps: OptionsType<CheckboxGroupProps> = {},
+    optionProps: OptionsType<SwitchProps> = {},
     rf?: DyFormItem
 ) {
     const {onChange, ...restRf} = (rf ?? {}) as any;
@@ -479,24 +486,101 @@ export function renderTimePicker(
     });
 }
 
-// otherRender：单个 checkbox
-function renderCheckbox(
-    value: Ref<boolean>,
-    label: string,
-    optionProps: AnyProps = {}
+// 0.4.2 新增
+/*type PropsOf<C> =
+    C extends new (...args: any) => { $props: infer P } ? P :
+        C extends FunctionalComponent<infer P> ? P :
+            Record<string, any>
+
+export function SimplyRender<F extends DyFormItem>(f: F) {
+    const { value: _omit, ...restF } = f as any
+
+    return function <C extends Component>(
+        com: C,
+        props?: Partial<PropsOf<C>>
+    ): VNode {
+        return h(com as any, {
+            ...restF,
+            ...(props as any),
+        })
+    }
+}*/
+export function renderCheckbox(
+    model: Ref<boolean | number | string>,
+    optionProps: OptionsType<CheckboxProps> = {},
+    rf?: DyFormItem,
 ) {
-    return h(
-        ElCheckbox,
-        {
-            modelValue: value.value,
-            "onUpdate:modelValue": (newVal: any) => {
-                value.value = newVal;
-                (optionProps as any).onChange?.(newVal, optionProps);
-            },
-            ...optionProps,
+    const {onChange, ...restRf} = (rf ?? {}) as DyFormItem;
+    return h(ElCheckbox, {
+        ...restRf as any,
+        label: (optionProps as CheckboxProps)?.label ?? rf?.label,
+        modelValue: model.value,
+        "onUpdate:modelValue": (newVal: any) => {
+            model.value = newVal
+            rf?.onChange?.(model.value, rf)
         },
-        () => label
-    );
+        ...optionProps,
+    })
+}
+
+/** Element Plus - InputTag（替代 NDynamicTags）
+ *  注意：ElInputTag 的 v-model 是 string[]（不是对象数组）。:contentReference[oaicite:1]{index=1}
+ */
+
+/*export function renderInputTag(
+    model: Ref<string[]>,
+    optionProps: WithAttrs<PropsOf<typeof ElInputTag>> = {},
+    rf?: DyFormItem,
+) {
+    const restRf = stripRf(rf)
+    const userUpdate = (optionProps as any)["onUpdate:modelValue"]
+
+    return h(ElInputTag as any, {
+        ...restRf,
+        ...optionProps,
+        modelValue: model.value,
+        "onUpdate:modelValue": (newVal: any) => {
+            model.value = (newVal ?? []) as string[]
+            rf?.onChange?.(model.value, rf)
+            userUpdate?.(newVal)
+        },
+    })
+}*/
+
+export function renderSlider(
+    model: Ref<number | number[]>,
+    optionProps: OptionsType<SliderProps> = {},
+    rf?: DyFormItem,
+) {
+    const {onChange, ...restRf} = (rf ?? {}) as DyFormItem;
+
+    return h(ElSlider, {
+        ...restRf as any,
+        modelValue: model.value,
+        "onUpdate:modelValue": (newVal: any) => {
+            model.value = newVal as any
+            rf?.onChange?.(newVal, rf)
+        },
+        ...optionProps,
+    })
+}
+
+export function renderInputNumber(
+    model: Ref<number | null>,
+    optionProps: OptionsType<InputNumberProps> = {},
+    rf?: DyFormItem,
+) {
+    const {onChange, ...restRf} = (rf ?? {}) as DyFormItem;
+
+    return h(ElInputNumber, {
+        ...restRf as any,
+        modelValue: model.value,
+        "onUpdate:modelValue": (newVal: any) => {
+            model.value = (newVal ?? null) as number | null
+            rf?.onChange?.(model.value, rf)
+        },
+        ...optionProps,
+    })
 }
 
 // tag

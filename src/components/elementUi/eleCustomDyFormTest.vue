@@ -2,9 +2,15 @@
 import {h, ref} from "vue";
 import {ElButton, ElInput} from "element-plus";
 import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
-import {type eleDynamicFormRef, type eleDynamicInputRef, EleDynamicForm, EleDynamicInput} from "@/elementPlus";
+import {
+  type eleDynamicFormRef,
+  type eleDynamicInputRef,
+  EleDynamicForm,
+  EleDynamicInput,
+} from "@/elementPlus";
 import type {FormItemRule, FormRules} from "element-plus";
 import ElInputTest from "../subside/EleInputTest.vue";
+import {OmitValue} from "@/utils/tools";
 
 type FormRow = {
   name: string
@@ -13,23 +19,39 @@ type FormRow = {
 }
 const eleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
 const eleDynamicInputRef = ref<eleDynamicInputRef | null>(null)
+const c = h('div', {
+  onClick() {
+  }
+})
+// const c2 = SimplyRender('div', {})
 const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
   {
     key: "name",
     label: "姓名",
-    value: 'ssss',
+    value: null,
     clearable: true,
     placeholder: '请输入姓名',
     required: true,
-    render2: f => {
-      const {value, ...restF} = f
-      return h(ElInput, {
-        ...restF,
-        modelValue: f.value.value, "onUpdate:modelValue"(v) {
-          f.value.value = v
-        }
-      })
-    },
+    /* render2: f => {
+       const {value, ...restF} = f
+       return h(ElInput, {
+         ...restF,
+         modelValue: f.value.value, "onUpdate:modelValue"(v) {
+           f.value.value = v
+         }
+       })
+     },*/
+    /*render2: f => SimplyRender(f)(ElInput, {
+      modelValue: f.value.value, "onUpdate:modelValue"(v) {
+        f.value.value = v
+      },
+    }),*/
+    render2: f => h(ElInput, {
+      ...OmitValue(f),
+      modelValue: f.value.value, "onUpdate:modelValue"(v) {
+        f.value.value = v
+      }
+    })
   },
   {
     key: "desc",

@@ -1,5 +1,6 @@
 import type {ValueType, DyCFormItem, DyRandomFun} from "@/types";
 import {isRef, ref, type Ref} from "vue";
+import type {DyFormItem} from "@/types/form";
 const tranArr = (obj: ValueType, arrayFun: DyRandomFun, splitSymbol: string) => Object.keys(obj).map((it, i) => {
     const v = obj[it]
     const isArray = Array.isArray(v)
@@ -115,6 +116,19 @@ const saferRepairColor = (colors: string[], i: number): string => {
 function ensureRef(v: any): Ref<any> {
     return isRef(v) ? v : ref(v ?? null)
 }
+function OmitValue<
+    T extends DyFormItem,
+    const K extends readonly (keyof T)[]
+>(f: T, extraKeys?: K): Omit<T, "value" | K[number]> {
+    const res: any = { ...f }
+    delete res.value
+
+    extraKeys?.forEach((k) => {
+        if (k !== "value") delete res[k]
+    })
+
+    return res
+}
 export {
     tranArr,
     resetObj,
@@ -122,5 +136,6 @@ export {
     formatNumberInput,
     getDepthColor,
     saferRepairColor,
-    ensureRef
+    ensureRef,
+    OmitValue
 }
