@@ -1,7 +1,16 @@
-import {defineComponent, type PropType, ref, toRaw, watch} from "vue";
+import {defineComponent, type PropType, ref, type SlotsType, toRaw, watch} from "vue";
 import {NButton, NInput} from "naive-ui";
 import {formatNumberInput, parseValue, saferRepairColor} from "@/utils/tools.ts";
-import type {ValueType, DyRandomFun, DyBtnConfig, DyListConfig, DyCasConfig,DyCasFormItem} from "@/types";
+import type {
+    ValueType,
+    DyRandomFun,
+    DyBtnConfig,
+    DyListConfig,
+    DyCasConfig,
+    DyCasFormItem,
+    DynamicCasInputSlots, CasScopeType
+} from "@/types";
+
 export default defineComponent({
     name: "NaiveUiDynamicCascadeInput",
     props: {
@@ -43,7 +52,8 @@ export default defineComponent({
         onReset: () => true,
         onMerge: (v: ValueType, ori: DyCasFormItem[]) => true,
     },
-    setup(props, {emit, expose}) {
+    slots: Object as SlotsType<DynamicCasInputSlots>,
+    setup(props, {emit, expose, slots}) {
         // config
         const mb: DyBtnConfig = {
             resetTxt: "重置",
@@ -56,6 +66,8 @@ export default defineComponent({
             maxHeight: "600px",
             allowFilter: true,
             showBorder: true,
+            hideArrayBtn: false,
+            hideNumberBtn: false,
             showPad: true,
             retractLen: 0,
             borderColors: [],
@@ -110,6 +122,36 @@ export default defineComponent({
                     items.map((r, i, arr) => {
                         const isChildren = Array.isArray(r.value)
                         const isAllow = allowType(typeof r.value)
+                        const scope = {
+                            row: r,
+                            index: i,
+                            isLast: i === arr.length - 1,
+                            addItem: () => {
+                                items.push({rId: props.randomFun(), key: "", value: ""});
+                            },
+                            addChild: () => {
+                                if (isAllow) {
+                                    r.value = [];
+                                    r.isArray = undefined
+                                }
+                                (r.value as DyCasFormItem[]).push({
+                                    rId: props.randomFun(),
+                                    key: "",
+                                    value: ""
+                                });
+                            },
+                            removeItem: () => {
+                                items.splice(i, 1);
+                                if (items.length < 1) {
+                                    if (oriObj === undefined) return resetMulObj([])
+                                    const fIndex = renderM.value.findIndex(it2 => it2.rId === oriObj?.rId)
+                                    if (depth < 1) renderM.value.splice(fIndex, 1, {...oriObj!, value: ""})
+                                    else oriObj!.value = ""
+                                }
+                            },
+                            toggleArray: () => (r.isArray = !r.isArray),
+                            toggleNumber: () => (r.isNumber = !r.isNumber),
+                        };
                         return <div class="dItem" key={r.rId}
                                     style={{marginLeft: depth > 1 ? `${depth * mc.retractLen!}px` : '0'}}>
                             <div class="input">
@@ -139,74 +181,65 @@ export default defineComponent({
                                         }
                                     }}
                                     v-slots={{
-                                        prefix: Array.isArray(r.value) ? undefined : () => <>
-                                            <NButton
-                                                type={r.isArray ? "success" : "default"}
-                                                size="tiny"
-                                                onClick={() => {
-                                                    r.isArray = !r.isArray
-                                                }}
-                                            >
-                                                Array
-                                            </NButton>
-                                            &nbsp;
-                                            <NButton
-                                                type={r.isNumber ? "success" : "default"}
-                                                size="tiny"
-                                                onClick={() => {
-                                                    r.isNumber = !r.isNumber
-                                                }}
-                                            >
-                                                Number
-                                            </NButton>
-                                        </>,
+                                        prefix: Array.isArray(r.value) ? undefined : () => (slots.typeTools
+                                            ? slots.typeTools(scope as CasScopeType)
+                                            : <>
+                                                {!mc.hideArrayBtn && <NButton
+                                                    type={r.isArray ? "success" : "default"}
+                                                    size="tiny"
+                                                    onClick={scope.toggleArray}
+                                                >
+                                                    Array
+                                                </NButton>}
+                                                &nbsp;
+                                                {!mc.hideNumberBtn && <NButton
+                                                    type={r.isNumber ? "success" : "default"}
+                                                    size="tiny"
+                                                    onClick={scope.toggleNumber}
+                                                >
+                                                    Number
+                                                </NButton>}
+                                            </>),
                                         suffix: () =>
                                             depth < props.depth ? (
-                                                !isChildren && <NButton
-                                                    type="success"
-                                                    size="tiny"
-                                                    onClick={() => {
-                                                        if (isAllow) {
-                                                            r.value = [];
-                                                            r.isArray = undefined
-                                                        }
-                                                        (r.value as DyCasFormItem[]).push({
-                                                            rId: props.randomFun(),
-                                                            key: "",
-                                                            value: ""
-                                                        });
-                                                    }}
-                                                >
-                                                    {props.newChildTxt(r)}
-                                                </NButton>
+                                                !isChildren && (slots.newChild ? slots.newChild(scope as CasScopeType) :
+                                                    <NButton
+                                                        type="success"
+                                                        size="tiny"
+                                                        onClick={() => {
+                                                            if (isAllow) {
+                                                                r.value = [];
+                                                                r.isArray = undefined
+                                                            }
+                                                            (r.value as DyCasFormItem[]).push({
+                                                                rId: props.randomFun(),
+                                                                key: "",
+                                                                value: ""
+                                                            });
+                                                        }}
+                                                    >
+                                                        {props.newChildTxt(r)}
+                                                    </NButton>)
                                             ) : null
                                     }}
                                 />
                             </div>
                             <div class="btn">
-                                <NButton
-                                    type="success"
-                                    disabled={i !== arr.length - 1}
-                                    onClick={() => {
-                                        items.push({rId: props.randomFun(), key: "", value: ""});
-                                    }}
-                                >
-                                    +
-                                </NButton>
-                                <NButton
-                                    type="error"
-                                    onClick={() => {
-                                        items.splice(i, 1);
-                                        if (items.length < 1) {
-                                            if (oriObj === undefined) return resetMulObj([])
-                                            const fIndex = renderM.value.findIndex(it2 => it2.rId === oriObj?.rId)
-                                            if (depth < 1) renderM.value.splice(fIndex, 1, {...oriObj!, value: ""})
-                                            else oriObj!.value = ""
-                                        }
-                                    }}
-                                >
-                                    -
-                                </NButton>
+                                {slots.rowActions ? slots.rowActions(scope as CasScopeType) : <>
+                                    <NButton
+                                        type="success"
+                                        disabled={!scope.isLast}
+                                        onClick={scope.addItem}
+                                    >
+                                        +
+                                    </NButton>
+                                    <NButton
+                                        type="error"
+                                        onClick={scope.removeItem}
+                                    >
+                                        -
+                                    </NButton>
+                                </>}
                             </div>
                             {Array.isArray(r.value) && renderFormItems(r.value, depth + 1, r)}
                         </div>
@@ -235,42 +268,45 @@ export default defineComponent({
                 return t === 'ori' ? toRaw(renderM.value) : resetMulObj(renderM.value)
             },
         })
+        // function
+        const newItem = () => renderM.value.push({rId: props.randomFun(), key: '', value: ''})
+        const reset = () => {
+            renderM.value = tranMulObj(props.modelValue);
+            emit('onReset')
+        }
+        const merge = () => {
+            const obj = resetMulObj(renderM.value);
+            emit("update:modelValue", obj);
+            emit('onMerge', obj, toRaw(renderM.value))
+            renderM.value = tranMulObj(obj);
+        }
         return () => (
-            <div class={props.dyCls ?? `dynamicCascadeForm`}>
-                <div class="dyFormList" style={{maxHeight: mc.maxHeight}}>{renderFormItems(renderM.value)}</div>
-                <div class='control'>
-                    {!renderM.value.length && (
-                        <NButton
-                            type="success"
-                            onClick={() => {
-                                renderM.value.push({rId: props.randomFun(), key: "", value: ""});
-                            }}
-                        >
-                            {mb.newTxt}
-                        </NButton>
+            <div class={`dynamicCascadeForm ${props.dyCls}`}>
+                <div class={`dyFormList ${!renderM.value.length ? 'noObj' : ''}`}
+                     style={{maxHeight: mc.maxHeight}}>{renderFormItems(renderM.value)}</div>
+                <div class={`control ${!renderM.value.length ? 'noObj' : ''}`}>
+                    {!renderM.value.length && ((slots.newBtn ? slots.newBtn({newItem}) :
+                            <NButton
+                                type="success"
+                                onClick={newItem}
+                            >
+                                {mb.newTxt}
+                            </NButton>)
                     )}
                     {
                         !props.isController && <>
-                            {!mc.hideReset && <NButton
+                            {!mc.hideReset && (slots.resetBtn ? slots.resetBtn({reset}) : <NButton
                                 type="default"
-                                onClick={() => {
-                                    renderM.value = tranMulObj(props.modelValue);
-                                    emit('onReset')
-                                }}
+                                onClick={reset}
                             >
                                 {mb.resetTxt}
-                            </NButton>}
-                            <NButton
+                            </NButton>)}
+                            {slots.mergeBtn ? slots.mergeBtn({merge}) : <NButton
                                 type="info"
-                                onClick={() => {
-                                    const obj = resetMulObj(renderM.value);
-                                    emit("update:modelValue", obj);
-                                    emit('onMerge', obj, toRaw(renderM.value))
-                                    renderM.value = tranMulObj(obj);
-                                }}
+                                onClick={merge}
                             >
                                 {mb.mergeTxt}
-                            </NButton>
+                            </NButton>}
                         </>
                     }
                 </div>

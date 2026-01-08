@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {DynamicCascadeInput,dynamicCascadeInputRef} from "@/";
+import {NaiDynamicCascadeInput} from "@/naiveUi";
+import {EleDynamicCascadeInput} from "@/elementPlus";
 
 const dyCascadeRef = ref<dynamicCascadeInputRef | null>(null)
 const test2 = ref({
@@ -17,7 +19,7 @@ const setData = () => {
 
 <template>
   <p>Cascade dynamicInput</p>
-  <dynamic-cascade-input  v-model="test2" :depth="5" ref="dyCascadeRef" is-controller :configs="{hideNumberBtn:true,hideArrayBtn:true}">
+  <ele-dynamic-cascade-input  v-model="test2" :depth="5" ref="dyCascadeRef" is-controller :configs="{hideNumberBtn:true,hideArrayBtn:true}">
     <template #newBtn="{newItem}">
       <button @click="newItem">新</button>
     </template>
@@ -28,7 +30,7 @@ const setData = () => {
       <button @click="merge">合并</button>
     </template>
     <template #typeTools="{row,toggleArray,toggleNumber}">
-      <button @click="toggleArray" :class="row.isArray?'act':''">Array</button>
+      <button @click="toggleArray" :class="row.isArray?'act':''">Array</button>&nbsp;
       <button @click="toggleNumber" :class="row.isNumber?'act':''">Number</button>
     </template>
     <template #rowActions="{isLast,addItem,removeItem}">
@@ -38,11 +40,13 @@ const setData = () => {
     <template #newChild="{addChild,row}">
       <button @click="addChild">+{{row.key}}+</button>
     </template>
-  </dynamic-cascade-input>
+  </ele-dynamic-cascade-input>
   <pre>{{ test2 }}</pre>
   <button @click="setData">setData 8888</button>
 </template>
 
 <style scoped>
-
+.act{
+  background-color: skyblue;
+}
 </style>
