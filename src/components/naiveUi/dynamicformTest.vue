@@ -6,13 +6,23 @@ import {FormRules, FormItemRule} from "naive-ui/es/form/src/interface";
 import {
   naiDynamicFormRef,
   NaiDynamicForm,
-  renderCheckboxGroup, renderDatePicker,
-  renderInput, renderPopSelect,
-  renderRadioButtonGroup, renderRadioGroup,
-  renderSelect, renderSwitch, renderTimePicker, renderTreeSelect
-} from "../../../dist/naiveUi";
+  renderCheckboxGroup,
+  renderDatePicker,
+  renderInput,
+  renderPopSelect,
+  renderRadioButtonGroup,
+  renderRadioGroup,
+  renderSelect,
+  renderSwitch,
+  renderTimePicker,
+  renderTreeSelect,
+  renderDynamicTags,
+  renderCheckbox,
+  renderSlider,
+  renderInputNumber
+} from "@/naiveUi";
 
-import {useDyForm, useReactiveForm} from "../../../dist";
+import {useDyForm, useReactiveForm} from "@/";
 
 type FormRow = {
   username: string
@@ -152,6 +162,45 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule | FormItemRu
         value: ref<number | null>(null),
         render2: f => renderTimePicker(f.value, {}, f),
       },
+      // 新
+      {
+        key: "future",
+        label: "未来",
+        value: ref([
+          {label: '你没见过不等于没有', value: 'hello world 1'},
+          {
+            label: '不要给自己设限',
+            value: 'hello world 2'
+          },
+          {
+            label: '不要说连升两级',
+            value: 'hello world 3'
+          },
+          {
+            label: '直接升到 CEO 都是有可能的',
+            value: 'hello world 4'
+          }
+        ]),
+        render2: f => renderDynamicTags(f.value, {}, f),
+      },
+      {
+        key: "checkbox",
+        label: "复选",
+        value: ref<boolean | null>(null),
+        render2: f => renderCheckbox(f.value, {}, f),
+      },
+      {
+        key: "slider",
+        label: "滑块",
+        value: ref<number | number[]>(0),
+        render2: f => renderSlider(f.value, {}, f),
+      },
+      {
+        key: "inputNumber",
+        label: "滑块",
+        value: ref<number | null>(0),
+        render2: f => renderInputNumber(f.value, {}, f),
+      },
     ])
 const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
@@ -177,6 +226,14 @@ const validatorData = () => {
 const resetData = () => {
   useForm.onReset()
 }
+const setItems = () => {
+  useForm.setItem('birthday', {hidden: true})
+  useForm.updateKeys([['sex', 'gender']])
+  /*useForm.setItems([
+    ['sex', {key: 'aaa'}],
+    ['birthday', {hidden: true}],
+  ])*/
+}
 </script>
 
 <template>
@@ -187,6 +244,7 @@ const resetData = () => {
     <n-button @click="setDisabled" type="default" size="small">set Disabled</n-button>
     <n-button @click="validatorData" type="info" size="small">validate Data</n-button>
     <n-button @click="resetData" type="error" size="small">reset Data</n-button>
+    <n-button @click="setItems" type="warning" size="small">set Items</n-button>
   </div>
 </template>
 

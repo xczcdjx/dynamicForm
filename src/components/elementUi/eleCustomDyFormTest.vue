@@ -17,7 +17,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
   {
     key: "name",
     label: "姓名",
-    value: null,
+    value: 'ssss',
     clearable: true,
     placeholder: '请输入姓名',
     required: true,

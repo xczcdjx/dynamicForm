@@ -16,7 +16,7 @@ import EleDecorateDyFormTest from "@/components/elementUi/eleDecorateDyFormTest.
   <n-message-provider>
     <div class="app">
 <!--      <simple-data/>-->
-      <cascade-data/>
+<!--      <cascade-data/>-->
 <!--      naive ui-->
 <!--      <dynamicform-test/>-->
 <!--      <simple-dy-form-test/>-->
@@ -24,7 +24,7 @@ import EleDecorateDyFormTest from "@/components/elementUi/eleDecorateDyFormTest.
 <!--      <decorate-dy-form-test/>-->
 <!--      element-plus-->
 <!--      <ele-simple-dy-form-test/>-->
-<!--      <ele-custom-dy-form-test/>-->
+      <ele-custom-dy-form-test/>
 <!--      <ele-dynamicform-test/>-->
 <!--      <ele-decorate-dy-form-test/>-->
     </div>

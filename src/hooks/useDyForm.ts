@@ -87,5 +87,34 @@ export function useDyForm<Row extends Record<string, any>>(
             else it.value = value
         })
     }
-    return {setDisabled, setHidden, setValue, setValues, getValue, getValues, onReset}
+    const setItem = <K extends KeyOf<Row>>(k: K, patchItem: Partial<Omit<DyFormItem<Row>, 'key'>>) => {
+        getItems().forEach((it) => {
+            if (it.key === k) {
+                const {key, ...fromRest} = patchItem as DyFormItem
+                Object.assign(it, fromRest)
+            }
+        })
+    }
+    const setItems = <K extends KeyOf<Row>>(patch: [K, Partial<Omit<DyFormItem<Row>, 'key'>>][]) => {
+        const patchMap = new Map(patch)
+        getItems().forEach((it) => {
+            const p = patchMap.get(it.key as K)
+            if (p) {
+                const {key, ...fromRest} = p as DyFormItem
+                Object.assign(it, fromRest)
+            }
+        })
+    }
+    /**
+     * updateKeys
+     * - 理论上key不允许修改，容易混乱管理，这里提供方法修改,请注意修改后对应关系
+     */
+    const updateKeys = <K extends KeyOf<Row>>(patch: [K, string][]) => {
+        const patchMap = new Map(patch)
+        getItems().forEach((it) => {
+            const p = patchMap.get(it.key as K)
+            if (p) it.key = p
+        })
+    }
+    return {setDisabled, setHidden, setValue, setValues, getValue, getValues, onReset, setItem, setItems, updateKeys}
 }
