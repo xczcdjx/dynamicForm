@@ -1,13 +1,14 @@
 import {
+    type DynamicTagsProps,
     NButton,
     NCheckbox,
     NCheckboxGroup,
-    NDatePicker,
-    NInput,
+    NDatePicker, NDynamicTags,
+    NInput, NInputNumber,
     NPopselect, NRadio,
     NRadioButton,
     NRadioGroup,
-    NSelect,
+    NSelect, NSlider,
     NSpace,
     NSwitch,
     NTag,
@@ -35,10 +36,13 @@ import type {SelectGroupOption, Value as SelectValue} from "naive-ui/lib/select/
 import type {TreeSelectOption, Value} from "naive-ui/lib/tree-select/src/interface";
 import {type AllowedComponentProps, createVNode, h, type Ref, type VNode} from "vue";
 import type {DyFormItem} from "@/types/form";
+import type {DynamicTagsOption} from "naive-ui/es/dynamic-tags/src/interface";
+import type {SliderProps} from "naive-ui/es/slider/src/Slider";
+import type {InputNumberProps} from "naive-ui/es/input-number/src/InputNumber";
 
 // 输入
 export function renderInput(model: Ref<string>, optionProps: InputProps | AllowedComponentProps = {}, rf?: DyFormItem) {
-    const {onChange, ...resetRf} = rf as DyFormItem
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
     return h(NInput, {
         ...resetRf as any,
         value: model.value,
@@ -57,7 +61,7 @@ export function renderSelect(
     optionProps: SelectProps | AllowedComponentProps = {},
     rf?: DyFormItem
 ) {
-    const {onChange, ...resetRf} = rf as DyFormItem
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
     return h(NSelect, {
         ...resetRf as any,
         value: model.value,
@@ -77,7 +81,7 @@ export function renderPopSelect(
     rf?: DyFormItem,
     defaultRender?: VNode
 ) {
-    const {value, labelField, valueField, onChange, ...resetProps} = rf as DyFormItem
+    const {value, labelField, valueField, onChange, ...resetProps} = rf ?? {} as DyFormItem
     const labelF = labelField ?? 'label'
     const valueF = valueField ?? 'value'
     const mOptions = resetProps.options ?? options
@@ -107,7 +111,7 @@ export function renderTreeSelect(
     optionProps: TreeSelectProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
-    const {valueField = 'value', onChange, ...resetProps} = rf as DyFormItem
+    const {valueField = 'value', onChange, ...resetProps} = rf ?? {} as DyFormItem
     return h(NTreeSelect, {
         ...resetProps as any,
         value: model.value,
@@ -128,7 +132,7 @@ export function renderRadioGroup(
     optionProps: RadioGroupProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
-    const {onChange, ...resetRf} = rf as DyFormItem
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
     return h(
         NRadioGroup,
         {
@@ -170,7 +174,7 @@ export function renderRadioButtonGroup(
     optionProps: RadioGroupProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
-    const {onChange, ...resetRf} = rf as DyFormItem
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
     return createVNode(
         NRadioGroup,
         {
@@ -212,7 +216,7 @@ export function renderCheckboxGroup(
     optionProps: CheckboxGroupProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
-    const {onChange, ...resetRf} = rf as DyFormItem
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
     return h(
         NCheckboxGroup,
         {
@@ -253,16 +257,16 @@ export function renderCheckboxGroup(
 
 // 开关
 export function renderSwitch(
-    value: Ref<boolean>,
+    model: Ref<boolean>,
     optionProps: SwitchProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
-    const {onChange, ...resetRf} = rf as DyFormItem
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
     return h(NSwitch, {
         ...resetRf as any,
-        value: value.value,
+        value: model.value,
         onUpdateValue: (newVal: boolean) => {
-            value.value = newVal;
+            model.value = newVal;
             rf?.onChange?.(newVal, rf);
         },
         ...optionProps
@@ -271,16 +275,16 @@ export function renderSwitch(
 
 // 日期时间
 export function renderDatePicker(
-    value: Ref<DatePickerValue>,
+    model: Ref<DatePickerValue>,
     optionProps: DatePickerProps | AllowedComponentProps = {},
     rf?: DyFormItem,
 ) {
-    const {onChange, ...resetRf} = rf as DyFormItem
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
     return h(NDatePicker, {
         ...resetRf as any,
-        value: value.value,
+        value: model.value,
         onUpdateValue: (newVal: any) => {
-            value.value = newVal;
+            model.value = newVal;
             rf?.onChange?.(newVal, rf);
         },
         ...optionProps
@@ -288,15 +292,87 @@ export function renderDatePicker(
 }
 
 export function renderTimePicker(
-    value: Ref<number | null>,
-    optionProps: TimePickerProps = {},
+    model: Ref<number | null>,
+    optionProps: TimePickerProps | AllowedComponentProps = {},
     rf?: DyFormItem,) {
-    const {onChange, ...resetRf} = rf as DyFormItem
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
     return h(NTimePicker, {
         ...resetRf as any,
-        value: value.value,
+        value: model.value,
         onUpdateValue: (newVal: number | null) => {
-            value.value = newVal;
+            model.value = newVal;
+            rf?.onChange?.(newVal, rf);
+        },
+        ...optionProps
+    });
+}
+
+// 0.43 版本新增
+export function renderCheckbox(
+    model: Ref<boolean>,
+    optionProps: CheckboxProps | AllowedComponentProps = {},
+    rf?: DyFormItem,
+) {
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
+    return h(
+        NCheckbox,
+        {
+            ...resetRf as any,
+            checked: model.value,
+            onUpdateChecked: (newVal: boolean) => {
+                model.value = newVal;
+                rf?.onChange?.(newVal, rf);
+            },
+            ...optionProps
+        },
+        {
+            default: () => (optionProps as CheckboxProps)?.label ?? rf?.label
+        }
+    );
+}
+
+export function renderDynamicTags(
+    model: Ref<Array<string | DynamicTagsOption>>,
+    optionProps: DynamicTagsProps | AllowedComponentProps = {},
+    rf?: DyFormItem) {
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
+    return h(NDynamicTags, {
+        ...resetRf as any,
+        value: model.value,
+        onUpdateValue: (newVal: any) => {
+            model.value = newVal;
+            rf?.onChange?.(newVal, rf);
+        },
+        ...optionProps
+    });
+}
+
+export function renderSlider(
+    model: Ref<number | number[]>,
+    optionProps: SliderProps | AllowedComponentProps = {},
+    rf?: DyFormItem) {
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
+    return h(NSlider, {
+        ...resetRf as any,
+        value: model.value,
+        onUpdateValue: (newVal: any) => {
+            model.value = newVal;
+            rf?.onChange?.(newVal, rf);
+        },
+        ...optionProps
+    });
+}
+
+export function renderInputNumber(
+    model: Ref<number | null>,
+    optionProps: InputNumberProps | AllowedComponentProps = {},
+    rf?: DyFormItem) {
+    const {onChange, ...resetRf} = rf ?? {} as DyFormItem
+    return h(NInputNumber, {
+        ...resetRf as any,
+        value: model.value,
+        onUpdateValue: (newVal: any) => {
+            model.value = newVal;
             rf?.onChange?.(newVal, rf);
         },
         ...optionProps
@@ -304,31 +380,3 @@ export function renderTimePicker(
 }
 
 // otherRender 暂未适配
-function renderCheckbox(
-    value: Ref<boolean>,
-    label: string,
-    optionProps: CheckboxProps | AllowedComponentProps = {}
-) {
-    return h(
-        NCheckbox,
-        {
-            checked: value.value,
-            onUpdateChecked: (newVal: boolean) => {
-                value.value = newVal;
-                // @ts-ignore
-                optionProps.onChange?.(newVal, optionProps);
-            },
-            ...optionProps
-        },
-        {
-            default: () => label
-        }
-    );
-}
-
-//
-function renderTag(label: string, optionProps: TagProps | AllowedComponentProps = {}) {
-    return h(NTag, optionProps, {
-        default: () => label
-    });
-}
