@@ -6,7 +6,7 @@ import {
     ElDropdown,
     ElDropdownItem,
     ElDropdownMenu,
-    ElInput, ElInputNumber,
+    ElInput, ElInputNumber, ElInputTag,
     ElOption,
     ElOptionGroup,
     ElPopover,
@@ -22,7 +22,7 @@ import {
 } from "element-plus";
 import {
     createVNode,
-    h,
+    h, ref,
 } from "vue";
 import type {Ref, VNode, AllowedComponentProps} from 'vue'
 import type {InputProps, SelectProps} from 'element-plus'
@@ -36,6 +36,7 @@ import type {TreeComponentProps} from "element-plus/es/components/tree/src/tree.
 import type {CheckboxProps} from "element-plus/es/components/checkbox/src/checkbox";
 import type {SliderProps} from "element-plus/es/components/slider/src/slider";
 import type {InputNumberProps} from "element-plus/es/components/input-number/src/input-number";
+import type {InputTagProps} from "element-plus/es/components/input-tag/src/input-tag";
 
 type AnyProps = Record<string, any> & AllowedComponentProps;
 type BasicOption = Record<string, any>;
@@ -523,29 +524,104 @@ export function renderCheckbox(
     })
 }
 
-/** Element Plus - InputTag（替代 NDynamicTags）
- *  注意：ElInputTag 的 v-model 是 string[]（不是对象数组）。:contentReference[oaicite:1]{index=1}
- */
+/*const dynamicTagsState = new WeakMap<object, { isCreate: Ref<boolean>; inputValue: Ref<string> }>()
 
-/*export function renderInputTag(
-    model: Ref<string[]>,
-    optionProps: WithAttrs<PropsOf<typeof ElInputTag>> = {},
+function getDynamicTagsState(key: object) {
+    let s = dynamicTagsState.get(key)
+    if (!s) {
+        s = { isCreate: ref(false), inputValue: ref("") }
+        dynamicTagsState.set(key, s)
+    }
+    return s
+}
+export function renderDynamicTags(
+    model: Ref<any[]>,
+    optionProps: OptionsType<TagProps> = {},
     rf?: DyFormItem,
 ) {
-    const restRf = stripRf(rf)
-    const userUpdate = (optionProps as any)["onUpdate:modelValue"]
-
-    return h(ElInputTag as any, {
-        ...restRf,
-        ...optionProps,
-        modelValue: model.value,
-        "onUpdate:modelValue": (newVal: any) => {
-            model.value = (newVal ?? []) as string[]
-            rf?.onChange?.(model.value, rf)
-            userUpdate?.(newVal)
-        },
-    })
+    const stateKey = (rf ?? model) as unknown as object
+    const { isCreate, inputValue } = getDynamicTagsState(stateKey)
+    const {onChange, labelField, valueField, disabled, ...restRf} = (rf ?? {}) as DyFormItem;
+    const {tagType, size} = optionProps
+    const createNew = () => {
+        const v = inputValue.value?.trim()
+        if (!v) return
+        model.value.push(valueField!==undefined?{[labelField??'label']:v,[valueField]:v}:v)
+        rf?.onChange?.(model.value, rf)
+        reset()
+    }
+    const reset = () => {
+        inputValue.value = ""
+        isCreate.value = false
+    }
+    return h(ElSpace, {}, [
+        ...model.value.map(it => {
+            const key = valueField ? it[valueField] : it
+            const label = labelField ? it[labelField] : it
+            return h(ElTag, {
+                ...restRf as any,
+                key: rf?.valueField ?? it,
+                disabled,
+                closable: disabled !== undefined ? !disabled : true,
+                onClose() {
+                    const index = model.value.findIndex(it2 => {
+                        if (valueField) return it2[valueField] === key
+                        else return it2 === it
+                    })
+                    if (index !== -1) {
+                        model.value.splice(index, 1);
+                        rf?.onChange?.(model.value, rf);
+                    }
+                },
+                ...optionProps,
+            }, () => label)
+        }),
+        // @ts-ignore
+        h(ElInput, {
+            class: 'w-10',
+            size: size ?? 'small',
+            style: {display: isCreate.value ? 'block' : 'none'},
+            modelValue: inputValue.value,
+            "onUpdate:modelValue"(v) {
+                inputValue.value = v
+            },
+            onBlur:createNew,
+            onKeydown(e:KeyboardEvent) {
+                if (e.key === 'Enter') createNew()
+                if (e.key==='Escape') reset()
+            }
+        }),
+        h(ElButton, {
+            size: size ?? 'small',
+            style: {display: !isCreate.value ? 'block' : 'none'},
+            plain: true,
+            // @ts-ignore
+            disabled, type: tagType,
+            onClick() {
+                isCreate.value = true
+            }
+        }, () => '+'),
+    ])
 }*/
+export function renderDynamicTags(
+    model: Ref<any[]>,
+    optionProps: OptionsType<InputTagProps> = {},
+    rf?: DyFormItem,
+) {
+    const {onChange, labelField = 'label', valueField, ...restRf} = (rf ?? {}) as DyFormItem;
+    return h(ElInputTag, {
+        ...restRf as any,
+        modelValue: valueField ? model.value.map(it => it[valueField]) : model.value,
+        "onUpdate:modelValue": (newVal: any[]) => {
+            model.value = valueField ? newVal.map(it => ({
+                [labelField]: it,
+                [valueField]: it
+            })) : newVal
+            rf?.onChange?.(newVal, rf)
+        },
+        ...optionProps,
+    })
+}
 
 export function renderSlider(
     model: Ref<number | number[]>,

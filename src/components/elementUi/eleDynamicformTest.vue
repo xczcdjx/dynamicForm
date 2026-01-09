@@ -7,9 +7,10 @@ import {
   renderPopSelect,
   renderRadioButtonGroup, renderRadioGroup,
   renderSelect, renderSwitch, renderTimePicker, renderTreeSelect,
-  renderCheckbox, renderInputNumber, renderSlider
+  renderCheckbox, renderInputNumber, renderSlider,renderDynamicTags
 } from "@/elementPlus";
 import type {FormItemRule, FormRules} from "element-plus";
+import {OmitValue} from "@/utils/tools";
 
 type FormRow = {
   username: string
@@ -137,6 +138,28 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     render2: f => renderDatePicker(f.value, {type:'datetime'}, f),
   },
   {
+    key: "future",
+    label: "未来",
+    labelField:'label',
+    valueField: 'value',
+    value: ref([
+      {label: '你没见过不等于没有', value: 'hello world 1'},
+      {
+        label: '不要给自己设限',
+        value: 'hello world 2'
+      },
+      {
+        label: '不要说连升两级',
+        value: 'hello world 3'
+      },
+      {
+        label: '直接升到 CEO 都是有可能的',
+        value: 'hello world 4'
+      }
+    ]),
+    render2: f => renderDynamicTags(f.value, {tagType:'primary'}, OmitValue(f)),
+  },
+  {
     key: "birthdayT",
     label: "时间",
     value: ref<Date>(new Date()),
@@ -182,6 +205,9 @@ const validatorData = () => {
     console.log(err)
   })
 }
+const disableAll = () => {
+  useForm.setDisabled(true)
+}
 </script>
 
 <template>
@@ -191,6 +217,7 @@ const validatorData = () => {
     <el-button @click="setData" type="warning" size="small">set Data</el-button>
     <el-button @click="validatorData" type="default" size="small">validate Data</el-button>
     <el-button @click="resetData" type="danger" size="small">reset Data</el-button>
+    <el-button @click="disableAll" type="primary" size="small">disabled All</el-button>
   </div>
 </template>
 
