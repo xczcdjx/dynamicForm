@@ -91,8 +91,8 @@ const formItems = useDecorateForm<FormRow>([
 ])
 const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
-  // const res=useForm.getValues() // 或
-  const res = naiDynamicFormRef.value?.getResult()
+  const res = useForm.getValues() // 或
+  // const res = naiDynamicFormRef.value?.getResult()
   console.log(res)
 }
 const resetData = () => {

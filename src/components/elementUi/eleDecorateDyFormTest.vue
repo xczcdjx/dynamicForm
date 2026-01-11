@@ -13,6 +13,10 @@ type FormRow = {
   password: string
   job: number
   birthday: number | Date
+  future: number[]
+  checkbox: boolean
+  slider: number
+  inputNumber: number
 }
 const eleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
 const formItems = useDecorateForm<FormRow>([
@@ -85,7 +89,9 @@ const formItems = useDecorateForm<FormRow>([
 ])
 const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
-  const res = eleDynamicFormRef.value?.getResult?.()
+  // const res = eleDynamicFormRef.value?.getResult?.()
+  // const res = useForm.getValues()
+  const res = useForm.getValue('future')
   console.log(res)
 }
 const resetData = () => eleDynamicFormRef.value?.reset?.()

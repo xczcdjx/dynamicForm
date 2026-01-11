@@ -20,12 +20,12 @@ import EleDecorateDyFormTest from "@/components/elementUi/eleDecorateDyFormTest.
 <!--      naive ui-->
 <!--      <dynamicform-test/>-->
 <!--      <simple-dy-form-test/>-->
-      <custom-dy-form-test/>
+<!--      <custom-dy-form-test/>-->
 <!--      <decorate-dy-form-test/>-->
 <!--      element-plus-->
 <!--      <ele-simple-dy-form-test/>-->
 <!--      <ele-custom-dy-form-test/>-->
-<!--      <ele-dynamicform-test/>-->
+      <ele-dynamicform-test/>
 <!--      <ele-decorate-dy-form-test/>-->
     </div>
   </n-message-provider>

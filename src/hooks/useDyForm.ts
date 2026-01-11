@@ -1,4 +1,4 @@
-import {type Ref, shallowReactive} from "vue"
+import {type Ref, shallowReactive, toRaw} from "vue"
 import {unref, isRef} from "vue"
 import type {DyFormItem} from "@/types/form"
 import {ensureRef} from "../utils/tools";
@@ -51,8 +51,13 @@ export function useDyForm<Row extends Record<string, any>>(
         })
     }
 
-    const getValue = <K extends KeyOf<Row>>(key: K) =>
-        getItems().find((i) => i.key === key) as DyFormItem<Row> | undefined
+    const getValue = <K extends KeyOf<Row>>(key: K): any | undefined => {
+        const v = getItems().find((i) => i.key === key)
+        if (v) {
+            const value = v.value
+            return isRef(value) ? toRaw(value.value) : value
+        }
+    }
 
     /*function getValues(): Row
     function getValues<K extends KeyOf<Row>>(keys: readonly K[]): Pick<Row, K>
@@ -74,7 +79,7 @@ export function useDyForm<Row extends Record<string, any>>(
         return getItems().reduce((p, c) => {
             const key = c.key as string
             if (!ks || ks.has(key)) {
-                const v = isRef(c.value) ? c.value.value : (c as any).value
+                const v = isRef(c.value) ? toRaw(c.value.value) : (c as any).value
                 ;(p as any)[key] = v
             }
             return p
@@ -87,6 +92,9 @@ export function useDyForm<Row extends Record<string, any>>(
             else it.value = value
         })
     }
+    const getItem = <K extends KeyOf<Row>>(key: K) =>
+        getItems().find((i) => i.key === key) as DyFormItem<Row> | undefined
+
     const setItem = <K extends KeyOf<Row>>(k: K, patchItem: Partial<Omit<DyFormItem<Row>, 'key'>>) => {
         getItems().forEach((it) => {
             if (it.key === k) {
@@ -116,5 +124,17 @@ export function useDyForm<Row extends Record<string, any>>(
             if (p) it.key = p
         })
     }
-    return {setDisabled, setHidden, setValue, setValues, getValue, getValues, onReset, setItem, setItems, updateKeys}
+    return {
+        setDisabled,
+        setHidden,
+        setValue,
+        setValues,
+        getValue,
+        getValues,
+        onReset,
+        getItem,
+        setItem,
+        setItems,
+        updateKeys
+    }
 }

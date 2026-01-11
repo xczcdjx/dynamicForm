@@ -8,7 +8,7 @@ import {
   renderRadioButtonGroup, renderRadioGroup,
   renderSelect, renderSwitch, renderTimePicker, renderTreeSelect,
   renderCheckbox, renderInputNumber, renderSlider,renderDynamicTags
-} from "../../../dist/elementPlus";
+} from "@/elementPlus";
 import type {FormItemRule, FormRules} from "element-plus";
 
 type FormRow = {

@@ -168,11 +168,33 @@ export function renderSelect(
  * - 单选：ElDropdown（点击项立即选中）
  * - 多选（model 是数组）：ElPopover + ElCheckboxGroup
  */
-// optionProps 暂未处理
+type PropsOf<C> = C extends new (...args: any) => { $props: infer P } ? P : never;
+
+type PopSelectSingleProps = OptionsType<PropsOf<typeof ElDropdown>>; // 单选：Dropdown
+type PopSelectMultipleProps = OptionsType<PropsOf<typeof ElPopover>>; // 多选：Popover
+
+export type PopSelectOptionProps = PopSelectSingleProps | PopSelectMultipleProps;
+
+export function renderPopSelect(
+    model: Ref<Array<string | number>>,
+    options: Array<SelectOption>,
+    optionProps?: PopSelectMultipleProps,
+    rf?: DyFormItem,
+    defaultRender?: VNode
+): VNode;
+
+export function renderPopSelect(
+    model: Ref<string | number | null>,
+    options: Array<SelectOption>,
+    optionProps?: PopSelectSingleProps,
+    rf?: DyFormItem,
+    defaultRender?: VNode
+): VNode;
+
 export function renderPopSelect(
     model: Ref<string | number | Array<string | number> | null>,
     options: Array<SelectOption>,
-    optionProps: AnyProps = {},
+    optionProps: PopSelectOptionProps = {},
     rf?: DyFormItem,
     defaultRender?: VNode
 ) {
@@ -187,9 +209,11 @@ export function renderPopSelect(
 
         const text =
             Array.isArray(model.value)
-                ? (model.value.length ? `已选 ${model.value.length} 项` : "请选择")
+                ? model.value.length
+                    ? `已选 ${model.value.length} 项`
+                    : "请选择"
                 : model.value != null
-                    ? (getLabelByValue(model.value, mOptions, labelF, valueF) || String(model.value))
+                    ? getLabelByValue(model.value, mOptions, labelF, valueF) || String(model.value)
                     : "请选择";
 
         return h(ElButton, null, {default: () => text});
@@ -202,7 +226,7 @@ export function renderPopSelect(
             {
                 trigger: "click",
                 ...(restProps as any),
-                ...optionProps,
+                ...(optionProps as PopSelectMultipleProps),
             },
             {
                 reference: () => renderTrigger(),
@@ -257,7 +281,7 @@ export function renderPopSelect(
                 model.value = cmd as any;
                 rf?.onChange?.(cmd, rf, opts);
             },
-            ...optionProps,
+            ...(optionProps as PopSelectSingleProps),
         },
         {
             default: () => renderTrigger(),
@@ -608,7 +632,7 @@ export function renderDynamicTags(
     optionProps: OptionsType<InputTagProps> = {},
     rf?: DyFormItem,
 ) {
-    const {onChange,value, labelField = 'label', valueField, ...restRf} = (rf ?? {}) as DyFormItem;
+    const {onChange, value, labelField = 'label', valueField, ...restRf} = (rf ?? {}) as DyFormItem;
     return h(ElInputTag, {
         ...restRf as any,
         modelValue: valueField ? model.value.map(it => it[valueField]) : model.value,
