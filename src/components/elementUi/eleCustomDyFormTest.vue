@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import {h, ref} from "vue";
 import {ElButton, ElInput} from "element-plus";
-import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
+import {useDyForm, useReactiveForm,OmitValue} from "../../../dist";
 import {
   type eleDynamicFormRef,
   type eleDynamicInputRef,
   EleDynamicForm,
   EleDynamicInput,
-} from "@/elementPlus";
+} from "../../../dist/elementPlus";
 import type {FormItemRule, FormRules} from "element-plus";
 import ElInputTest from "../subside/EleInputTest.vue";
-import {OmitValue} from "@/utils/tools";
 
 type FormRow = {
   name: string
@@ -62,8 +61,8 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     required: true,
     type: 'textarea',
     render2: f => h(ElInputTest, {
-      ...f,
-      value: f.value.value, "onUpdate:value"(v) {
+      ...OmitValue(f),
+      modelValue: f.value.value, "onUpdate:modelValue"(v) {
         f.value.value = v
       }
     }),

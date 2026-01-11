@@ -608,7 +608,7 @@ export function renderDynamicTags(
     optionProps: OptionsType<InputTagProps> = {},
     rf?: DyFormItem,
 ) {
-    const {onChange, labelField = 'label', valueField, ...restRf} = (rf ?? {}) as DyFormItem;
+    const {onChange,value, labelField = 'label', valueField, ...restRf} = (rf ?? {}) as DyFormItem;
     return h(ElInputTag, {
         ...restRf as any,
         modelValue: valueField ? model.value.map(it => it[valueField]) : model.value,

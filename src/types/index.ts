@@ -1,5 +1,6 @@
 import type {DyFormItem} from "./form.ts";
 import type {VNode} from "vue";
+import {renderCheckbox, renderSlider} from "@/elementPlus";
 
 export type DyCFormItem = {
     rId: string;
@@ -57,7 +58,8 @@ export type ScopeType = {
     toggleArray: () => boolean
     toggleNumber: () => boolean
 }
-export type CasScopeType=ScopeType & { addChild: () => void }
+export type CasScopeType = ScopeType & { addChild: () => void }
+
 export interface DynamicInputSlots {
     newBtn?: ({newItem}: { newItem: () => void }) => VNode[]
     resetBtn?: ({reset}: { reset: () => void }) => VNode[]
@@ -66,7 +68,7 @@ export interface DynamicInputSlots {
     rowActions?: (row: ScopeType) => VNode[]
 }
 
-export interface DynamicCasInputSlots extends Omit<DynamicInputSlots, 'rowActions'|'typeTools'> {
+export interface DynamicCasInputSlots extends Omit<DynamicInputSlots, 'rowActions' | 'typeTools'> {
     typeTools?: (row: CasScopeType) => VNode[]
     rowActions?: (row: CasScopeType) => VNode[]
     newChild?: (row: CasScopeType) => VNode[]
@@ -93,6 +95,11 @@ export type RenderType =
     | "renderSwitch"
     | "renderDatePicker"
     | "renderTimePicker"
+    | "renderCheckbox"
+    | "renderDynamicTags"
+    | "renderSlider"
+    | "renderInputNumber"
+
 export type ExposeDyFType = {
     reset?: (v?: any) => void
     validator: () => Promise<object>
@@ -121,4 +128,8 @@ export type Renderers<Row extends Record<string, any>, RuleT = any> = {
     renderSwitch: (value: any, props: any, it: any) => any
     renderDatePicker: (value: any, props: any, it: any) => any
     renderTimePicker: (value: any, props: any, it: any) => any
+    renderCheckbox: (value: any, props: any, it: any) => any
+    renderDynamicTags: (value: any, props: any, it: any) => any
+    renderSlider: (value: any, props: any, it: any) => any
+    renderInputNumber: (value: any, props: any, it: any) => any
 }

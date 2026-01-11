@@ -8,9 +8,8 @@ import {
   renderRadioButtonGroup, renderRadioGroup,
   renderSelect, renderSwitch, renderTimePicker, renderTreeSelect,
   renderCheckbox, renderInputNumber, renderSlider,renderDynamicTags
-} from "@/elementPlus";
+} from "../../../dist/elementPlus";
 import type {FormItemRule, FormRules} from "element-plus";
-import {OmitValue} from "@/utils/tools";
 
 type FormRow = {
   username: string
@@ -138,6 +137,12 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     render2: f => renderDatePicker(f.value, {type:'datetime'}, f),
   },
   {
+    key: "birthdayT",
+    label: "时间",
+    value: ref<Date>(new Date()),
+    render2: f => renderTimePicker(f.value, {}, f),
+  },
+  {
     key: "future",
     label: "未来",
     labelField:'label',
@@ -157,13 +162,10 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
         value: 'hello world 4'
       }
     ]),
-    render2: f => renderDynamicTags(f.value, {tagType:'primary'}, OmitValue(f)),
-  },
-  {
-    key: "birthdayT",
-    label: "时间",
-    value: ref<Date>(new Date()),
-    render2: f => renderTimePicker(f.value, {}, f),
+    render2: f => {
+      const {value,...restF} = f
+      return renderDynamicTags(f.value, {tagType:'primary'}, restF)
+    },
   },
   {
     key: "checkbox",

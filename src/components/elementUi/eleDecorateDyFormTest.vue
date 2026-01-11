@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {ElButton} from "element-plus";
-import {useDyForm} from "../../../dist";
+import {useDyForm} from "@/";
 import {
   type eleDynamicFormRef,
   EleDynamicForm,
   useDecorateForm,
   renderDatePicker
-} from "../../../dist/elementPlus";
+} from "@/elementPlus";
 
 type FormRow = {
   password: string
@@ -42,6 +42,45 @@ const formItems = useDecorateForm<FormRow>([
     label: "生日",
     value: null,
     render2: f => renderDatePicker(f.value, {type: 'datetime'}, f),
+  },
+  {
+    key: "future",
+    label: "未来",
+    valueField:'value',
+    value: [
+      {label: '你没见过不等于没有', value: 'hello world 1'},
+      {
+        label: '不要给自己设限',
+        value: 'hello world 2'
+      },
+      {
+        label: '不要说连升两级',
+        value: 'hello world 3'
+      },
+      {
+        label: '直接升到 CEO 都是有可能的',
+        value: 'hello world 4'
+      }
+    ],
+    renderType: 'renderDynamicTags'
+  },
+  {
+    key: "checkbox",
+    label: "复选",
+    value: null,
+    renderType: 'renderCheckbox',
+  },
+  {
+    key: "slider",
+    label: "滑块",
+    value: 0,
+    renderType: 'renderSlider',
+  },
+  {
+    key: "inputNumber",
+    label: "滑块",
+    value: 0,
+    renderType: 'renderInputNumber',
   },
 ])
 const useForm = useDyForm<FormRow>(formItems)

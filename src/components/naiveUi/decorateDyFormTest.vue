@@ -50,6 +50,44 @@ const formItems = useDecorateForm<FormRow>([
     value: null,
     render2: f => renderDatePicker(f.value, {type: 'datetime'}, f),
   },
+  {
+    key: "future",
+    label: "未来",
+    value: [
+      {label: '你没见过不等于没有', value: 'hello world 1'},
+      {
+        label: '不要给自己设限',
+        value: 'hello world 2'
+      },
+      {
+        label: '不要说连升两级',
+        value: 'hello world 3'
+      },
+      {
+        label: '直接升到 CEO 都是有可能的',
+        value: 'hello world 4'
+      }
+    ],
+    renderType: 'renderDynamicTags'
+  },
+  {
+    key: "checkbox",
+    label: "复选",
+    value: null,
+    renderType: 'renderCheckbox',
+  },
+  {
+    key: "slider",
+    label: "滑块",
+    value: 0,
+    renderType: 'renderSlider',
+  },
+  {
+    key: "inputNumber",
+    label: "滑块",
+    value: 0,
+    renderType: 'renderInputNumber',
+  },
 ])
 const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {

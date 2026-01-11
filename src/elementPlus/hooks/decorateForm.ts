@@ -3,6 +3,7 @@ import type {DecorateDyFormItem, Renderers, RenderType} from "@/types";
 import type {DyFormItem} from "@/types/form";
 import {ensureRef} from "../../utils/tools";
 import {shallowReactive} from "vue";
+
 export function createUseDecorateForm(renderers: Renderers<any, any>) {
     return function useDecorateForm<Row extends Record<string, any>, RuleT = any>(
         items: DecorateDyFormItem<Row, RuleT>[],
@@ -36,6 +37,10 @@ export function createUseDecorateForm(renderers: Renderers<any, any>) {
             renderDatePicker: (it) => r.renderDatePicker(it.value as any, it.renderProps ?? {}, it as any),
 
             renderTimePicker: (it) => r.renderTimePicker(it.value as any, it.renderProps ?? {}, it as any),
+            renderCheckbox: (it) => r.renderCheckbox(it.value as any, it.renderProps ?? {}, it as any),
+            renderDynamicTags: (it) => r.renderDynamicTags(it.value as any, it.renderProps ?? {}, it as any),
+            renderSlider: (it) => r.renderSlider(it.value as any, it.renderProps ?? {}, it as any),
+            renderInputNumber: (it) => r.renderInputNumber(it.value as any, it.renderProps ?? {}, it as any),
         }
 
         const normalized = items.map((raw) => {
@@ -61,4 +66,5 @@ export function createUseDecorateForm(renderers: Renderers<any, any>) {
         return normalized as DyFormItem<Row, RuleT>[]
     }
 }
+
 export const useDecorateForm = createUseDecorateForm(renderers)

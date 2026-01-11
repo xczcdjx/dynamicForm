@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {h, ref} from "vue";
 import {NButton, NInput} from "naive-ui";
-import {useDyForm, useReactiveForm} from "../../dist";
-import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef}  from "../../dist/naiveUi";
+import {useDyForm, useReactiveForm} from "../../../dist";
+import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef}  from "../../../dist/naiveUi";
 // import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
 // import {type naiDynamicFormRef, NaiDynamicForm, NaiDynamicInput, type naiDynamicInputRef} from "@/naiveUi";
 import type {FormItemRule, FormRules} from "naive-ui/es/form/src/interface";
-import InputTest from "@/components/subside/InputTest.vue";
+import InputTest from "../subside/InputTest.vue";
 
 type FormRow = {
   name: string
@@ -23,6 +23,7 @@ const formItems = useReactiveForm<FormRow, FormRules | FormItemRule>([
     clearable: true,
     placeholder: '请输入姓名',
     required: true,
+    // @ts-ignore
     render2: f => h(NInput, {
       ...f,
       value: f.value.value, "onUpdate:value"(v) {
