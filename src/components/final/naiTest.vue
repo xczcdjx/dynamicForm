@@ -70,12 +70,12 @@ onMounted(()=>{
     <template #controlBtn>
       <n-button type="success" size="small" @click="()=>{}">Add</n-button>
     </template>
-    <template #default="tableHeight">
+    <template #default>
       <n-data-table
           :columns="columns"
           :data="pagedData"
           :bordered="false"
-          :style="{ height: `${tableHeight}px`}"
+          :style="{ height: `100%`}"
           :flex-height="true"
           :scroll-x="900"
       />

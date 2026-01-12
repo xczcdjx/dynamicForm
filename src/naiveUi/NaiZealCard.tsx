@@ -15,7 +15,7 @@ type ZealCardSlots = {
     searchForm?: () => VNode[]
     searchBtn?: () => VNode[]
     controlBtn?: () => VNode[]
-    default?: (tableHeight: number) => VNode[]
+    default?: () => VNode[]
     rest?: () => VNode[]
     footer?: () => VNode[]
 }
@@ -28,37 +28,10 @@ export default defineComponent({
     },
     slots: Object as SlotsType<ZealCardSlots>,
     setup(props, {slots}) {
-        const tableHeight = ref<number>(200)
-        const bodyRef = ref<HTMLDivElement | null>(null)
-        const wrapRef = ref<HTMLDivElement | null>(null)
-        let ro: ResizeObserver | null = null
-
-        const update = () => {
-            tableHeight.value = bodyRef.value?.clientHeight ?? 0
-            console.log('scrollHeight',wrapRef.value?.scrollHeight)
-        }
-        /*const onScroll = (e: Event) => {
-            const el = e.target as HTMLElement;
-            const { scrollTop, scrollHeight, clientHeight } = el;
-            // 触底判断
-            const reachBottom = scrollTop + clientHeight >= scrollHeight - 2;
-            tableHeight.value=tableHeight.value-scrollTop
-            console.log(window.pageYOffset)
-            console.log("scrollTop:", scrollTop, "reachBottom:", reachBottom);
-        };*/
-        const onScroll = () => {
-            const el = document.scrollingElement!;
-            console.log("page scrollTop:", el.scrollTop);
-        };
         onMounted(async () => {
-            // wrapRef.value!.addEventListener("scroll", onScroll, { passive: true });
-            window.addEventListener('resize',onScroll, { passive: true })
-            await nextTick()
-            update()
-            // ro = new ResizeObserver(update)
-            // bodyRef.value && ro.observe(bodyRef.value)
+
         })
-        return () => <div class='zealCard' ref={wrapRef}>
+        return () => <div class='zealCard'>
             <NCard content-style={{display: 'flex', flexDirection: 'column'}} v-slots={{
                 header: () => <div class='header'>
                     <div class="title">{props.title}</div>
@@ -77,8 +50,8 @@ export default defineComponent({
                     {slots.footer?.()}
                 </div>
             }}>
-                <div ref={bodyRef} style={{flex: 1, overflow: 'auto'}}>
-                    {slots.default?.(tableHeight.value)}
+                <div style={{flex: 1, overflow: 'auto'}}>
+                    {slots.default?.()}
                 </div>
             </NCard>
             {slots.rest?.()}
