@@ -1,6 +1,6 @@
 import {
     defineComponent,
-    nextTick, onBeforeUnmount,
+    nextTick,
     onMounted,
     type PropType,
     ref,
@@ -28,50 +28,25 @@ export default defineComponent({
     },
     slots: Object as SlotsType<ZealCardSlots>,
     setup(props, {slots}) {
-        const wrapRef = ref<HTMLDivElement | null>(null);
-        const headerRef = ref<HTMLDivElement | null>(null);
-        const footerRef = ref<HTMLDivElement | null>(null);
-        const restRef = ref<HTMLDivElement | null>(null);
+        const tableHeight = ref<number>(200)
+        const bodyRef = ref<HTMLDivElement | null>(null)
+        const wrapRef = ref<HTMLDivElement | null>(null)
+        let ro: ResizeObserver | null = null
 
-        const tableHeight = ref(0);
-
-        let ro: ResizeObserver | null = null;
-
-        const calc = () => {
-            const wrap = wrapRef.value;
-            if (!wrap) return;
-
-            const wrapH = wrap.clientHeight;
-            const headerH = headerRef.value?.clientHeight ?? 0;
-            const footerH = footerRef.value?.clientHeight ?? 0;
-            const restH = restRef.value?.clientHeight ?? 0;
-
-            // 如果你的 .zealCard 有 padding，clientHeight 已含 padding；
-            // 你还需要视情况减掉 NCard 自己的 padding/边距（看你的布局）。
-            console.log(wrap)
-            const h = Math.max(0, wrapH - headerH - footerH - restH);
-            tableHeight.value = h-wrap.scrollHeight;
-            console.log(tableHeight.value)
-        };
-
+        const update = () => {
+            tableHeight.value = bodyRef.value?.clientHeight ?? 0
+            // console.log('scrollHeight',bodyRef.value?.scrollHeight)
+            console.log(window.pageYOffset)
+        }
         onMounted(async () => {
-            await nextTick();
-            calc();
-
-            ro = new ResizeObserver(calc);
-            wrapRef.value && ro.observe(wrapRef.value);
-            headerRef.value && ro.observe(headerRef.value);
-            footerRef.value && ro.observe(footerRef.value);
-            restRef.value && ro.observe(restRef.value);
-        });
-
-        onBeforeUnmount(() => {
-            ro?.disconnect();
-            ro = null;
-        });
+            await nextTick()
+            update()
+            ro = new ResizeObserver(update)
+            bodyRef.value && ro.observe(bodyRef.value)
+        })
         return () => <div class='zealCard' ref={wrapRef}>
-            <NCard v-slots={{
-                header: () => <div class='header' ref={headerRef}>
+            <NCard content-style={{display: 'flex', flexDirection: 'column'}} v-slots={{
+                header: () => <div class='header'>
                     <div class="title">{props.title}</div>
                     <div class="search">
                         {slots.searchForm?.()}
@@ -84,13 +59,15 @@ export default defineComponent({
                         {slots.controlBtn?.()}
                     </div>
                 </div>,
-                footer: () => <div class='footer' ref={footerRef}>
+                footer: () => <div class='footer'>
                     {slots.footer?.()}
                 </div>
             }}>
-                {slots.default?.(tableHeight.value)}
+                <div ref={bodyRef} style={{flex: 1, overflow: 'auto'}}>
+                    {slots.default?.(tableHeight.value)}
+                </div>
             </NCard>
-            <div ref={restRef}>{slots.rest?.()}</div>
+            {slots.rest?.()}
         </div>
     }
 })
