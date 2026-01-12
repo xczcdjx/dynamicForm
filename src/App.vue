@@ -32,7 +32,7 @@ import EleTest from "@/components/final/eleTest.vue";
         <!--      <ele-decorate-dy-form-test/>-->
         <!--      final-->
         <nai-test/>
-        <ele-test/>
+<!--        <ele-test/>-->
       </div>
     </n-modal-provider>
   </n-message-provider>
