@@ -3,6 +3,7 @@ import NaiDynamicCascadeInput from "./NaiDynamicCascadeInput";
 import NaiDynamicForm from "./NaiDynamicForm";
 import NaiPopupModal from "./NaiPopupModal";
 import NaiZealCard from "./NaiZealCard";
+import {NaiZealTableSearch} from "./NaiZealTableTool";
 import type {ExposeDyFType, ExposeType} from "@/types";
 import {useDecorateForm} from './hooks/decorateForm'
 export {useDecorateForm}
@@ -11,4 +12,4 @@ export * from './hooks/renderForm'
 export type naiDynamicInputRef = InstanceType<typeof NaiDynamicInput> & ExposeType
 export type naiDynamicCascadeInputRef = InstanceType<typeof NaiDynamicCascadeInput> & ExposeType
 export type naiDynamicFormRef = InstanceType<typeof NaiDynamicForm> & ExposeDyFType
-export {NaiDynamicInput, NaiDynamicCascadeInput,NaiDynamicForm,NaiPopupModal,NaiZealCard};
+export {NaiDynamicInput, NaiDynamicCascadeInput,NaiDynamicForm,NaiPopupModal,NaiZealCard,NaiZealTableSearch};

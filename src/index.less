@@ -92,7 +92,8 @@
     display: grid;
     gap: 10px;
     padding: 0 5px 10px 5px;
-    &.noList{
+
+    &.noList {
       padding: 0;
     }
 
@@ -115,7 +116,8 @@
             border: 1px solid #d2d6dd;
             padding: 0.35em 0.4em;
             border-radius: 3px;
-            &:focus{
+
+            &:focus {
               outline: none;
               box-shadow: 0 0 5px rgba(0, 123, 255, 0.3)
             }
@@ -137,7 +139,8 @@
             &.nativeV {
               letter-spacing: 3px;
               padding: 0;
-              &:focus{
+
+              &:focus {
                 outline: none;
                 //box-shadow: 0 0 5px rgba(0, 123, 255, 0.3)
               }
@@ -148,6 +151,7 @@
             white-space: nowrap;
             display: flex;
             gap: 5px;
+
             > button {
               font-weight: normal;
               border-radius: 3px;
@@ -155,8 +159,9 @@
             }
           }
         }
-        .value{
-          .el-button + .el-button{
+
+        .value {
+          .el-button + .el-button {
             margin-left: 5px;
           }
         }
@@ -182,16 +187,18 @@
     }
   }
 
-  .key,.isKey{
+  .key, .isKey {
     .el-input__inner {
       text-align: center;
     }
   }
+
   .control {
     .centerFlex();
     margin-top: 5px;
     column-gap: 10px;
-    &.noList{
+
+    &.noList {
       margin-top: 0;
     }
   }
@@ -242,16 +249,19 @@
   .dynamicForm();
 
   .dyFormList {
-    &.noObj{
+    &.noObj {
       padding: 0;
-      .depth-1{
+
+      .depth-1 {
         display: none;
       }
     }
+
     .dItem {
       width: inherit;
-      .vInput{
-        .surSlot{
+
+      .vInput {
+        .surSlot {
           white-space: nowrap;
 
           > button {
@@ -260,6 +270,7 @@
           }
         }
       }
+
       .input {
         .key {
 
@@ -268,7 +279,8 @@
         .value {
           &.isKey {
             text-align: center;
-            input{
+
+            input {
               font-weight: bold;
             }
           }
@@ -282,15 +294,18 @@
       border: 1px solid var(--c1);
       border-style: dashed;
       border-radius: 5px;
-      >.dItem{
+
+      > .dItem {
         padding: 5px;
       }
-       .dItem +.dItem {
+
+      .dItem + .dItem {
         //padding: 5px;
-         margin-top: 5px;
+        margin-top: 5px;
       }
-      &.no-pad{
-        >.dItem{
+
+      &.no-pad {
+        > .dItem {
           padding: 0;
         }
       }
@@ -331,29 +346,34 @@
       }*/
       .loop(5); // 生成 depth-1 到 depth-5
     }
-    .no-border{
+
+    .no-border {
       border: none !important;
     }
-    .no-pad{
+
+    .no-pad {
       padding: 0 !important;
     }
   }
-  .control{
-    &.noObj{
+
+  .control {
+    &.noObj {
       margin: 0;
     }
   }
 }
 
-.naiDynamicForm{
-  .cls-required{
+.naiDynamicForm {
+  .cls-required {
     margin-left: 5px;
     color: red;
   }
-  .header{
+
+  .header {
     margin-bottom: 5px;
   }
-  .footer{
+
+  .footer {
     margin-top: 5px;
   }
 }
@@ -388,23 +408,28 @@
   }
 }
 
-.flex{
+.flex {
   display: flex;
-    &.justify-end{
-      justify-content: flex-end;
-    }
-    &.align-center{
-      align-items: center;
-    }
+
+  &.justify-end {
+    justify-content: flex-end;
+  }
+
+  &.align-center {
+    align-items: center;
+  }
 }
-.sm-gap{
+
+.sm-gap {
   gap: 5px;
 }
-.zealCard{
+
+.zealCard {
   //height: calc(100vh - 40px);
-  .n-card{
+  .n-card {
     height: 100%;
   }
+
   .title {
     text-align: center;
     font-weight: bold;
@@ -413,6 +438,20 @@
 
   .search {
     margin: 10px 0;
+
+    .searchBtn {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+  }
+
+  .controlBtn {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .footer {
@@ -420,16 +459,50 @@
     justify-content: center;
   }
 
-  .search .searchBtn {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-
   .fControlBtn {
     display: flex;
     justify-content: center;
     gap: 10px;
+  }
+}
+
+.naiZealTableSearch, .naiZealSearchDrawer {
+  .searchForm {
+    overflow: auto;
+
+    .n-form {
+      .n-form-item .n-form-item-feedback-wrapper {
+        min-height: 10px;
+        margin-top: 0;
+      }
+    }
+  }
+
+  .naiTitle {
+    margin-bottom: 10px;
+  }
+
+  .drawerSearchBtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .searchBtn {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+.naiZealSearchDrawer {
+  .searchBtn {
+    margin: 0;
+  }
+
+  .searchForm {
+
   }
 }
 

@@ -14,9 +14,11 @@ type ZealCardSlots = {
     searchForm?: () => VNode[]
     searchBtn?: () => VNode[]
     controlBtn?: () => VNode[]
+    toolBtn?: () => VNode[]
     default?: (obj: { tableHeight: number }) => VNode[]
     rest?: () => VNode[]
     footer?: () => VNode[]
+    header?: () => VNode[]
 }
 export default defineComponent({
     name: 'NaiZealCard',
@@ -31,6 +33,10 @@ export default defineComponent({
         outPadding: {
             type: Number,
             default: 20
+        },
+        searchBtnTxt: {
+            type: Array as PropType<string[]>,
+            default: () => ['Reset', 'Search']
         }
     },
     slots: Object as SlotsType<ZealCardSlots>,
@@ -93,19 +99,25 @@ export default defineComponent({
         return () => <div class='zealCard' style={{height: `calc(${props.zealHeight} - ${props.outPadding * 2}px)`}}
                           ref={wrapRef}>
             <NCard ref={cardRef} v-slots={{
-                header: () => <div class='header'>
-                    <div class="title">{props.title}</div>
-                    <div class="search">
-                        {slots.searchForm?.()}
-                        {slots.searchBtn?.() || (slots.searchForm && <div class="searchBtn">
-                            <NButton size="small">Reset</NButton>
-                            <NButton type="info" size="small">Search</NButton>
-                        </div>)}
+                header: () => {
+                    const [rTxt,sTxt]=props.searchBtnTxt
+                    return <div class='header'>
+                        {slots.header?.() ?? <>
+                            <div class="title">{props.title}</div>
+                            <div class="search">
+                                {slots.searchForm?.()}
+                                {slots.searchBtn?.() || (slots.searchForm && <div class="searchBtn">
+                                    <NButton size="small">{rTxt}</NButton>
+                                    <NButton type="info" size="small">{sTxt}</NButton>
+                                </div>)}
+                            </div>
+                        </>}
+                        <div class="controlBtn">
+                            {slots.controlBtn?.()}
+                            {slots.toolBtn?.()}
+                        </div>
                     </div>
-                    <div class="controlBtn">
-                        {slots.controlBtn?.()}
-                    </div>
-                </div>,
+                },
                 footer: () => <div class='footer'>
                     {slots.footer?.()}
                 </div>

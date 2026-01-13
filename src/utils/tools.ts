@@ -129,6 +129,16 @@ function OmitValue<
 
     return res
 }
+function Debounce<T extends (...args: any[]) => void>(func: T, delay: number=500): (...args: Parameters<T>) => void {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    return function (...args: Parameters<T>) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(...args);
+        }, delay);
+    };
+}
 export {
     tranArr,
     resetObj,
@@ -137,5 +147,6 @@ export {
     getDepthColor,
     saferRepairColor,
     ensureRef,
-    OmitValue
+    OmitValue,
+    Debounce
 }

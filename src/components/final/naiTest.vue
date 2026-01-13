@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref} from "vue";
-import {DataTableColumns, NButton, NDataTable,NPagination} from "naive-ui";
-import {NaiPopupModal, useDecorateForm,NaiZealCard, NaiDynamicForm} from "@/naiveUi";
+import {DataTableColumns, NButton, NDataTable, NPagination} from "naive-ui";
+import {NaiPopupModal, useDecorateForm, NaiZealCard, NaiDynamicForm, NaiZealTableSearch} from "@/naiveUi";
 import {PageModal, SongType, zealData} from "./dataTest";
+
 const tableData = ref<SongType[]>([])
 const naiPopupModalRef = ref<InstanceType<typeof NaiPopupModal> | null>(null)
 const toggleShow = () => {
@@ -18,7 +19,6 @@ const onSubmit = async () => {
 }
 
 
-
 // search
 const searchFormItems = useDecorateForm([
   {
@@ -28,12 +28,15 @@ const searchFormItems = useDecorateForm([
   {
     key: "age",
     label: "Age",
+    value: 1
   },
+  ...Array.from({length: 8}).map((_, it) => ({key: `test${it}`, label: `test${it}`})),
 ].map(it => ({
-  ...it, value: null,
+  value: null,
   clearable: true,
   renderType: 'renderInput',
-  span: 12
+  span: 12,
+  ...it,
 })))
 // table
 const columns: DataTableColumns<SongType> = [
@@ -57,18 +60,30 @@ const pagedData = computed(() => {
   const start = (pageNo - 1) * pageSize
   return tableData.value.slice(start, start + pageSize)
 })
-onMounted(()=>{
-  tableData.value=zealData
+
+const doReset = () => {
+  console.log('reset')
+}
+const doSearch = (data) => {
+  console.log(data)
+}
+onMounted(() => {
+  tableData.value = zealData
 })
 </script>
 
 <template>
-  <NaiZealCard title="zeal test">
-    <template #searchForm>
-      <NaiDynamicForm :items="searchFormItems" ref="searchDynamicFormRef" preset="grid"/>
+  <NaiZealCard>
+    <template #header>
+      <NaiZealTableSearch :search-items="searchFormItems" title="zeal test" @onReset="doReset" @onSearch="doSearch"/>
     </template>
     <template #controlBtn>
       <n-button type="success" size="small" @click="()=>{}">Add</n-button>
+    </template>
+    <template #toolBtn>
+      <n-button type="default" size="small" @click="()=>{}">
+        Tool
+      </n-button>
     </template>
     <template #default="{tableHeight}">
       <n-data-table
@@ -77,7 +92,7 @@ onMounted(()=>{
           :bordered="false"
           :style="{ height: tableHeight+'px'}"
           :flex-height="true"
-          :scroll-x="900"
+          :scroll-x="600"
       />
     </template>
     <template #footer>
