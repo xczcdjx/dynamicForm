@@ -1,9 +1,9 @@
 import {defineComponent, nextTick, onMounted, type PropType, ref, type SlotsType, type VNode, watch} from "vue";
 import {NaiDynamicForm, type naiDynamicFormRef} from "@/naiveUi";
-import type {DyFormItem} from "@/types/form.ts";
+import type {DyFormItem} from "@/types/form";
 import {NButton, NDrawer, NDrawerContent} from "naive-ui";
-import useWindowSize from "@/hooks/useTool.ts";
-import {useDyForm} from "@/hooks/useDyForm.ts";
+import {useDyForm} from "../hooks/useDyForm";
+import {useWindowSize} from "../hooks/useTool";
 
 type NaiZealTableSearchSlots = {
     title?: (obj: { isMobile: boolean }) => VNode[]

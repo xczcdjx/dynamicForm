@@ -1,7 +1,7 @@
 import {computed, onMounted, onUnmounted, ref} from "vue";
 import {Debounce} from "../utils/tools";
 
-export default function useWindowSize(mobileWidth: number = 756, delay: number = 500) {
+function useWindowSize(mobileWidth: number = 756, delay: number = 500) {
     const width = ref(window.innerWidth)
     const height = ref(window.innerWidth)
     const listenSize = Debounce(() => {
@@ -18,4 +18,7 @@ export default function useWindowSize(mobileWidth: number = 756, delay: number =
     return {
         width, height, isMobile
     }
+}
+export {
+    useWindowSize,
 }
