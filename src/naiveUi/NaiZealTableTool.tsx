@@ -1,9 +1,20 @@
-import {defineComponent, nextTick, onMounted, type PropType, ref, type SlotsType, type VNode, watch} from "vue";
+import {
+    defineComponent,
+    nextTick,
+    onMounted,
+    type PropType,
+    reactive,
+    ref,
+    type SlotsType,
+    type VNode,
+    watch
+} from "vue";
 import {NaiDynamicForm, type naiDynamicFormRef} from "@/naiveUi";
 import type {DyFormItem} from "@/types/form";
-import {NButton, NDrawer, NDrawerContent} from "naive-ui";
+import {NButton, NDrawer, NDrawerContent, NPagination} from "naive-ui";
 import {useDyForm} from "../hooks/useDyForm";
 import {useWindowSize} from "../hooks/useTool";
+import type {PaginationSlots} from "naive-ui/es/pagination/src/Pagination";
 
 type NaiZealTableSearchSlots = {
     title?: (obj: { isMobile: boolean }) => VNode[]
@@ -40,6 +51,10 @@ export const NaiZealTableSearch = defineComponent({
         searchBtnTxt: {
             type: Array as PropType<string[]>,
             default: () => ['Reset', 'Search']
+        },
+        mobileDrawer: {
+            type: Boolean,
+            default: true
         },
         closeDrawerAuto: {
             type: Boolean,
@@ -96,17 +111,10 @@ export const NaiZealTableSearch = defineComponent({
             const [rTxt, sTxt] = props.searchBtnTxt
             return <div class='naiZealTableSearch'>
                 {
-                    isMobile.value ? <div class='drawerSearchBtn'>
+                    !props.mobileDrawer || !isMobile.value ? <>
                         {slots.title?.({isMobile: isMobile.value}) ?? <div class="naiTitle">
                             {props.title}
                         </div>}
-                        <NButton size="small" onClick={() => {
-                            toggleDrawer(true)
-                        }}>{props.drawerOpenTxt}</NButton>
-                    </div> : <>
-                        <div class="naiTitle">
-                            {props.title}
-                        </div>
                         <div class="searchForm" style={{
                             maxHeight: props.searchFormMaxHeight
                         }}>
@@ -120,7 +128,14 @@ export const NaiZealTableSearch = defineComponent({
                             <NButton size="small" onClick={onReset}>{rTxt}</NButton>
                             <NButton type="info" size="small" onClick={onSearch}>{sTxt}</NButton>
                         </div>
-                    </>
+                    </> : <div class='drawerSearchBtn'>
+                        {slots.title?.({isMobile: isMobile.value}) ?? <div class="naiTitle">
+                            {props.title}
+                        </div>}
+                        <NButton size="small" onClick={() => {
+                            toggleDrawer(true)
+                        }}>{props.drawerOpenTxt}</NButton>
+                    </div>
 
                 }
                 <NDrawer class='naiZealSearchDrawer' v-model:show={drawShow.value} maxHeight={props.drawerMaxHeight}
@@ -145,5 +160,64 @@ export const NaiZealTableSearch = defineComponent({
                 </NDrawer>
             </div>
         }
+    }
+})
+type PageModal = {
+    pageSize: number
+    pageNo: number
+    total: number
+}
+export const NaiZealTablePagination = defineComponent({
+    name: 'NaiZealTablePagination',
+    props: {
+        pageConfig: {
+            type: Array as PropType<string[]>,
+            default: () => ['pageNo', 'pageSize', 'total'],
+        }
+    },
+    emits: {
+        pageChange: (v: any) => true,
+        pageSizeChange: (v: any) => true,
+    },
+    slots: Object as SlotsType<PaginationSlots>,
+    setup(props, {emit, slots, expose}) {
+        const [noKey = 'pageNo', sizeKey = 'pageSize', totalKey = 'total'] = props.pageConfig
+        const pm = reactive<PageModal>({pageNo: 1, pageSize: 10, total: 0})
+        const setPageNo = (n: number) => {
+            pm.pageNo = n
+            emit('pageChange', {
+                [noKey]: n,
+                [sizeKey]: pm.pageSize
+            })
+        }
+        const setPageSize = (n: number) => {
+            pm.pageSize = n
+            emit('pageSizeChange', {
+                [noKey]: pm.pageNo,
+                [sizeKey]: n
+            })
+        }
+        const setPage = (v: Record<string, any>) => {
+            pm.pageNo = v[noKey]
+            pm.pageSize = v[sizeKey]
+            pm.total = v[totalKey]
+        }
+        const setTotal = (total: number) => {
+            pm.total = total
+        }
+        expose({
+            setPage,
+            setTotal
+        })
+        return () => <NPagination page={pm.pageNo}
+                                  page-size={pm.pageSize}
+                                  itemCount={pm.total}
+                                  onUpdate:page={setPageNo}
+                                  onUpdate:pageSize={setPageSize}
+                                  v-slots={{
+                                      // prefix:({itemCount})=><span>Total {itemCount}</span>
+                                      ...slots
+                                  }}
+        />
     }
 })

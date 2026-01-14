@@ -28,9 +28,8 @@ const searchFormItems = useDecorateForm([
   {
     key: "age",
     label: "Age",
-    value: 1
   },
-  ...Array.from({length: 8}).map((_, it) => ({key: `test${it}`, label: `test${it}`})),
+  // ...Array.from({length: 8}).map((_, it) => ({key: `test${it}`, label: `test${it}`})),
 ].map(it => ({
   value: null,
   clearable: true,
@@ -75,7 +74,11 @@ onMounted(() => {
 <template>
   <NaiZealCard>
     <template #header>
-      <NaiZealTableSearch :search-items="searchFormItems" title="zeal test" @onReset="doReset" @onSearch="doSearch"/>
+      <NaiZealTableSearch :search-items="searchFormItems" title="zeal test" @onReset="doReset" @onSearch="doSearch">
+<!--        <template #title>
+          <p>11111</p>
+        </template>-->
+      </NaiZealTableSearch>
     </template>
     <template #controlBtn>
       <n-button type="success" size="small" @click="()=>{}">Add</n-button>
