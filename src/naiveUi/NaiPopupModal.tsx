@@ -1,7 +1,6 @@
 import {computed, defineComponent, type PropType, reactive, ref, type SlotsType, type VNodeChild} from "vue";
 import {NButton, NModal} from "naive-ui";
 import type {ModalProps, CardSlots} from "naive-ui";
-
 export default defineComponent({
     name: 'NaiPopupModal',
     props: {

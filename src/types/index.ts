@@ -133,3 +133,12 @@ export type Renderers<Row extends Record<string, any>, RuleT = any> = {
     renderSlider: (value: any, props: any, it: any) => any
     renderInputNumber: (value: any, props: any, it: any) => any
 }
+export type ExposePopupMType = {
+    toggle?: (f?: boolean) => void
+}
+export type ExposeZealTSearchType = {
+    onReset?: () => void
+    onSearch?: () => void
+    toggleDrawer?: (f?: boolean) => void
+    getParams?: () => object
+}

@@ -1,43 +1,53 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref} from "vue";
-import {DataTableColumns, NButton, NDataTable, NPagination} from "naive-ui";
-import {NaiPopupModal, useDecorateForm, NaiZealCard, NaiDynamicForm, NaiZealTableSearch} from "@/naiveUi";
-import {PageModal, SongType, zealData} from "./dataTest";
+import {h, nextTick, onMounted, ref} from "vue";
+import {DataTableColumns, NButton, NDataTable, NSpace, useMessage} from "naive-ui";
+import {
+  NaiPopupModal,
+  useDecorateForm,
+  NaiZealCard,
+  NaiDynamicForm,
+  NaiZealTableSearch,
+  NaiZealTablePaginationControl,
+  naiPopupModalRef,
+  renderInput,
+  renderInputNumber,
+  naiDynamicFormRef,
+  naiZealTableSearchRef
+} from "@/naiveUi";
+import {SongType, zealData} from "./dataTest";
+import {usePagination} from "@/naiveUi/hooks/zealForm";
+import {useDyForm, useReactiveForm} from "@/";
 
+const message = useMessage()
+const referId = ref<string | number>('-1')
 const tableData = ref<SongType[]>([])
-const naiPopupModalRef = ref<InstanceType<typeof NaiPopupModal> | null>(null)
-const toggleShow = () => {
-  naiPopupModalRef.value?.toggle(true);
-}
-const onCancel = async () => {
-  return undefined
-}
-const onSubmit = async () => {
-  return await new Promise(resolve => setTimeout(() => {
-    resolve(true)
-  }, 2000))
-}
-
-
-// search
+const handleDynamicFormRef = ref<naiDynamicFormRef | null>(null)
+const naiZealTableSearchRef = ref<naiZealTableSearchRef | null>(null)
+const naiPopupModalRef = ref<naiPopupModalRef | null>(null)
+const tableLoading = ref<boolean>(false)
+// search form
 const searchFormItems = useDecorateForm([
   {
-    key: "name",
-    label: "Name",
+    key: "no",
+    label: "No",
+    renderType: 'renderInputNumber',
   },
   {
-    key: "age",
-    label: "Age",
+    key: "title",
+    label: "Title",
   },
-  // ...Array.from({length: 8}).map((_, it) => ({key: `test${it}`, label: `test${it}`})),
+  {
+    key: "length",
+    label: "Length",
+  },
 ].map(it => ({
   value: null,
   clearable: true,
   renderType: 'renderInput',
-  span: 12,
+  span: 8,
   ...it,
 })))
-// table
+// table column
 const columns: DataTableColumns<SongType> = [
   {
     title: 'No',
@@ -51,47 +61,148 @@ const columns: DataTableColumns<SongType> = [
     title: 'Length',
     key: 'length'
   },
+  {
+    title: 'Action',
+    key: 'actions',
+    fixed: 'right',
+    render(row) {
+      return h(
+          NSpace, {}, [
+            h(NButton,
+                {
+                  size: 'small',
+                  onClick: () => upItem(row)
+                },
+                {default: () => 'update'}),
+            h(NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                  onClick: () => delItem(row)
+                },
+                {default: () => 'delete'})
+          ]
+      )
+    }
+  }
 ]
-const pageModal = reactive<PageModal>({pageNo: 1, pageSize: 10})
-// pagination
-const pagedData = computed(() => {
-  const {pageNo, pageSize} = pageModal
-  const start = (pageNo - 1) * pageSize
-  return tableData.value.slice(start, start + pageSize)
-})
-
-const doReset = () => {
-  console.log('reset')
+const pagination = usePagination(fetchData)
+const updateFormItems = useReactiveForm<SongType>([
+  {
+    key: "no",
+    label: "No",
+    clearable: true,
+    render2: (f) => renderInputNumber(f.value, {}, f)
+  },
+  {
+    key: "title",
+    label: "Title",
+    clearable: true,
+    render2: (f) => renderInput(f.value, {}, f),
+  },
+  {
+    key: "length",
+    label: "Length",
+    clearable: true,
+    render2: (f) => renderInput(f.value, {}, f),
+  },
+])
+const useForm = useDyForm(updateFormItems)
+const doSearch = () => {
+  fetchData()
+  pagination.pageNo = 1
 }
-const doSearch = (data) => {
-  console.log(data)
+const doReset = () => {
+  fetchData()
+  pagination.pageNo = 1
+}
+
+// mock http request
+async function fetchData() {
+  tableLoading.value = true
+  const {pageNo, pageSize} = pagination
+  const params = naiZealTableSearchRef.value?.getParams()
+  const r = await new Promise<{ data: SongType[], total: number }>((resolve, reject) => {
+    setTimeout(() => {
+      const start = (pageNo - 1) * pageSize
+      const {length, no, title} = params
+      const data = zealData.value.filter(it => (!length || it.length.includes(length)) && (!title || it.title.includes(title)) && (!no || it.no === parseInt(no)))
+      resolve({
+        data: data.slice(start, start + pageSize),
+        total: data.length
+      })
+    }, 1500)
+  })
+  tableData.value = r.data
+  pagination.setTotalSize(r.total)
+  tableLoading.value = false
+}
+
+const newItem = () => {
+  referId.value = '-1'
+  useForm.onReset()
+  nextTick(() => {
+    naiPopupModalRef.value?.toggle(true)
+  })
+}
+
+function upItem(r: SongType) {
+  referId.value = r.no
+  useForm.setValues(r)
+  nextTick(() => {
+    naiPopupModalRef.value?.toggle(true)
+  })
+}
+
+function delItem(r: SongType) {
+  zealData.value = zealData.value.filter(it2 => it2.no !== r.no)
+  message.success('delete successful')
+  fetchData()
+}
+
+const onSubmit = async () => {
+  handleDynamicFormRef.value?.validator().then((v: any) => {
+    if (referId.value === '-1') {
+      zealData.value.unshift({...v, key: Date.now()})
+      message.success('Add successful')
+    } else {
+      zealData.value = zealData.value.map(it => {
+        if (referId.value === it.no) return v as SongType
+        return it
+      })
+      message.success('Update successful')
+    }
+    nextTick(() => {
+      naiPopupModalRef.value?.toggle(false)
+      fetchData()
+    })
+  })
 }
 onMounted(() => {
-  tableData.value = zealData
+  fetchData()
 })
 </script>
 
 <template>
   <NaiZealCard>
     <template #header>
-      <NaiZealTableSearch :search-items="searchFormItems" title="zeal test" @onReset="doReset" @onSearch="doSearch">
-<!--        <template #title>
-          <p>11111</p>
-        </template>-->
-      </NaiZealTableSearch>
+      <NaiZealTableSearch :search-items="searchFormItems" ref="naiZealTableSearchRef" :mobile-drawer="true"
+                          title="zeal test" @onReset="doReset"
+                          @onSearch="doSearch"/>
     </template>
     <template #controlBtn>
-      <n-button type="success" size="small" @click="()=>{}">Add</n-button>
+      <n-button type="success" size="small" @click="newItem">Add</n-button>
     </template>
     <template #toolBtn>
       <n-button type="default" size="small" @click="()=>{}">
-        Tool
+        Tool...
       </n-button>
     </template>
     <template #default="{tableHeight}">
       <n-data-table
+          :loading="tableLoading"
           :columns="columns"
-          :data="pagedData"
+          :data="tableData"
           :bordered="false"
           :style="{ height: tableHeight+'px'}"
           :flex-height="true"
@@ -99,18 +210,15 @@ onMounted(() => {
       />
     </template>
     <template #footer>
-      <n-pagination v-model:page="pageModal.pageNo"
-                    v-model:page-size="pageModal.pageSize"
-                    :item-count="tableData.length">
+      <NaiZealTablePaginationControl :pagination="pagination">
         <template #prefix="{ itemCount }">
           Total {{ itemCount }}
         </template>
-      </n-pagination>
+      </NaiZealTablePaginationControl>
     </template>
     <template #rest>
-      <NaiPopupModal title="addTest" ref="naiPopupModalRef" :on-cancel="onCancel" :on-submit="onSubmit"
-                     :close-on-mask="false">
-
+      <NaiPopupModal :title="referId==='-1'?'add Test':'update Test'" ref="naiPopupModalRef" :on-submit="onSubmit">
+        <NaiDynamicForm :items="updateFormItems" ref="handleDynamicFormRef"/>
       </NaiPopupModal>
     </template>
   </NaiZealCard>

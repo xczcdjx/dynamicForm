@@ -27,7 +27,7 @@ export interface DyFormItem<K = any, RuleT = any> extends BaseDyFormItem<K> {
     // reset?: (formItem: DyFormItem) => void
     rule?: RuleT
     required?: boolean
-    requiredHint?: (label:string)=>string
+    requiredHint?: (label: string) => string
     disabled?: Ref<boolean> | boolean
     clearable?: boolean
     // 以下是简化类型
@@ -38,3 +38,17 @@ export interface DyFormItem<K = any, RuleT = any> extends BaseDyFormItem<K> {
     filterable?: boolean
     multiple?: boolean
 }
+export type PageModal = {
+    pageSize: number
+    pageNo: number
+    total: number
+}
+export type ZealPagination = {
+    showSizePicker: boolean
+    pageCount?: number
+    pageSizes: number[]
+    pageSlot: number
+    onChange: () => void
+    onPageSizeChange: () => void
+    setTotalSize: (totalSize: number) => void
+}&PageModal
