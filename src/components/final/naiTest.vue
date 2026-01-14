@@ -15,8 +15,7 @@ import {
   naiZealTableSearchRef
 } from "@/naiveUi";
 import {SongType, zealData} from "./dataTest";
-import {usePagination} from "@/naiveUi/hooks/zealForm";
-import {useDyForm, useReactiveForm} from "@/";
+import {useDyForm, useReactiveForm, usePagination} from "@/";
 
 const message = useMessage()
 const referId = ref<string | number>('-1')

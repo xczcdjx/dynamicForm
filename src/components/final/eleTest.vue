@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ElButton} from "element-plus";
+import {ElButton,ElPagination} from "element-plus";
 import {ElePopupModal} from "@/elementPlus";
 import {ref} from "vue";
 
@@ -19,6 +19,7 @@ const onSubmit = async () => {
 
 <template>
   <el-button @click="toggleShow">ele popupOpen</el-button>
+<!--  <el-pagination/>-->
   <ElePopupModal title="addTest" ref="naiPopupModalRef" :on-cancel="onCancel" :on-submit="onSubmit"
                  :close-on-mask="false">
     <p>111</p>

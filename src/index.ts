@@ -15,4 +15,5 @@ export type dynamicCascadeInputRef = InstanceType<typeof DynamicCascadeInput> & 
 export {DynamicInput, DynamicCascadeInput};
 export * from './hooks/useDyForm'
 export * from './hooks/useTool'
+export * from './hooks/zealForm'
 export * from './utils/tools'

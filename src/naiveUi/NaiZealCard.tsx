@@ -2,24 +2,15 @@ import {
     defineComponent,
     nextTick, onBeforeUnmount,
     onMounted,
-    type PropType,
     ref,
+    type PropType,
     type SlotsType,
     type VNode,
     type VNodeChild
 } from "vue";
 import {NButton, NCard} from "naive-ui";
+import type {ZealCardSlots} from "@/types/slots.ts";
 
-type ZealCardSlots = {
-    searchForm?: () => VNode[]
-    searchBtn?: () => VNode[]
-    controlBtn?: () => VNode[]
-    toolBtn?: () => VNode[]
-    default?: (obj: { tableHeight: number }) => VNode[]
-    rest?: () => VNode[]
-    footer?: () => VNode[]
-    header?: () => VNode[]
-}
 export default defineComponent({
     name: 'NaiZealCard',
     props: {
@@ -100,7 +91,7 @@ export default defineComponent({
                           ref={wrapRef}>
             <NCard ref={cardRef} v-slots={{
                 header: () => {
-                    const [rTxt,sTxt]=props.searchBtnTxt
+                    const [rTxt, sTxt] = props.searchBtnTxt
                     return <div class='header'>
                         {slots.header?.() ?? <>
                             <div class="title">{props.title}</div>

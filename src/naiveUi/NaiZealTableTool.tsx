@@ -2,23 +2,20 @@ import {
     defineComponent,
     nextTick,
     onMounted,
-    type PropType,
-    reactive,
     ref,
-    type SlotsType, toRef,
-    type VNode,
-    watch
+    watch,
+    toRef,
 } from "vue";
-import {NaiDynamicForm, type naiDynamicFormRef} from "@/naiveUi";
+import type {PropType, SlotsType, VNode,} from 'vue'
 import type {DyFormItem, PageModal, ZealPagination} from "@/types/form";
+import type {PaginationProps, PaginationSlots} from "naive-ui/es/pagination/src/Pagination";
 import {NButton, NDrawer, NDrawerContent, NPagination} from "naive-ui";
+import {NaiDynamicForm} from "../naiveUi";
 import {useDyForm} from "../hooks/useDyForm";
 import {useWindowSize} from "../hooks/useTool";
-import type {PaginationProps, PaginationSlots} from "naive-ui/es/pagination/src/Pagination";
+import type {NaiZealTableSearchSlots} from "@/types/slots";
 
-type NaiZealTableSearchSlots = {
-    title?: (obj: { isMobile: boolean }) => VNode[]
-}
+
 export const NaiZealTableSearch = defineComponent({
     name: 'NaiZealTableSearch',
     props: {
@@ -104,7 +101,7 @@ export const NaiZealTableSearch = defineComponent({
             onReset,
             onSearch,
             toggleDrawer,
-            getParams:()=>useForm.getValues()
+            getParams: () => useForm.getValues()
         })
         return () => {
             const [rTxt, sTxt] = props.searchBtnTxt
@@ -163,8 +160,8 @@ export const NaiZealTableSearch = defineComponent({
         }
     }
 })
-
-export const NaiZealTablePagination = defineComponent({
+/* no support */
+/*export const NaiZealTablePagination = defineComponent({
     name: 'NaiZealTablePagination',
     props: {
         pageKeyConfig: {
@@ -232,18 +229,26 @@ export const NaiZealTablePagination = defineComponent({
                                   }}
         />
     }
-})
+})*/
 export const NaiZealTablePaginationControl = defineComponent({
     name: 'NaiZealTablePaginationControl',
     props: {
         pagination: {
             type: Object as PropType<ZealPagination>,
             required: true
-        }
+        },
+        pageConfig: {
+            type: Object as PropType<PaginationProps>
+        },
+        checkWindowSize: {
+            type: Array as PropType<number[]>,
+            default: [756, 500]
+        },
     },
     slots: Object as SlotsType<PaginationSlots>,
     setup(props, {slots}) {
         const pm = toRef(props, 'pagination')
+        const {isMobile} = useWindowSize(...props.checkWindowSize)
 
         function onChange(page: number) {
             pm.value!.pageNo = page
@@ -261,9 +266,10 @@ export const NaiZealTablePaginationControl = defineComponent({
                                   itemCount={pm.value?.total}
                                   pageSizes={pm.value?.pageSizes}
                                   pageSlot={pm.value?.pageSlot}
-                                  showSizePicker={pm.value?.showSizePicker}
+                                  showSizePicker={slots.prefix && isMobile.value ? false : pm.value?.showSizePicker}
                                   onUpdate:page={onChange}
                                   onUpdate:pageSize={onPageSizeChange}
+                                  {...props.pageConfig}
                                   v-slots={{
                                       // prefix:({itemCount})=><span>Total {itemCount}</span>
                                       ...slots

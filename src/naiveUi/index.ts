@@ -5,7 +5,7 @@ import NaiDynamicForm from "./NaiDynamicForm";
 import NaiPopupModal from "./NaiPopupModal";
 import NaiZealCard from "./NaiZealCard";
 import {useDecorateForm} from './hooks/decorateForm'
-import {NaiZealTableSearch, NaiZealTablePaginationControl, NaiZealTablePagination} from "./NaiZealTableTool";
+import {NaiZealTableSearch, NaiZealTablePaginationControl} from "./NaiZealTableTool";
 import '../index.less'
 
 type naiDynamicInputRef = InstanceType<typeof NaiDynamicInput> & ExposeType
@@ -22,7 +22,6 @@ export {
     NaiZealCard,
     useDecorateForm,
     NaiZealTableSearch,
-    NaiZealTablePagination,
     NaiZealTablePaginationControl
 };
 export type {
