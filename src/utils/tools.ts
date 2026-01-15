@@ -139,6 +139,11 @@ function Debounce<T extends (...args: any[]) => void>(func: T, delay: number=500
         }, delay);
     };
 }
+const getPadY = (el: HTMLElement | null) => {
+    if (!el) return 0;
+    const s = getComputedStyle(el);
+    return (parseFloat(s.paddingTop) || 0) + (parseFloat(s.paddingBottom) || 0);
+};
 export {
     tranArr,
     resetObj,
@@ -148,5 +153,6 @@ export {
     saferRepairColor,
     ensureRef,
     OmitValue,
-    Debounce
+    Debounce,
+    getPadY
 }

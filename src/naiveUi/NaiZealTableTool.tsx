@@ -8,12 +8,12 @@ import {
 } from "vue";
 import type {PropType, SlotsType, VNode,} from 'vue'
 import type {DyFormItem, PageModal, ZealPagination} from "@/types/form";
+import type {ZealTableSearchSlots} from "@/types/slots";
 import type {PaginationProps, PaginationSlots} from "naive-ui/es/pagination/src/Pagination";
 import {NButton, NDrawer, NDrawerContent, NPagination} from "naive-ui";
 import {NaiDynamicForm} from "../naiveUi";
 import {useDyForm} from "../hooks/useDyForm";
 import {useWindowSize} from "../hooks/useTool";
-import type {NaiZealTableSearchSlots} from "@/types/slots";
 
 
 export const NaiZealTableSearch = defineComponent({
@@ -66,7 +66,7 @@ export const NaiZealTableSearch = defineComponent({
         onReset: () => true,
         onSearch: (data: object) => true,
     },
-    slots: Object as SlotsType<NaiZealTableSearchSlots>,
+    slots: Object as SlotsType<ZealTableSearchSlots>,
     setup(props, {emit, slots, expose}) {
         const drawShow = ref<boolean>(false)
         const copyData = ref<any>({})
