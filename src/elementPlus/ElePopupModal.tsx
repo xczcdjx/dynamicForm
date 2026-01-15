@@ -34,11 +34,11 @@ export default defineComponent({
             default: 'min(1080px,90%)'
         },
         onCancel: {
-            type: Function as PropType<() => boolean | Promise<boolean>>,
+            type: Function as PropType<() => boolean | Promise<boolean | void> | void>,
             default: () => true
         },
         onSubmit: {
-            type: Function as PropType<() => boolean | Promise<boolean>>,
+            type: Function as PropType<() => boolean | Promise<boolean | void> | void>,
             default: () => true
         },
         footerTxt: {

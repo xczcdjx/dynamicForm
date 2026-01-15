@@ -2,6 +2,7 @@ import EleDynamicInput from "./EleDynamicInput";
 import EleDynamicCascadeInput from "./EleDynamicCascadeInput";
 import EleDynamicForm from "./EleDynamicForm";
 import ElePopupModal from "./ElePopupModal";
+import EleZealCard from "./EleZealCard";
 import type {ExposeDyFType, ExposeType} from "@/types";
 import {useDecorateForm} from './hooks/decorateForm'
 export {useDecorateForm}
@@ -10,4 +11,4 @@ export * from './hooks/renderForm'
 export type eleDynamicInputRef = InstanceType<typeof EleDynamicInput> & ExposeType
 export type eleCascadeDynamicInputRef = InstanceType<typeof EleDynamicCascadeInput> & ExposeType
 export type eleDynamicFormRef = InstanceType<typeof EleDynamicForm> & ExposeDyFType
-export {EleDynamicInput, EleDynamicCascadeInput,EleDynamicForm,ElePopupModal};
+export {EleDynamicInput, EleDynamicCascadeInput,EleDynamicForm,ElePopupModal,EleZealCard};

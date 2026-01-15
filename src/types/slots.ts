@@ -10,6 +10,9 @@ export type ZealCardSlots = {
     footer?: () => VNode[]
     header?: () => VNode[]
 }
-export type NaiZealTableSearchSlots = {
+export type ZealTableSearchSlots = {
     title?: (obj: { isMobile: boolean }) => VNode[]
+}
+export type EleZealTablePaginationSlots = {
+    default?: () => VNode[]
 }

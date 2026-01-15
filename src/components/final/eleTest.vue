@@ -1,32 +1,56 @@
 <script setup lang="ts">
-import {ElButton,ElPagination} from "element-plus";
-import {ElePopupModal} from "@/elementPlus";
-import {ref} from "vue";
+import {ElTable, ElTableColumn} from "element-plus";
+import {ElePopupModal, EleZealCard} from "@/elementPlus";
+import {onMounted, ref} from "vue";
+import {type SongType, zealData} from "./dataTest";
 
-const naiPopupModalRef = ref<InstanceType<typeof ElePopupModal> | null>(null)
-const toggleShow = () => {
-  naiPopupModalRef.value?.toggle(true);
-}
-const onCancel = async () => {
-  return undefined
-}
+const referId = ref<string | number>('-1')
+const elePopupModalRef = ref<InstanceType<typeof ElePopupModal> | null>(null)
+const tableData = ref<SongType[]>([])
+const tableProps: { label: string, prop: keyof SongType }[] = [
+  {label: 'No', prop: 'no'},
+  {label: 'Title', prop: 'title'},
+  {label: 'Length', prop: 'length'},
+]
 const onSubmit = async () => {
-  return await new Promise(resolve => setTimeout(() => {
-    resolve(true)
-  }, 2000))
+
 }
+onMounted(() => {
+  tableData.value = zealData.value
+})
 </script>
 
 <template>
-  <el-button @click="toggleShow">ele popupOpen</el-button>
-<!--  <el-pagination/>-->
-  <ElePopupModal title="addTest" ref="naiPopupModalRef" :on-cancel="onCancel" :on-submit="onSubmit"
-                 :close-on-mask="false">
-    <p>111</p>
-    <!--    <template #footer>
-          <n-button @click="onSubmit">submit</n-button>
-        </template>-->
-  </ElePopupModal>
+  <EleZealCard>
+    <template #header>
+      <div>111</div>
+    </template>
+    <template #controlBtn>
+      <n-button type="success" size="small" @click="()=>{}">Add</n-button>
+    </template>
+    <template #toolBtn>
+      <n-button type="default" size="small" @click="()=>{}">
+        Tool...
+      </n-button>
+    </template>
+    <template #default="{tableHeight}">
+      <el-table :data="tableData" :max-height="tableHeight">
+        <el-table-column :prop="r.prop" :label="r.label" v-for="r in tableProps" :key="r.prop">
+          <template #scope="row">
+            {{ row[r.prop] }}
+          </template>
+        </el-table-column>
+      </el-table>
+    </template>
+    <template #footer>
+
+    </template>
+    <template #rest>
+      <ElePopupModal :title="referId==='-1'?'add Test':'update Test'" ref="elePopupModalRef" :on-submit="onSubmit">
+
+      </ElePopupModal>
+    </template>
+  </EleZealCard>
 </template>
 
 <style scoped>
