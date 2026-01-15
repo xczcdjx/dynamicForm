@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {h, nextTick, onMounted, ref} from "vue";
-import {DataTableColumns, NButton, NDataTable, NSpace, useMessage} from "naive-ui";
+import {type DataTableColumns, NButton, NDataTable, NSpace, useMessage} from "naive-ui";
 import {
   NaiPopupModal,
   useDecorateForm,
@@ -8,13 +8,15 @@ import {
   NaiDynamicForm,
   NaiZealTableSearch,
   NaiZealTablePaginationControl,
-  naiPopupModalRef,
   renderInput,
   renderInputNumber,
+} from "@/naiveUi";
+import type {
+  naiPopupModalRef,
   naiDynamicFormRef,
   naiZealTableSearchRef
-} from "@/naiveUi";
-import {SongType, zealData} from "./dataTest";
+} from "@/naiveUi"
+import {type SongType, zealData} from "./dataTest";
 import {useDyForm, useReactiveForm, usePagination} from "@/";
 
 const message = useMessage()
@@ -45,7 +47,7 @@ const searchFormItems = useDecorateForm([
   renderType: 'renderInput',
   span: 8,
   ...it,
-})))
+})) as any[])
 // table column
 const columns: DataTableColumns<SongType> = [
   {
@@ -91,17 +93,20 @@ const updateFormItems = useReactiveForm<SongType>([
     key: "no",
     label: "No",
     clearable: true,
+    value: null,
     render2: (f) => renderInputNumber(f.value, {}, f)
   },
   {
     key: "title",
     label: "Title",
+    value: null,
     clearable: true,
     render2: (f) => renderInput(f.value, {}, f),
   },
   {
     key: "length",
     label: "Length",
+    value: null,
     clearable: true,
     render2: (f) => renderInput(f.value, {}, f),
   },
@@ -120,12 +125,12 @@ const doReset = () => {
 async function fetchData() {
   tableLoading.value = true
   const {pageNo, pageSize} = pagination
-  const params = naiZealTableSearchRef.value?.getParams()
+  const params = naiZealTableSearchRef.value?.getParams<SongType>?.()
   const r = await new Promise<{ data: SongType[], total: number }>((resolve, reject) => {
     setTimeout(() => {
       const start = (pageNo - 1) * pageSize
-      const {length, no, title} = params
-      const data = zealData.value.filter(it => (!length || it.length.includes(length)) && (!title || it.title.includes(title)) && (!no || it.no === parseInt(no)))
+      const {length, no, title} = params!
+      const data = zealData.value.filter(it => (!length || it.length.includes(length)) && (!title || it.title.includes(title)) && (!no || it.no === parseInt(no as string)))
       resolve({
         data: data.slice(start, start + pageSize),
         total: data.length
@@ -141,7 +146,7 @@ const newItem = () => {
   referId.value = '-1'
   useForm.onReset()
   nextTick(() => {
-    naiPopupModalRef.value?.toggle(true)
+    naiPopupModalRef.value?.toggle?.(true)
   })
 }
 
@@ -149,7 +154,7 @@ function upItem(r: SongType) {
   referId.value = r.no
   useForm.setValues(r)
   nextTick(() => {
-    naiPopupModalRef.value?.toggle(true)
+    naiPopupModalRef.value?.toggle?.(true)
   })
 }
 
@@ -172,7 +177,7 @@ const onSubmit = async () => {
       message.success('Update successful')
     }
     nextTick(() => {
-      naiPopupModalRef.value?.toggle(false)
+      naiPopupModalRef.value?.toggle?.(false)
       fetchData()
     })
   })

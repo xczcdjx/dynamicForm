@@ -1,7 +1,7 @@
 import {ref} from "vue";
 
 export interface SongType {
-    no: number
+    no: number|string
     title: string
     length: string
 }

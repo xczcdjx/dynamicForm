@@ -1,6 +1,7 @@
 import {computed, defineComponent, type PropType, reactive, ref, type SlotsType, type VNodeChild} from "vue";
 import {NButton, NModal} from "naive-ui";
 import type {ModalProps, CardSlots} from "naive-ui";
+
 export default defineComponent({
     name: 'NaiPopupModal',
     props: {
@@ -17,7 +18,7 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
-        closeOnMask:{
+        closeOnMask: {
             type: Boolean,
             default: true
         },
@@ -26,11 +27,11 @@ export default defineComponent({
             default: 'min(1080px,90%)'
         },
         onCancel: {
-            type: Function as PropType<() => boolean | Promise<boolean>>,
+            type: Function as PropType<() => boolean | Promise<boolean | void> | void>,
             default: () => true
         },
         onSubmit: {
-            type: Function as PropType<() => boolean | Promise<boolean>>,
+            type: Function as PropType<() => boolean | Promise<boolean | void> | void>,
             default: () => true
         },
         footerTxt: {

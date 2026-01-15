@@ -140,5 +140,5 @@ export type ExposeZealTSearchType = {
     onReset?: () => void
     onSearch?: () => void
     toggleDrawer?: (f?: boolean) => void
-    getParams?: () => object
+    getParams?: <T extends object>() => T
 }
