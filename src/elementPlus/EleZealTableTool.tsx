@@ -10,10 +10,9 @@ import type {PropType, SlotsType, VNode,} from 'vue'
 import type {DyFormItem, PageModal, ZealPagination} from "@/types/form";
 import type {EleZealTablePaginationSlots, ZealTableSearchSlots} from "@/types/slots";
 
-import {ElPagination,ElButton,ElDrawer} from 'element-plus'
-import {NaiDynamicForm} from "../naiveUi";
+import {ElPagination, ElButton, ElDrawer} from 'element-plus'
+import {EleDynamicForm} from "../elementPlus";
 import {useDyForm} from "../hooks/useDyForm";
-import {useWindowSize} from "../hooks/useTool";
 import type {PaginationProps} from "element-plus/es/components/pagination/src/pagination";
 
 
@@ -35,12 +34,8 @@ export const EleZealTableSearch = defineComponent({
             default: '200px'
         },
         size: {
-            type: [Number,String],
-            default: 420
-        },
-        checkWindowSize: {
-            type: Array as PropType<number[]>,
-            default: [756, 500]
+            type: [Number, String],
+            default: 240
         },
         drawerOpenTxt: {
             type: String,
@@ -56,9 +51,13 @@ export const EleZealTableSearch = defineComponent({
         },
         closeDrawerAuto: {
             type: Boolean,
-            default: true
+            default: false
         },
         copyDefault: {
+            type: Boolean,
+            default: false
+        },
+        isMobile:{
             type: Boolean,
             default: false
         }
@@ -72,7 +71,6 @@ export const EleZealTableSearch = defineComponent({
         const drawShow = ref<boolean>(false)
         const copyData = ref<any>({})
         const useForm = useDyForm(props.searchItems)
-        const {isMobile} = useWindowSize(...props.checkWindowSize)
         const toggleDrawer = (f?: boolean) => {
             drawShow.value = f ?? !drawShow.value
         }
@@ -88,7 +86,7 @@ export const EleZealTableSearch = defineComponent({
             emit('onSearch', data)
             toggleDrawer(false)
         }
-        watch(() => isMobile.value, (n) => {
+        watch(() => props.isMobile, (n) => {
             if (props.closeDrawerAuto) return
             if (!n) toggleDrawer(false)
         })
@@ -106,19 +104,20 @@ export const EleZealTableSearch = defineComponent({
         })
         return () => {
             const [rTxt, sTxt] = props.searchBtnTxt
-            return <div class='naiZealTableSearch'>
+            return <div class='eleZealTableSearch'>
                 {
-                    !props.mobileDrawer || !isMobile.value ?
+                    !props.mobileDrawer || !props.isMobile ?
                         <>
-                            {slots.title?.({isMobile: isMobile.value}) ?? <div class="naiTitle">
+                            {slots.title?.() ?? <div class="naiTitle">
                                 {props.title}
                             </div>}
                             <div class="searchForm" style={{
                                 maxHeight: props.searchFormMaxHeight
                             }}>
-                                <NaiDynamicForm items={props.searchItems} preset={'grid'}
+                                <EleDynamicForm items={props.searchItems} preset={'grid'}
                                                 formConfig={{
-                                                    labelPlacement: 'left',
+                                                    labelPosition: 'left',
+                                                    showMessage: false
                                                     // showFeedback: false
                                                 }}/>
                             </div>
@@ -128,7 +127,7 @@ export const EleZealTableSearch = defineComponent({
                             </div>
                         </> :
                         <div class='drawerSearchBtn'>
-                            {slots.title?.({isMobile: isMobile.value}) ?? <div class="naiTitle">
+                            {slots.title?.() ?? <div class="naiTitle">
                                 {props.title}
                             </div>}
                             <ElButton size="small" onClick={() => {
@@ -137,24 +136,25 @@ export const EleZealTableSearch = defineComponent({
                         </div>
 
                 }
-                <ElDrawer class='naiZealSearchDrawer' v-model={drawShow.value} size={props.size}
-                         trapFocus={false} direction="ttb">
-                    {/*<NDrawerContent title={props.drawerTitle ?? props.title} v-slots={{
-                        footer: () => <div class="searchBtn">
-                            <ElButton size="small" onClick={onReset}>{rTxt}</ElButton>
-                            <ElButton type="info" size="small" onClick={onSearch}>{sTxt}</ElButton>
-                        </div>
-                    }}>
-                        <div class="searchForm">
-                            <NaiDynamicForm formConfig={
-                                {
-                                    labelPlacement: 'left',
-                                    size: 'small',
-                                    // showFeedback: false
-                                }
-                            } items={props.searchItems}/>
-                        </div>
-                    </NDrawerContent>*/}
+                <ElDrawer class='eleZealSearchDrawer' v-model={drawShow.value} size={props.size}
+                          trapFocus={false} direction="ttb" v-slots={{
+                    header: () => <div>
+                        {props.drawerTitle ?? props.title}
+                    </div>,
+                    footer: () => <div class="searchBtn">
+                        <ElButton size="small" onClick={onReset}>{rTxt}</ElButton>
+                        <ElButton type="info" size="small" onClick={onSearch}>{sTxt}</ElButton>
+                    </div>
+                }}>
+                    <div class="searchForm">
+                        <EleDynamicForm formConfig={
+                            {
+                                labelPosition: 'left',
+                                size: 'small',
+                                showMessage: false
+                            }
+                        } items={props.searchItems}/>
+                    </div>
                 </ElDrawer>
             </div>
         }
@@ -171,15 +171,14 @@ export const EleZealTablePaginationControl = defineComponent({
         pageConfig: {
             type: Object as PropType<PaginationProps>
         },
-        checkWindowSize: {
-            type: Array as PropType<number[]>,
-            default: [756, 500]
-        },
+        isMobile:{
+            type: Boolean,
+            default: false
+        }
     },
     slots: Object as SlotsType<EleZealTablePaginationSlots>,
     setup(props, {slots}) {
         const pm = toRef(props, 'pagination')
-        const {isMobile} = useWindowSize(...props.checkWindowSize)
 
         function onChange(page: number) {
             pm.value!.pageNo = page
@@ -196,7 +195,7 @@ export const EleZealTablePaginationControl = defineComponent({
                                    page-size={pm.value?.pageSize}
                                    total={pm.value?.total}
                                    pageSizes={pm.value?.pageSizes}
-                                   layout={slots.default && isMobile.value ? replaceLayout(pm.value?.layout) : pm.value?.layout}
+                                   layout={!slots.default && props.isMobile ? replaceLayout(pm.value?.layout) : pm.value?.layout}
                                    onUpdate:current-page={onChange}
                                    onUpdate:page-size={onPageSizeChange}
                                    {...props.pageConfig}
@@ -206,5 +205,15 @@ export const EleZealTablePaginationControl = defineComponent({
         />
     }
 })
-const replaceLayout = (t?: string) =>
-    t?.split(',').filter(it => ['sizes', 'jumper'].includes(it)).join(',')
+const escapeReg = (s: string) =>
+    s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const replaceLayout = (t?: string, removes: string[] = ['sizes', 'jumper']) => {
+    if (!t || removes.length === 0) return t
+    const reg = new RegExp(
+        `(^|,\\s*)(${removes.map(escapeReg).join('|')})(?=\\s*,|$)`,
+        'g'
+    )
+    return t
+        .replace(reg, '')
+        .replace(/^,|,$/g, '')
+}

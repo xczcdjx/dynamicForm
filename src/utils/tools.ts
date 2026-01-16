@@ -1,5 +1,5 @@
 import type {ValueType, DyCFormItem, DyRandomFun} from "@/types";
-import {isRef, ref, type Ref} from "vue";
+import {isRef, ref, type Ref, unref} from "vue";
 import type {DyFormItem} from "@/types/form";
 const tranArr = (obj: ValueType, arrayFun: DyRandomFun, splitSymbol: string) => Object.keys(obj).map((it, i) => {
     const v = obj[it]
@@ -144,6 +144,10 @@ const getPadY = (el: HTMLElement | null) => {
     const s = getComputedStyle(el);
     return (parseFloat(s.paddingTop) || 0) + (parseFloat(s.paddingBottom) || 0);
 };
+const unwrapObj = <T extends Record<string, any>>(obj: T) =>
+    Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, unref(v)])) as {
+        [K in keyof T]: T[K] extends { value: infer V } ? V : T[K]
+    };
 export {
     tranArr,
     resetObj,
@@ -154,5 +158,6 @@ export {
     ensureRef,
     OmitValue,
     Debounce,
-    getPadY
+    getPadY,
+    unwrapObj
 }

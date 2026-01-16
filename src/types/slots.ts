@@ -1,17 +1,18 @@
 import type {VNode} from "vue";
 
+type SizeObjType = { isMobile: boolean, width: number, height: number };
 export type ZealCardSlots = {
     searchForm?: () => VNode[]
     searchBtn?: () => VNode[]
     controlBtn?: () => VNode[]
     toolBtn?: () => VNode[]
-    default?: (obj: { tableHeight: number }) => VNode[]
+    default?: (obj: { tableHeight: number } & SizeObjType) => VNode[]
     rest?: () => VNode[]
-    footer?: () => VNode[]
-    header?: () => VNode[]
+    footer?: (size: SizeObjType) => VNode[]
+    header?: (size: SizeObjType) => VNode[]
 }
 export type ZealTableSearchSlots = {
-    title?: (obj: { isMobile: boolean }) => VNode[]
+    title?: () => VNode[]
 }
 export type EleZealTablePaginationSlots = {
     default?: () => VNode[]

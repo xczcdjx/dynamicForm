@@ -8,7 +8,7 @@ export default defineComponent({
     name: 'EleDynamicForm',
     props: {
         formConfig: {
-            type: Object as PropType<FormProps>,
+            type: Object as PropType<Partial<FormProps>>,
             default: () => ({
                 labelPosition: 'left',
                 size: 'default',
