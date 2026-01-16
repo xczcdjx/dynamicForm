@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {h, nextTick, onMounted, ref} from "vue";
-import {ElMessage, ElTable, ElTableColumn, ElButton} from "element-plus";
+import {ElMessage, ElButton, ElSpace} from "element-plus";
 import {
   ElePopupModal,
   useDecorateForm,
@@ -8,6 +8,7 @@ import {
   EleDynamicForm,
   EleZealTableSearch,
   EleZealTablePaginationControl,
+  EleZealTable,
   renderInput,
   renderInputNumber,
 } from "@/elementPlus";
@@ -18,6 +19,7 @@ import type {
 } from "@/elementPlus"
 import {type SongType, zealData} from "./dataTest";
 import {useDyForm, useReactiveForm, usePagination} from "@/";
+import {ZealColumn} from "@/types/form";
 
 const referId = ref<string | number>('-1')
 const tableData = ref<SongType[]>([])
@@ -48,11 +50,32 @@ const searchFormItems = useDecorateForm([
   ...it,
 })) as any[])
 // table column
-const tableProps: { label: string, prop: keyof SongType }[] = [
-  {label: 'No', prop: 'no'},
-  {label: 'Title', prop: 'title'},
-  {label: 'Length', prop: 'length'},
-]
+const columns: ZealColumn<SongType>[] = [
+  {type: 'expand', render: row => h('div', {}, JSON.stringify(row, null, 2))},
+  {label: "No", prop: "no", width: 80},
+  {label: "Title", prop: "title", slot: "title"},
+  {label: "Length", prop: "length"},
+  {
+    label: "Actions", fixed: 'right', width: 160, render: (row) => h(
+        ElSpace, {}, [
+          h(ElButton,
+              {
+                size: 'small',
+                onClick: () => upItem(row)
+              },
+              'update'),
+          h(ElButton,
+              {
+                size: 'small',
+                type: 'danger',
+                onClick: () => delItem(row)
+              },
+              'delete')
+        ]
+    )
+  },
+];
+
 const pagination = usePagination(fetchData)
 const updateFormItems = useReactiveForm<SongType>([
   {
@@ -174,13 +197,14 @@ onMounted(() => {
       </el-button>
     </template>
     <template #default="{tableHeight}">
-      <el-table :data="tableData" :max-height="tableHeight" v-loading="tableLoading">
-        <el-table-column :prop="r.prop" :label="r.label" v-for="r in tableProps" :key="r.prop">
-          <template #scope="row">
-            {{ row[r.prop] }}
-          </template>
-        </el-table-column>
-      </el-table>
+      <EleZealTable :data="tableData" :columns="columns" :max-height="tableHeight" :loading="tableLoading">
+        <template #title="{ row }">
+          <el-tag>{{ row.title }}</el-tag>
+        </template>
+        <template #empty>
+          <p> no data</p>
+        </template>
+      </EleZealTable>
     </template>
     <template #footer="{isMobile}">
       <EleZealTablePaginationControl :is-mobile="isMobile" :pagination="pagination"/>

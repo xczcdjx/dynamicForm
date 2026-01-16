@@ -19,3 +19,8 @@ export type ZealTableSearchSlots = {
 export type EleZealTablePaginationSlots = {
     default?: () => VNode[]
 }
+export type EleZealTableSlots = {
+    default?: () => VNode[]
+    append?: () => VNode[]
+    empty?: () => VNode[]
+}

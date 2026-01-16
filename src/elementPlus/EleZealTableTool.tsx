@@ -7,10 +7,10 @@ import {
     toRef,
 } from "vue";
 import type {PropType, SlotsType,} from 'vue'
-import type {DyFormItem, ZealPagination} from "@/types/form";
-import type {EleZealTablePaginationSlots, ZealTableSearchSlots} from "@/types/slots";
+import type {DyFormItem, ZealColumn, ZealPagination} from "@/types/form";
+import type {EleZealTablePaginationSlots, EleZealTableSlots, ZealTableSearchSlots} from "@/types/slots";
 
-import {ElPagination, ElButton, ElDrawer} from 'element-plus'
+import {ElPagination, ElButton, ElDrawer, ElTable, ElTableColumn, type TableProps} from 'element-plus'
 import {EleDynamicForm} from "../elementPlus";
 import {useDyForm} from "../hooks/useDyForm";
 import type {PaginationProps} from "element-plus/es/components/pagination/src/pagination";
@@ -221,3 +221,63 @@ const replaceLayout = (t?: string, removes: string[] = ['sizes', 'jumper']) => {
         .replace(reg, '')
         .replace(/^,|,$/g, '')
 }
+
+export const EleZealTable = defineComponent({
+    name: "EleZealTable",
+    props: {
+        data: {type: Array as PropType<any[]>, default: () => []},
+        columns: {type: Array as PropType<ZealColumn<any>[]>, default: () => []},
+        loading: {type: Boolean, default: false},
+        maxHeight: {type: [Number, String] as PropType<number | string>},
+        columnAlign: {
+            type: String as PropType<ZealColumn<any>['align']>
+        },
+        stripe: {type: Boolean, default: true},
+        border: {type: Boolean, default: false},
+        tableConfig: {
+            type: Object as PropType<Partial<TableProps<any>>>
+        }
+    },
+    slots: Object as SlotsType<EleZealTableSlots>,
+    setup(props, {slots}) {
+        return () => (
+            <ElTable
+                data={props.data}
+                maxHeight={props.maxHeight as any}
+                v-loading={props.loading}
+                stripe={props.stripe}
+                border={props.border}
+                {...props.tableConfig}
+                v-slots={slots}
+            >
+                {props.columns.map((c) => {
+                    const key = c.key ?? String(c.prop ?? c.label);
+                    const align = c.align ?? props.columnAlign
+                    return (
+                        // @ts-ignore
+                        <ElTableColumn
+                            {...c}
+                            align={align}
+                            key={key}
+                            v-slots={{
+                                default: (scope: any) => {
+                                    // 1) 优先用 render（naive 风格）
+                                    if (c.render) return c.render({row: scope.row, $index: scope.$index});
+
+                                    // 2) 其次用具名 slot（template 风格）
+                                    const slotName = c.slot ?? (c.prop ? String(c.prop) : "");
+                                    const s = slotName ? (slots as any)[slotName] : undefined;
+                                    if (s) return s(scope);
+
+                                    // 3) 最后默认显示 row[prop]
+                                    if (c.prop) return scope.row[c.prop as any];
+                                    return null;
+                                },
+                            }}
+                        />
+                    );
+                })}
+            </ElTable>
+        );
+    },
+});

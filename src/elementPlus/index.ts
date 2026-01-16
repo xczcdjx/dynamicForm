@@ -5,7 +5,7 @@ import EleDynamicForm from "./EleDynamicForm";
 import ElePopupModal from "./ElePopupModal";
 import EleZealCard from "./EleZealCard";
 import {useDecorateForm} from './hooks/decorateForm'
-import {EleZealTableSearch, EleZealTablePaginationControl} from './EleZealTableTool'
+import {EleZealTableSearch, EleZealTablePaginationControl,EleZealTable} from './EleZealTableTool'
 import '../index.less'
 
 type eleDynamicInputRef = InstanceType<typeof EleDynamicInput> & ExposeType
@@ -25,5 +25,5 @@ export {
     EleDynamicInput, EleDynamicCascadeInput,
     EleDynamicForm, ElePopupModal,
     EleZealCard, useDecorateForm,
-    EleZealTableSearch, EleZealTablePaginationControl
+    EleZealTableSearch, EleZealTablePaginationControl,EleZealTable
 };

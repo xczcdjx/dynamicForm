@@ -54,3 +54,19 @@ export type ZealPagination = {
     setTotalSize: (totalSize: number) => void
     layout?: string
 } & PageModal
+
+export type ZealColumn<T extends Record<string, any>> = {
+    label?: string;
+    prop?: keyof T;
+    key?: string;
+    width?: string | number;
+    type?: 'default' | 'selection' | 'index' | 'expand';
+    minWidth?: string | number;
+    align?: "left" | "center" | "right";
+    fixed?: boolean | "left" | "right";
+    sortable?: boolean | "custom";
+    showOverflowTooltip?: boolean;
+    resizable?: boolean;
+    render?: (scope: { row: T; $index: number }) => VNode;
+    slot?: string;
+};
