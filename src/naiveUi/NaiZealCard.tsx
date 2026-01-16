@@ -6,7 +6,7 @@ import {
 import {NButton, NCard} from "naive-ui";
 import type {ZealCardSlots} from "@/types/slots.ts";
 import {useObserverSize, useWindowSize} from "../hooks/useTool";
-import {unwrapObj} from "@/utils/tools.ts";
+import {unwrapObj} from "../utils/tools.ts";
 
 export default defineComponent({
     name: 'NaiZealCard',

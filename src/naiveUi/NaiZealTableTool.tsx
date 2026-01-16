@@ -6,14 +6,13 @@ import {
     watch,
     toRef,
 } from "vue";
-import type {PropType, SlotsType, VNode,} from 'vue'
-import type {DyFormItem, PageModal, ZealPagination} from "@/types/form";
+import type {PropType, SlotsType,} from 'vue'
+import type {DyFormItem, ZealPagination} from "@/types/form";
 import type {ZealTableSearchSlots} from "@/types/slots";
 import type {PaginationProps, PaginationSlots} from "naive-ui/es/pagination/src/Pagination";
 import {NButton, NDrawer, NDrawerContent, NPagination} from "naive-ui";
 import {NaiDynamicForm} from "../naiveUi";
 import {useDyForm} from "../hooks/useDyForm";
-import {useWindowSize} from "../hooks/useTool";
 
 
 export const NaiZealTableSearch = defineComponent({

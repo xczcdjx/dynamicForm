@@ -6,8 +6,8 @@ import {
     watch,
     toRef,
 } from "vue";
-import type {PropType, SlotsType, VNode,} from 'vue'
-import type {DyFormItem, PageModal, ZealPagination} from "@/types/form";
+import type {PropType, SlotsType,} from 'vue'
+import type {DyFormItem, ZealPagination} from "@/types/form";
 import type {EleZealTablePaginationSlots, ZealTableSearchSlots} from "@/types/slots";
 
 import {ElPagination, ElButton, ElDrawer} from 'element-plus'
@@ -57,7 +57,7 @@ export const EleZealTableSearch = defineComponent({
             type: Boolean,
             default: false
         },
-        isMobile:{
+        isMobile: {
             type: Boolean,
             default: false
         }
@@ -171,7 +171,7 @@ export const EleZealTablePaginationControl = defineComponent({
         pageConfig: {
             type: Object as PropType<PaginationProps>
         },
-        isMobile:{
+        isMobile: {
             type: Boolean,
             default: false
         }
