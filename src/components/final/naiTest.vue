@@ -189,8 +189,9 @@ onMounted(() => {
 
 <template>
   <NaiZealCard>
-    <template #header>
-      <NaiZealTableSearch :search-items="searchFormItems" ref="naiZealTableSearchRef" :mobile-drawer="true"
+    <template #header="{isMobile}">
+      <NaiZealTableSearch :isMobile="isMobile" :search-items="searchFormItems" ref="naiZealTableSearchRef"
+                          :mobile-drawer="true"
                           title="zeal test" @onReset="doReset"
                           @onSearch="doSearch"/>
     </template>
@@ -213,8 +214,8 @@ onMounted(() => {
           :scroll-x="600"
       />
     </template>
-    <template #footer>
-      <NaiZealTablePaginationControl :pagination="pagination">
+    <template #footer="{isMobile}">
+      <NaiZealTablePaginationControl :is-mobile="isMobile" :pagination="pagination">
         <template #prefix="{ itemCount }">
           Total {{ itemCount }}
         </template>

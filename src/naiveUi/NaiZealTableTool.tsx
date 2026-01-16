@@ -37,10 +37,6 @@ export const NaiZealTableSearch = defineComponent({
             type: Number,
             default: 420
         },
-        checkWindowSize: {
-            type: Array as PropType<number[]>,
-            default: [756, 500]
-        },
         drawerOpenTxt: {
             type: String,
             default: 'Search Drawer'
@@ -60,6 +56,10 @@ export const NaiZealTableSearch = defineComponent({
         copyDefault: {
             type: Boolean,
             default: false
+        },
+        isMobile: {
+            type: Boolean,
+            default: false
         }
     },
     emits: {
@@ -71,7 +71,6 @@ export const NaiZealTableSearch = defineComponent({
         const drawShow = ref<boolean>(false)
         const copyData = ref<any>({})
         const useForm = useDyForm(props.searchItems)
-        const {isMobile} = useWindowSize(...props.checkWindowSize)
         const toggleDrawer = (f?: boolean) => {
             drawShow.value = f ?? !drawShow.value
         }
@@ -87,7 +86,7 @@ export const NaiZealTableSearch = defineComponent({
             emit('onSearch', data)
             toggleDrawer(false)
         }
-        watch(() => isMobile.value, (n) => {
+        watch(() => props.isMobile, (n) => {
             if (props.closeDrawerAuto) return
             if (!n) toggleDrawer(false)
         })
@@ -107,9 +106,9 @@ export const NaiZealTableSearch = defineComponent({
             const [rTxt, sTxt] = props.searchBtnTxt
             return <div class='naiZealTableSearch'>
                 {
-                    !props.mobileDrawer || !isMobile.value ?
+                    !props.mobileDrawer || !props.isMobile ?
                         <>
-                            {slots.title?.({isMobile: isMobile.value}) ?? <div class="naiTitle">
+                            {slots.title?.() ?? <div class="naiTitle">
                                 {props.title}
                             </div>}
                             <div class="searchForm" style={{
@@ -127,7 +126,7 @@ export const NaiZealTableSearch = defineComponent({
                             </div>
                         </> :
                         <div class='drawerSearchBtn'>
-                            {slots.title?.({isMobile: isMobile.value}) ?? <div class="naiTitle">
+                            {slots.title?.() ?? <div class="naiTitle">
                                 {props.title}
                             </div>}
                             <NButton size="small" onClick={() => {
@@ -240,15 +239,14 @@ export const NaiZealTablePaginationControl = defineComponent({
         pageConfig: {
             type: Object as PropType<PaginationProps>
         },
-        checkWindowSize: {
-            type: Array as PropType<number[]>,
-            default: [756, 500]
-        },
+        isMobile: {
+            type: Boolean,
+            default: false
+        }
     },
     slots: Object as SlotsType<PaginationSlots>,
     setup(props, {slots}) {
         const pm = toRef(props, 'pagination')
-        const {isMobile} = useWindowSize(...props.checkWindowSize)
 
         function onChange(page: number) {
             pm.value!.pageNo = page
@@ -266,7 +264,7 @@ export const NaiZealTablePaginationControl = defineComponent({
                                   itemCount={pm.value?.total}
                                   pageSizes={pm.value?.pageSizes}
                                   pageSlot={pm.value?.pageSlot}
-                                  showSizePicker={slots.prefix && isMobile.value ? false : pm.value?.showSizePicker}
+                                  showSizePicker={slots.prefix && props.isMobile ? false : pm.value?.showSizePicker}
                                   onUpdate:page={onChange}
                                   onUpdate:pageSize={onPageSizeChange}
                                   {...props.pageConfig}

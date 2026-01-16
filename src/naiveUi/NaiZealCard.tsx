@@ -5,7 +5,8 @@ import {
 } from "vue";
 import {NButton, NCard} from "naive-ui";
 import type {ZealCardSlots} from "@/types/slots.ts";
-import {useObserverSize} from "../hooks/useTool";
+import {useObserverSize, useWindowSize} from "../hooks/useTool";
+import {unwrapObj} from "@/utils/tools.ts";
 
 export default defineComponent({
     name: 'NaiZealCard',
@@ -24,45 +25,48 @@ export default defineComponent({
         searchBtnTxt: {
             type: Array as PropType<string[]>,
             default: () => ['Reset', 'Search']
-        }
+        },
+        checkWindowSize: {
+            type: Array as PropType<number[]>,
+            default: [756, 500]
+        },
     },
     slots: Object as SlotsType<ZealCardSlots>,
     setup(props, {slots}) {
+        const sizeObj = useWindowSize(...props.checkWindowSize)
         const {wrapRef, cardRef, restRef, tableHeight} = useObserverSize(NCard)
-        return () => <div class='zealCard' style={{height: `calc(${props.zealHeight} - ${props.outPadding * 2}px)`}}
-                          ref={wrapRef}>
-            <NCard ref={cardRef} v-slots={{
-                header: () => {
-                    const [rTxt, sTxt] = props.searchBtnTxt
-                    return <div class='header'>
-                        {slots.header?.() ?? <>
-                            <div class="title">{props.title}</div>
-                            <div class="search">
-                                {slots.searchForm?.()}
-                                {slots.searchBtn?.() || (slots.searchForm && <div class="searchBtn">
-                                    <NButton size="small">{rTxt}</NButton>
-                                    <NButton type="info" size="small">{sTxt}</NButton>
-                                </div>)}
+        return () => {
+            const unSizeObj = unwrapObj(sizeObj)
+            return <div class='zealCard' style={{height: `calc(${props.zealHeight} - ${props.outPadding * 2}px)`}}
+                        ref={wrapRef}>
+                <NCard ref={cardRef} v-slots={{
+                    header: () => {
+                        const [rTxt, sTxt] = props.searchBtnTxt
+                        return <div class='header'>
+                            {slots.header?.(unSizeObj) ?? <>
+                                <div class="title">{props.title}</div>
+                                <div class="search">
+                                    {slots.searchForm?.()}
+                                    {slots.searchBtn?.() || (slots.searchForm && <div class="searchBtn">
+                                        <NButton size="small">{rTxt}</NButton>
+                                        <NButton type="info" size="small">{sTxt}</NButton>
+                                    </div>)}
+                                </div>
+                            </>}
+                            <div class="controlBtn">
+                                {slots.controlBtn?.()}
+                                {slots.toolBtn?.()}
                             </div>
-                        </>}
-                        <div class="controlBtn">
-                            {slots.controlBtn?.()}
-                            {slots.toolBtn?.()}
                         </div>
+                    },
+                    footer: () => <div class='footer'>
+                        {slots.footer?.(unSizeObj)}
                     </div>
-                },
-                footer: () => <div class='footer'>
-                    {slots.footer?.()}
-                </div>
-            }}>
-                {slots.default?.({tableHeight: tableHeight.value})}
-            </NCard>
-            <div ref={restRef}>{slots.rest?.()}</div>
-        </div>
+                }}>
+                    {slots.default?.({tableHeight: tableHeight.value, ...unSizeObj})}
+                </NCard>
+                <div ref={restRef}>{slots.rest?.()}</div>
+            </div>
+        }
     }
 })
-const getPadY = (el: HTMLElement | null) => {
-    if (!el) return 0;
-    const s = getComputedStyle(el);
-    return (parseFloat(s.paddingTop) || 0) + (parseFloat(s.paddingBottom) || 0);
-};
