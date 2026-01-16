@@ -13,6 +13,8 @@ export type ZealCardSlots = {
 }
 export type ZealTableSearchSlots = {
     title?: () => VNode[]
+    searchBtn?: (o: { onSearch: () => void, onReset: () => void }) => VNode[]
+    drawerBtn?: (o: { openDrawer: () => void }) => VNode[]
 }
 export type EleZealTablePaginationSlots = {
     default?: () => VNode[]

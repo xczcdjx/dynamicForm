@@ -119,18 +119,23 @@ export const NaiZealTableSearch = defineComponent({
                                                     // showFeedback: false
                                                 }}/>
                             </div>
-                            <div class="searchBtn">
-                                <NButton size="small" onClick={onReset}>{rTxt}</NButton>
-                                <NButton type="info" size="small" onClick={onSearch}>{sTxt}</NButton>
-                            </div>
+                            {
+                                slots.searchBtn ? slots.searchBtn?.({onSearch, onReset}) : <div class="searchBtn">
+                                    <NButton size="small" onClick={onReset}>{rTxt}</NButton>
+                                    <NButton type="info" size="small" onClick={onSearch}>{sTxt}</NButton>
+                                </div>
+                            }
                         </> :
                         <div class='drawerSearchBtn'>
                             {slots.title?.() ?? <div class="naiTitle">
                                 {props.title}
                             </div>}
-                            <NButton size="small" onClick={() => {
-                                toggleDrawer(true)
-                            }}>{props.drawerOpenTxt}</NButton>
+                            {
+                                slots.drawerBtn ? slots.drawerBtn?.({openDrawer: () => toggleDrawer(true)}) :
+                                    <NButton size="small" onClick={() => {
+                                        toggleDrawer(true)
+                                    }}>{props.drawerOpenTxt}</NButton>
+                            }
                         </div>
 
                 }
@@ -138,7 +143,7 @@ export const NaiZealTableSearch = defineComponent({
                          trapFocus={false}
                          blockScroll={false} placement="top">
                     <NDrawerContent title={props.drawerTitle ?? props.title} v-slots={{
-                        footer: () => <div class="searchBtn">
+                        footer: () => slots.searchBtn ? slots.searchBtn?.({onSearch, onReset}) : <div class="searchBtn">
                             <NButton size="small" onClick={onReset}>{rTxt}</NButton>
                             <NButton type="info" size="small" onClick={onSearch}>{sTxt}</NButton>
                         </div>

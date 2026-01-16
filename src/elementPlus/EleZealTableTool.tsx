@@ -121,18 +121,21 @@ export const EleZealTableSearch = defineComponent({
                                                     // showFeedback: false
                                                 }}/>
                             </div>
-                            <div class="searchBtn">
-                                <ElButton size="small" onClick={onReset}>{rTxt}</ElButton>
-                                <ElButton type="info" size="small" onClick={onSearch}>{sTxt}</ElButton>
-                            </div>
+                            {
+                                slots.searchBtn ? slots.searchBtn?.({onSearch, onReset}) : <div class="searchBtn">
+                                    <ElButton size="small" onClick={onReset}>{rTxt}</ElButton>
+                                    <ElButton type="primary" size="small" onClick={onSearch}>{sTxt}</ElButton>
+                                </div>}
                         </> :
                         <div class='drawerSearchBtn'>
                             {slots.title?.() ?? <div class="naiTitle">
                                 {props.title}
                             </div>}
-                            <ElButton size="small" onClick={() => {
-                                toggleDrawer(true)
-                            }}>{props.drawerOpenTxt}</ElButton>
+                            {
+                                slots.drawerBtn ? slots.drawerBtn?.({openDrawer: () => toggleDrawer(true)}) :
+                                    <ElButton size="small" onClick={() => {
+                                        toggleDrawer(true)
+                                    }}>{props.drawerOpenTxt}</ElButton>}
                         </div>
 
                 }
@@ -141,10 +144,11 @@ export const EleZealTableSearch = defineComponent({
                     header: () => <div>
                         {props.drawerTitle ?? props.title}
                     </div>,
-                    footer: () => <div class="searchBtn">
-                        <ElButton size="small" onClick={onReset}>{rTxt}</ElButton>
-                        <ElButton type="info" size="small" onClick={onSearch}>{sTxt}</ElButton>
-                    </div>
+                    footer: () =>
+                        slots.searchBtn ? slots.searchBtn?.({onSearch, onReset}) : <div class="searchBtn">
+                            <ElButton size="small" onClick={onReset}>{rTxt}</ElButton>
+                            <ElButton type="primary" size="small" onClick={onSearch}>{sTxt}</ElButton>
+                        </div>
                 }}>
                     <div class="searchForm">
                         <EleDynamicForm formConfig={

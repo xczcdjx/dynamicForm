@@ -159,7 +159,11 @@ onMounted(() => {
       <EleZealTableSearch :is-mobile="isMobile" :search-items="searchFormItems" ref="naiZealTableSearchRef"
                           :mobile-drawer="true"
                           title="zeal test" @onReset="doReset"
-                          @onSearch="doSearch"/>
+                          @onSearch="doSearch">
+        <template #drawerBtn="{openDrawer}">
+          <el-button @click="openDrawer">+</el-button>
+        </template>
+      </EleZealTableSearch>
     </template>
     <template #controlBtn>
       <el-button type="success" size="small" @click="newItem">Add</el-button>
