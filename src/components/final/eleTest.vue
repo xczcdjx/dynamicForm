@@ -27,7 +27,7 @@ const handleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
 const naiZealTableSearchRef = ref<eleZealTableSearchRef | null>(null)
 const naiPopupModalRef = ref<elePopupModalRef | null>(null)
 const tableLoading = ref<boolean>(false)
-const selectOpts=ref<(number|string)[]>([])
+const selectOpts = ref<(number | string)[]>([])
 // search form
 const searchFormItems = useDecorateForm([
   {
@@ -154,6 +154,7 @@ function delItem(r: SongType) {
   ElMessage.success('delete successful')
   fetchData()
 }
+
 const deleteAll = () => {
   zealData.value = zealData.value.filter(it2 => !selectOpts.value.includes(it2.no))
   ElMessage.success('delete all successful')
@@ -178,7 +179,7 @@ const onSubmit = async () => {
   })
 }
 const handleSelectionChange = (v: SongType[]) => {
-  selectOpts.value=v.map(it=>it.no)
+  selectOpts.value = v.map(it => it.no)
 }
 onMounted(() => {
   fetchData()
