@@ -67,6 +67,6 @@ export type ZealColumn<T extends Record<string, any>> = {
     sortable?: boolean | "custom";
     showOverflowTooltip?: boolean;
     resizable?: boolean;
-    render?: (scope: { row: T; $index: number }) => VNode;
+    render2?: (row: T, $index: number) => VNode;
     slot?: string;
 };

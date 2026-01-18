@@ -239,45 +239,46 @@ export const EleZealTable = defineComponent({
         }
     },
     slots: Object as SlotsType<EleZealTableSlots>,
-    setup(props, {slots}) {
-        return () => (
-            <ElTable
-                data={props.data}
-                maxHeight={props.maxHeight as any}
-                v-loading={props.loading}
-                stripe={props.stripe}
-                border={props.border}
-                {...props.tableConfig}
-                v-slots={slots}
-            >
-                {props.columns.map((c) => {
-                    const key = c.key ?? String(c.prop ?? c.label);
-                    const align = c.align ?? props.columnAlign
-                    return (
-                        // @ts-ignore
-                        <ElTableColumn
-                            {...c}
-                            align={align}
-                            key={key}
-                            v-slots={{
-                                default: (scope: any) => {
-                                    // 1) 优先用 render（naive 风格）
-                                    if (c.render) return c.render({row: scope.row, $index: scope.$index});
-
-                                    // 2) 其次用具名 slot（template 风格）
-                                    const slotName = c.slot ?? (c.prop ? String(c.prop) : "");
-                                    const s = slotName ? (slots as any)[slotName] : undefined;
-                                    if (s) return s(scope);
-
-                                    // 3) 最后默认显示 row[prop]
-                                    if (c.prop) return scope.row[c.prop as any];
-                                    return null;
-                                },
-                            }}
-                        />
-                    );
-                })}
-            </ElTable>
-        );
+    setup(props, {slots, attrs}) {
+        return () =>
+            (
+                <ElTable
+                    {...props.tableConfig}
+                    {...attrs}
+                    data={props.data}
+                    maxHeight={props.maxHeight as any}
+                    v-loading={props.loading}
+                    stripe={props.stripe}
+                    border={props.border}
+                    v-slots={slots}
+                >
+                    {props.columns.map((c) => {
+                        const key = c.key ?? String(c.prop ?? c.label);
+                        const align = c.align ?? props.columnAlign
+                        const {render2, slot, ...colProps} = c as any;
+                        const slotKey =
+                            slot ? slot : c.prop ? `cell-${String(c.prop)}` : undefined;
+                        const cellSlot = slotKey ? (slots as any)[slotKey] : undefined;
+                        return (
+                            <ElTableColumn
+                                {...colProps}
+                                align={align}
+                                key={key}
+                                v-slots={{
+                                    default: (scope: any) => {
+                                        // 1.render
+                                        if (render2) return render2(scope.row, scope.$index);
+                                        // 2.具名 slot
+                                        if (cellSlot) return cellSlot(scope);
+                                        // 3.row[prop]
+                                        if (c.prop) return scope.row[c.prop as any];
+                                        return null;
+                                    },
+                                }}
+                            />
+                        );
+                    })}
+                </ElTable>
+            );
     },
 });

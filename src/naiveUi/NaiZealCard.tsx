@@ -54,7 +54,7 @@ export default defineComponent({
                                 </div>
                             </>}
                             <div class="controlBtn">
-                                {slots.controlBtn?.()}
+                                <div>{slots.controlBtn?.()}</div>
                                 {slots.toolBtn?.()}
                             </div>
                         </div>

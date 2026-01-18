@@ -27,6 +27,7 @@ const handleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
 const naiZealTableSearchRef = ref<eleZealTableSearchRef | null>(null)
 const naiPopupModalRef = ref<elePopupModalRef | null>(null)
 const tableLoading = ref<boolean>(false)
+const selectOpts=ref<(number|string)[]>([])
 // search form
 const searchFormItems = useDecorateForm([
   {
@@ -51,12 +52,13 @@ const searchFormItems = useDecorateForm([
 })) as any[])
 // table column
 const columns: ZealColumn<SongType>[] = [
-  {type: 'expand', render: row => h('div', {}, JSON.stringify(row, null, 2))},
+  {type: 'selection', width: 55},
+  {type: 'expand', render2: row => h('div', {}, JSON.stringify(row, null, 2))},
   {label: "No", prop: "no", width: 80},
   {label: "Title", prop: "title", slot: "title"},
   {label: "Length", prop: "length"},
   {
-    label: "Actions", fixed: 'right', width: 160, render: (row) => h(
+    label: "Actions", fixed: 'right', width: 160, render2: (row) => h(
         ElSpace, {}, [
           h(ElButton,
               {
@@ -152,7 +154,11 @@ function delItem(r: SongType) {
   ElMessage.success('delete successful')
   fetchData()
 }
-
+const deleteAll = () => {
+  zealData.value = zealData.value.filter(it2 => !selectOpts.value.includes(it2.no))
+  ElMessage.success('delete all successful')
+  fetchData()
+}
 const onSubmit = async () => {
   handleDynamicFormRef.value?.validator().then((v: any) => {
     if (referId.value === '-1') {
@@ -170,6 +176,9 @@ const onSubmit = async () => {
       fetchData()
     })
   })
+}
+const handleSelectionChange = (v: SongType[]) => {
+  selectOpts.value=v.map(it=>it.no)
 }
 onMounted(() => {
   fetchData()
@@ -190,6 +199,7 @@ onMounted(() => {
     </template>
     <template #controlBtn>
       <el-button type="success" size="small" @click="newItem">Add</el-button>
+      <el-button type="danger" size="small" @click="deleteAll" :disabled="!selectOpts.length">Del Selected</el-button>
     </template>
     <template #toolBtn>
       <el-button type="default" size="small" @click="()=>{}">
@@ -197,7 +207,8 @@ onMounted(() => {
       </el-button>
     </template>
     <template #default="{tableHeight}">
-      <EleZealTable :data="tableData" :columns="columns" :max-height="tableHeight" :loading="tableLoading">
+      <EleZealTable :data="tableData" :columns="columns" :max-height="tableHeight" :loading="tableLoading"
+                    @selection-change="handleSelectionChange">
         <template #title="{ row }">
           <el-tag>{{ row.title }}</el-tag>
         </template>
