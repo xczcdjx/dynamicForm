@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {h, nextTick, onMounted, ref} from "vue";
-import {type DataTableColumns, NButton, NDataTable, NSpace, useMessage} from "naive-ui";
+import {DataTableColumnKey, type DataTableColumns, NButton, NDataTable, NSpace, useMessage} from "naive-ui";
 import {
   NaiPopupModal,
   useDecorateForm,
@@ -18,6 +18,7 @@ import type {
 } from "@/naiveUi"
 import {type SongType, zealData} from "./dataTest";
 import {useDyForm, useReactiveForm, usePagination} from "@/";
+import {ElButton, ElMessage} from "element-plus";
 
 const message = useMessage()
 const referId = ref<string | number>('-1')
@@ -26,6 +27,7 @@ const handleDynamicFormRef = ref<naiDynamicFormRef | null>(null)
 const naiZealTableSearchRef = ref<naiZealTableSearchRef | null>(null)
 const naiPopupModalRef = ref<naiPopupModalRef | null>(null)
 const tableLoading = ref<boolean>(false)
+const selectOpts = ref<(number | string)[]>([])
 // search form
 const searchFormItems = useDecorateForm([
   {
@@ -50,6 +52,9 @@ const searchFormItems = useDecorateForm([
 })) as any[])
 // table column
 const columns: DataTableColumns<SongType> = [
+  {
+    type: 'selection'
+  },
   {
     title: 'No',
     key: 'no'
@@ -120,7 +125,9 @@ const doReset = () => {
   fetchData()
   pagination.pageNo = 1
 }
-
+function rowKey(row: SongType) {
+  return row.no
+}
 // mock http request
 async function fetchData() {
   tableLoading.value = true
@@ -163,7 +170,11 @@ function delItem(r: SongType) {
   message.success('delete successful')
   fetchData()
 }
-
+const deleteAll = () => {
+  zealData.value = zealData.value.filter(it2 => !selectOpts.value.includes(it2.no))
+  ElMessage.success('delete all successful')
+  fetchData()
+}
 const onSubmit = async () => {
   handleDynamicFormRef.value?.validator().then((v: any) => {
     if (referId.value === '-1') {
@@ -182,6 +193,9 @@ const onSubmit = async () => {
     })
   })
 }
+const handleSelectionChange = (v: DataTableColumnKey[]) => {
+  selectOpts.value = v
+}
 onMounted(() => {
   fetchData()
 })
@@ -196,7 +210,8 @@ onMounted(() => {
                           @onSearch="doSearch"/>
     </template>
     <template #controlBtn>
-      <n-button type="success" size="small" @click="newItem">Add</n-button>
+      <n-button type="success" size="small" @click="newItem">Add</n-button>&nbsp;
+      <n-button type="error" size="small" @click="deleteAll" :disabled="!selectOpts.length">Del Selected</n-button>
     </template>
     <template #toolBtn>
       <n-button type="default" size="small" @click="()=>{}">
@@ -205,6 +220,7 @@ onMounted(() => {
     </template>
     <template #default="{tableHeight}">
       <n-data-table
+          :row-key="rowKey"
           :loading="tableLoading"
           :columns="columns"
           :data="tableData"
@@ -212,6 +228,7 @@ onMounted(() => {
           :style="{ height: tableHeight+'px'}"
           :flex-height="true"
           :scroll-x="600"
+          @update:checked-row-keys="handleSelectionChange"
       />
     </template>
     <template #footer="{isMobile}">

@@ -31,8 +31,8 @@ import EleTest from "@/components/final/eleTest.vue";
         <!--      <ele-dynamicform-test/>-->
         <!--      <ele-decorate-dy-form-test/>-->
         <!--      final-->
-<!--        <nai-test/>-->
-        <ele-test/>
+        <nai-test/>
+<!--        <ele-test/>-->
       </div>
     </n-modal-provider>
   </n-message-provider>
