@@ -18,7 +18,6 @@ import type {
 } from "@/naiveUi"
 import {type SongType, zealData} from "./dataTest";
 import {useDyForm, useReactiveForm, usePagination} from "@/";
-import {ElButton, ElMessage} from "element-plus";
 
 const message = useMessage()
 const referId = ref<string | number>('-1')
@@ -172,7 +171,7 @@ function delItem(r: SongType) {
 }
 const deleteAll = () => {
   zealData.value = zealData.value.filter(it2 => !selectOpts.value.includes(it2.no))
-  ElMessage.success('delete all successful')
+  message.success('delete successful')
   fetchData()
 }
 const onSubmit = async () => {

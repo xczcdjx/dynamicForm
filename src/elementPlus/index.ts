@@ -1,3 +1,4 @@
+import '../index.less'
 import type {ExposeDyFType, ExposePopupMType, ExposeType, ExposeZealTSearchType} from "@/types";
 import EleDynamicInput from "./EleDynamicInput";
 import EleDynamicCascadeInput from "./EleDynamicCascadeInput";
@@ -6,7 +7,6 @@ import ElePopupModal from "./ElePopupModal";
 import EleZealCard from "./EleZealCard";
 import {useDecorateForm} from './hooks/decorateForm'
 import {EleZealTableSearch, EleZealTablePaginationControl,EleZealTable} from './EleZealTableTool'
-import '../index.less'
 
 type eleDynamicInputRef = InstanceType<typeof EleDynamicInput> & ExposeType
 type eleCascadeDynamicInputRef = InstanceType<typeof EleDynamicCascadeInput> & ExposeType

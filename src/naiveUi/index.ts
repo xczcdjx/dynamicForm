@@ -1,3 +1,4 @@
+import '../index.less'
 import type {ExposeDyFType, ExposePopupMType, ExposeType, ExposeZealTSearchType} from "@/types";
 import NaiDynamicInput from "./NaiDynamicInput";
 import NaiDynamicCascadeInput from "./NaiDynamicCascadeInput";
@@ -6,7 +7,6 @@ import NaiPopupModal from "./NaiPopupModal";
 import NaiZealCard from "./NaiZealCard";
 import {useDecorateForm} from './hooks/decorateForm'
 import {NaiZealTableSearch, NaiZealTablePaginationControl} from "./NaiZealTableTool";
-import '../index.less'
 
 type naiDynamicInputRef = InstanceType<typeof NaiDynamicInput> & ExposeType
 type naiDynamicCascadeInputRef = InstanceType<typeof NaiDynamicCascadeInput> & ExposeType

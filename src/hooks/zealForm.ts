@@ -17,7 +17,7 @@ export const usePagination = function (cb?: () => void, options?: Partial<ZealPa
         pageSizes: [25, 50, 100, 200],
         pageSlot: 5,
         total: 0,
-        layout: "total, sizes, prev, pager, next, jumper",
+        layout: "total, prev, pager, next, sizes, jumper",
         onChange,
         onPageSizeChange,
         setTotalSize(totalSize: number) {
