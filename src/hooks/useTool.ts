@@ -5,7 +5,7 @@ type VueComponentCtor = abstract new (...args: any) => ComponentPublicInstance
 
 function useWindowSize(mobileWidth: number = 756, delay: number = 500) {
     const width = ref(window.innerWidth)
-    const height = ref(window.innerWidth)
+    const height = ref(window.innerHeight)
     const listenSize = Debounce(() => {
         width.value = window.innerWidth
         height.value = window.innerHeight
