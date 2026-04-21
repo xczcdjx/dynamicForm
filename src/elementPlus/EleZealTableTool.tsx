@@ -8,12 +8,27 @@ import {
 } from "vue";
 import type {PropType, SlotsType,} from 'vue'
 import type {DyFormItem, ZealColumn, ZealPagination} from "@/types/form";
-import type {EleZealTablePaginationSlots, EleZealTableSlots, ZealTableSearchSlots} from "@/types/slots";
+import type {
+    EleZealTablePaginationSlots,
+    EleZealTableSlots,
+    ZealTableBtnControlSlots,
+    ZealTableSearchSlots
+} from "@/types/slots";
 
-import {ElPagination, ElButton, ElDrawer, ElTable, ElTableColumn, type TableProps} from 'element-plus'
+import {
+    ElPagination,
+    ElButton,
+    ElDrawer,
+    ElTable,
+    ElTableColumn,
+    type TableProps,
+    ElSpace,
+    ElDropdown, ElDropdownMenu, ElDropdownItem
+} from 'element-plus'
 import {EleDynamicForm} from "../elementPlus";
 import {useDyForm} from "../hooks/useDyForm";
 import type {PaginationProps} from "element-plus/es/components/pagination/src/pagination";
+import type {TableBtnType} from "@/types";
 
 
 export const EleZealTableSearch = defineComponent({
@@ -282,3 +297,63 @@ export const EleZealTable = defineComponent({
             );
     },
 });
+
+export const EleZealTableBtnControl = defineComponent({
+    name: 'EleZealTableBtnControl',
+    props: {
+        isMobile: {
+            type: Boolean,
+            default: false
+        },
+        btnItems: {
+            type: Array as PropType<TableBtnType[]>,
+            default: () => []
+        },
+        size: {
+            type: String as PropType<"small" | "large">,
+        },
+        dropDownText: {
+            type: String,
+            default: '更多'
+        }
+    },
+    slots: Object as SlotsType<ZealTableBtnControlSlots>,
+    emits: {
+        onSelect: (k: string) => true
+    },
+    setup(props, {emit, slots}) {
+        const items = props.btnItems
+        const {dropDownText, size} = props
+        return () => <ElSpace>
+            {!props.isMobile ? items.map(it => {
+                const {key, onSelect, title, ...p} = it
+                return <ElButton size={size} key={key} onClick={() => {
+                    onSelect?.(key)
+                    emit('onSelect', key)
+                }} {...p}>{title}</ElButton>
+
+            }) : <ElDropdown size={size} trigger='click'
+                             placement='bottom'
+                             v-slots={{
+                                 dropdown: () => <ElDropdownMenu>
+                                     {
+                                         items.map(it => <ElDropdownItem disabled={it.disabled} key={it.key}
+                                                                         onClick={() => {
+                                                                             it.onSelect?.(it.key)
+                                                                             emit('onSelect', it.key)
+                                                                         }}>
+                                                 {it.title}
+                                             </ElDropdownItem>
+                                         )
+                                     }
+                                 </ElDropdownMenu>
+                             }}
+            >
+                {slots.text ? slots.text() : <ElButton size={size}>
+                    {dropDownText}
+                </ElButton>}
+            </ElDropdown>
+            }
+        </ElSpace>
+    }
+})

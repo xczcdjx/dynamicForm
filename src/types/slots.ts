@@ -24,3 +24,6 @@ export type EleZealTableSlots = {
     append?: () => VNode[]
     empty?: () => VNode[]
 }
+export type ZealTableBtnControlSlots={
+    text: () => void
+}

@@ -4,15 +4,16 @@ import {
     onMounted,
     ref,
     watch,
-    toRef,
+    toRef, type VNodeChild,
 } from "vue";
-import type {PropType, SlotsType,} from 'vue'
+import type {PropType, SlotsType, VNode} from 'vue'
 import type {DyFormItem, ZealPagination} from "@/types/form";
-import type {ZealTableSearchSlots} from "@/types/slots";
+import type {ZealTableBtnControlSlots, ZealTableSearchSlots} from "@/types/slots";
 import type {PaginationProps, PaginationSlots} from "naive-ui/es/pagination/src/Pagination";
-import {NButton, NDrawer, NDrawerContent, NPagination} from "naive-ui";
+import {NButton, NDrawer, NDrawerContent, NDropdown, NPagination, NSpace} from "naive-ui";
 import {NaiDynamicForm} from "../naiveUi";
 import {useDyForm} from "../hooks/useDyForm";
+import type {TableBtnType} from "@/types";
 
 
 export const NaiZealTableSearch = defineComponent({
@@ -277,5 +278,55 @@ export const NaiZealTablePaginationControl = defineComponent({
                                       ...slots
                                   }}
         />
+    }
+})
+export const NaiZealTableBtnControl = defineComponent({
+    name: 'NaiZealTableBtnControl',
+    props: {
+        isMobile: {
+            type: Boolean,
+            default: false
+        },
+        btnItems: {
+            type: Array as PropType<TableBtnType[]>,
+            default: () => []
+        },
+        size: {
+            type: String as PropType<"medium" | "small" | "large">,
+        },
+        dropDownText: {
+            type: String,
+            default: '更多'
+        }
+    },
+    slots: Object as SlotsType<ZealTableBtnControlSlots>,
+    emits: {
+        onSelect: (k: string) => true
+    },
+    setup(props, {emit, slots}) {
+        const items = props.btnItems
+        const {dropDownText, size} = props
+        const onSelect = (k: string) => {
+            items.find(it => it.key === k)?.onSelect?.(k)
+            emit('onSelect', k)
+        }
+        return () => <NSpace>
+            {!props.isMobile ? items.map(it => {
+                const {key, onSelect, title, ...p} = it
+                // @ts-ignore
+                return <NButton size={size} key={key} onClick={() => {
+                    onSelect?.(key)
+                    emit('onSelect', key)
+                }} {...p}>{title}</NButton>
+            }) : <NDropdown size={size} trigger='click'
+                            onSelect={onSelect}
+                            options={items.map(it => ({label: it.title, disabled: it.disabled, key: it.key}))}
+                            v-slots={{
+                                default: () => slots.text ? slots.text() : <NButton size={size}>
+                                    {dropDownText}
+                                </NButton>
+                            }}
+            />}
+        </NSpace>
     }
 })

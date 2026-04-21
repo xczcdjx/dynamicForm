@@ -142,3 +142,10 @@ export type ExposeZealTSearchType = {
     toggleDrawer?: (f?: boolean) => void
     getParams?: <T extends object>() => T
 }
+
+export type TableBtnType = {
+    key: string
+    title?: string
+    onSelect?: (k: string) => void
+    disabled?: boolean
+}

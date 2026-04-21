@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {h, nextTick, onMounted, ref} from "vue";
-import {DataTableColumnKey, type DataTableColumns, NButton, NDataTable, NSpace, useMessage} from "naive-ui";
+import {type DataTableColumnKey, type DataTableColumns, NButton, NDataTable, NSpace, useMessage} from "naive-ui";
 import {
   NaiPopupModal,
   useDecorateForm,
@@ -16,9 +16,18 @@ import type {
   naiDynamicFormRef,
   naiZealTableSearchRef
 } from "@/naiveUi"
-import {type SongType, zealData} from "./dataTest";
 import {useDyForm, useReactiveForm, usePagination} from "@/";
-
+interface SongType {
+  no: number|string
+  title: string
+  length: string
+}
+const zealData = ref<SongType[]>([
+  {no: 3, title: 'Wonderwall', length: '4:18'},
+  {no: 4, title: 'Don\'t Look Back in Anger', length: '4:48'},
+  {no: 12, title: 'Champagne Supernova', length: '7:27'},
+  ...Array.from({length: 50}).map((_, i) => ({no: i + 13, title: `test Data ${i + 1}`, length: `${i * i}`}))
+])
 const message = useMessage()
 const referId = ref<string | number>('-1')
 const tableData = ref<SongType[]>([])
@@ -171,7 +180,7 @@ function delItem(r: SongType) {
 }
 const deleteAll = () => {
   zealData.value = zealData.value.filter(it2 => !selectOpts.value.includes(it2.no))
-  message.success('delete successful')
+  message.success('delete all successful')
   fetchData()
 }
 const onSubmit = async () => {

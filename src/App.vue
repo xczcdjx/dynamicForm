@@ -10,8 +10,7 @@ import EleSimpleDyFormTest from "@/components/elementUi/eleSimpleDyFormTest.vue"
 import EleCustomDyFormTest from "@/components/elementUi/eleCustomDyFormTest.vue";
 import EleDynamicformTest from "@/components/elementUi/eleDynamicformTest.vue";
 import EleDecorateDyFormTest from "@/components/elementUi/eleDecorateDyFormTest.vue";
-import NaiTest from "@/components/final/naiTest.vue";
-import EleTest from "@/components/final/eleTest.vue";
+import FinalIndex from "@/components/final/index.vue";
 </script>
 
 <template>
@@ -31,8 +30,7 @@ import EleTest from "@/components/final/eleTest.vue";
         <!--      <ele-dynamicform-test/>-->
         <!--      <ele-decorate-dy-form-test/>-->
         <!--      final-->
-<!--        <nai-test/>-->
-        <ele-test/>
+        <final-index/>
       </div>
     </n-modal-provider>
   </n-message-provider>
