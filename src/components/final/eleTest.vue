@@ -78,7 +78,9 @@ const {tableColumns, eleZealCardRef} = useZealColumnTool<SongType>(({isMobile}) 
         }
     )
   },
-])
+],{
+  align:'center'
+})
 const pagination = usePagination(fetchData)
 const updateFormItems = useReactiveForm<SongType>([
   {
@@ -208,8 +210,9 @@ onMounted(() => {
         Tool...
       </el-button>
     </template>
-    <template #default="{tableHeight}">
+    <template #default="{tableHeight,isMobile}">
       <EleZealTable :data="tableData" :columns="tableColumns" :max-height="tableHeight" :loading="tableLoading"
+                    :table-config="{size:isMobile?'small':''}"
                     @selection-change="handleSelectionChange">
         <template #title="{ row }">
           <el-tag>{{ row.title }}</el-tag>

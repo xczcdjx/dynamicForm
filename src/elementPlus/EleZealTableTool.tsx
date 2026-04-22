@@ -330,7 +330,7 @@ export const EleZealTableBtnControl = defineComponent({
     setup(props, {emit, slots}) {
         const items = props.btnItems
         const {dropDownText, size} = props
-        return () => <ElSpace>
+        return () => <div class='zealTableBtnControl'>
             {!props.isMobile ? items.map(it => {
                 const {key, onSelect, title, ...p} = it
                 return <ElButton size={size} key={key} onClick={() => {
@@ -361,6 +361,6 @@ export const EleZealTableBtnControl = defineComponent({
                 </ElButton>}
             </ElDropdown>
             }
-        </ElSpace>
+        </div>
     }
 })

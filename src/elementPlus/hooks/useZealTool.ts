@@ -13,7 +13,7 @@ export function useZealColumnTool<T extends Record<string, any>>(
         return createColumn({
             isMobile: eleCR?.isMobile ?? ref(false),
             tableHeight: eleCR?.tableHeight ?? ref(0),
-        }).map(it => ({...it, ...config})) as ZealColumn<T>
+        }).map(it => ({...config, ...it})) as ZealColumn<T>[]
     })
     return {
         eleZealCardRef, tableColumns

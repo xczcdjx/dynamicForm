@@ -14,7 +14,7 @@ export function useZealColumnTool<T extends Record<string, any> = any>(
         return createColumn({
             isMobile: eleCR?.isMobile ?? ref(false),
             tableHeight: eleCR?.tableHeight ?? ref(0),
-        }).map(it => ({...it, ...config})) as DataTableColumns<T>
+        }).map(it => ({...config, ...it})) as DataTableColumns<T>
     })
     return {
         naiZealCardRef, tableColumns

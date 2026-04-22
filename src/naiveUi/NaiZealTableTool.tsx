@@ -315,7 +315,7 @@ export const NaiZealTableBtnControl = defineComponent({
             items.find(it => it.key === k)?.onSelect?.(k)
             emit('onSelect', k)
         }
-        return () => <NSpace justify="center">
+        return () => <div class='zealTableBtnControl'>
             {!props.isMobile ? items.map(it => {
                 const {key, onSelect, title, ...p} = it
                 // @ts-ignore
@@ -333,6 +333,6 @@ export const NaiZealTableBtnControl = defineComponent({
                             }}
                             {...props.dropDownProps}
             />}
-        </NSpace>
+        </div>
     }
 })

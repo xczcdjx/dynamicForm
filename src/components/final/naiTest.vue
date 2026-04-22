@@ -237,8 +237,9 @@ onMounted(() => {
         Tool...
       </n-button>
     </template>
-    <template #default="{tableHeight}">
+    <template #default="{tableHeight,isMobile}">
       <n-data-table
+          :size="isMobile?'small':'large'"
           :row-key="rowKey"
           :loading="tableLoading"
           :columns="tableColumns"
