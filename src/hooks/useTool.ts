@@ -22,7 +22,7 @@ function useWindowSize(mobileWidth: number = 756, delay: number = 500) {
     }
 }
 
-function useObserverSize<T extends VueComponentCtor>(ct: T) {
+function useObserverSize<T extends VueComponentCtor>(ct: T,delay:number=120) {
     const prefix = ct.name === 'ElCard' ? 'el' : 'n'
     const wrapRef = ref<HTMLDivElement | null>(null);
     const restRef = ref<HTMLDivElement | null>(null);
@@ -32,31 +32,45 @@ function useObserverSize<T extends VueComponentCtor>(ct: T) {
 
     let ro: ResizeObserver | null = null;
 
-    const calc = () => {
-        const wrap = wrapRef.value;
+    const getCardNodes = () => {
         const cardEl = (cardRef.value?.$el as HTMLElement | undefined) ?? null;
-        if (!wrap || !cardEl) return;
+        if (!cardEl) {
+            return {
+                cardEl: null,
+                headerWrap: null,
+                footerWrap: null,
+                contentEl: null
+            };
+        }
 
-        const wrapInnerH = wrap.clientHeight - getPadY(wrap);
-
-        // rest 在 card
-        const restH = restRef.value?.offsetHeight ?? 0;
-
-        // card header/footer 容器
         const headerWrap =
             (cardEl.querySelector(`.${prefix}-card__header`) as HTMLElement | null) ||
             (cardEl.querySelector(`.${prefix}-card-header`) as HTMLElement | null);
+
         const footerWrap =
-            (cardEl.querySelector(`.${prefix}-card__footer`) as HTMLElement | null) ||
-            (cardEl.querySelector(`.${prefix}-card-footer`) as HTMLElement | null);
+            (cardEl.querySelector(`.${prefix}-card__footer`) as HTMLElement | null);
 
-        const headerH = headerWrap?.offsetHeight ?? 0;
-        const footerH = footerWrap?.offsetHeight ?? 0;
-
-        // 量 content 的 padding
         const contentEl =
             (cardEl.querySelector(`.${prefix}-card__body`) as HTMLElement | null) ||
-            (cardEl.querySelector(`.${prefix}-card-content`) as HTMLElement | null);
+            (cardEl.querySelector(`.${prefix}-card__content`) as HTMLElement | null);
+
+        return {
+            cardEl,
+            headerWrap,
+            footerWrap,
+            contentEl
+        };
+    };
+
+    const calcCore = () => {
+        const wrap = wrapRef.value;
+        const { cardEl, headerWrap, footerWrap, contentEl } = getCardNodes();
+        if (!wrap || !cardEl) return;
+
+        const wrapInnerH = wrap.clientHeight - getPadY(wrap);
+        const restH = restRef.value?.offsetHeight ?? 0;
+        const headerH = headerWrap?.offsetHeight ?? 0;
+        const footerH = footerWrap?.offsetHeight ?? 0;
         const contentPadY = getPadY(contentEl);
         tableHeight.value = Math.max(
             0,
@@ -66,13 +80,16 @@ function useObserverSize<T extends VueComponentCtor>(ct: T) {
 
     onMounted(async () => {
         await nextTick();
-        calc();
+        const calc=Debounce(calcCore,delay)
 
         ro = new ResizeObserver(calc);
         wrapRef.value && ro.observe(wrapRef.value);
         restRef.value && ro.observe(restRef.value);
         // header/footer/content 的高度变化也会影响 tableHeight，直接观察 card 根节点最省事
-        cardRef.value?.$el && ro.observe(cardRef.value.$el as HTMLElement);
+        // cardRef.value?.$el && ro.observe(cardRef.value.$el as HTMLElement);
+        const { cardEl, headerWrap } = getCardNodes();
+        cardEl && ro.observe(cardEl);
+        if (prefix==='n') headerWrap && ro.observe(headerWrap);
     });
 
     onBeforeUnmount(() => {
