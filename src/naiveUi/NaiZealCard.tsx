@@ -1,4 +1,5 @@
 import {
+    computed,
     defineComponent,
     type PropType,
     type SlotsType,
@@ -30,11 +31,19 @@ export default defineComponent({
             type: Array as PropType<number[]>,
             default: [756, 500]
         },
+        observeDelay: {
+            type: Number,
+            default: 100
+        }
     },
     slots: Object as SlotsType<ZealCardSlots>,
-    setup(props, {slots}) {
+    setup(props, {slots, expose}) {
         const sizeObj = useWindowSize(...props.checkWindowSize)
-        const {wrapRef, cardRef, restRef, tableHeight} = useObserverSize(NCard)
+        const {wrapRef, cardRef, restRef, tableHeight} = useObserverSize(NCard,props.observeDelay)
+        expose({
+            tableHeight,
+            isMobile: computed(() => sizeObj.isMobile)
+        })
         return () => {
             const unSizeObj = unwrapObj(sizeObj)
             return <div class='zealCard' style={{height: `calc(${props.zealHeight} - ${props.outPadding * 2}px)`}}

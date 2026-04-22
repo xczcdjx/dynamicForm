@@ -1,5 +1,5 @@
 import type {DyFormItem} from "./form.ts";
-import type {VNode} from "vue";
+import type {ComputedRef, Ref, VNode} from "vue";
 import {renderCheckbox, renderSlider} from "@/elementPlus";
 
 export type DyCFormItem = {
@@ -81,6 +81,14 @@ export type DyRandomFun = (id?: number | string) => string
 export type ExposeType = {
     onSet?: (obj?: object) => void
     getResult?: (t?: 'res' | 'ori') => DyCFormItem[] | object
+}
+export type ExposeZealCardType = {
+    tableHeight: Ref<number>
+    isMobile: ComputedRef<boolean>
+}
+export type ZealColumnType = {
+    tableHeight: Ref<number>
+    isMobile: Ref<boolean>
 }
 // DynamicForm type
 export type PresetType = 'fullRow' | 'grid'

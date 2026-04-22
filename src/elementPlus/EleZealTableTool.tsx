@@ -30,6 +30,7 @@ import {useDyForm} from "../hooks/useDyForm";
 import type {PaginationProps} from "element-plus/es/components/pagination/src/pagination";
 import type {TableBtnType} from "@/types";
 import {dropdownProps} from "element-plus/es/components/dropdown/src/dropdown";
+import {buttonProps} from "element-plus/es/components/button/src/button";
 
 
 export const EleZealTableSearch = defineComponent({
@@ -307,11 +308,12 @@ export const EleZealTableBtnControl = defineComponent({
             default: false
         },
         btnItems: {
-            type: Array as PropType<TableBtnType[]>,
+            type: Array as PropType<(TableBtnType&Partial<ExtractPropTypes<typeof buttonProps>>)[]>,
             default: () => []
         },
         size: {
             type: String as PropType<"small" | "large">,
+            default:'small'
         },
         dropDownProps: {
             type: Object as PropType<Partial<ExtractPropTypes<typeof dropdownProps>>>

@@ -22,7 +22,7 @@ function useWindowSize(mobileWidth: number = 756, delay: number = 500) {
     }
 }
 
-function useObserverSize<T extends VueComponentCtor>(ct: T, delay: number = 120) {
+function useObserverSize<T extends VueComponentCtor>(ct: T, delay: number = 100) {
     const prefix = ct.name === 'ElCard' ? 'el' : 'n'
     const wrapRef = ref<HTMLDivElement | null>(null);
     const restRef = ref<HTMLDivElement | null>(null);
@@ -72,7 +72,6 @@ function useObserverSize<T extends VueComponentCtor>(ct: T, delay: number = 120)
         const headerH = headerWrap?.offsetHeight ?? 0;
         const footerH = footerWrap?.offsetHeight ?? 0;
         const contentPadY = getPadY(contentEl);
-        console.log(111)
         tableHeight.value = Math.max(
             0,
             wrapInnerH - restH - headerH - footerH - contentPadY

@@ -10,23 +10,20 @@ import {
   EleZealTablePaginationControl,
   EleZealTable,
   renderInput,
-  renderInputNumber, EleZealTableBtnControl
+  renderInputNumber, EleZealTableBtnControl,
+  useZealColumnTool
 } from "@/elementPlus";
 import type {
-  eleZealCardRef,
   elePopupModalRef,
   eleDynamicFormRef,
-  eleZealTableSearchRef
+  eleZealTableSearchRef,
 } from "@/elementPlus"
 import {type SongType, zealData} from "./dataTest";
-import {useDyForm, useReactiveForm, usePagination, useWindowSize} from "@/index.ts";
+import {useDyForm, useReactiveForm, usePagination} from "@/index.ts";
 import type {ZealColumn} from "@/types/form";
-import {useZealColumnTool} from "@/elementPlus/hooks/useZealTool.ts";
 
-const isMobile = ref(false)
 const referId = ref<string | number>('-1')
 const tableData = ref<SongType[]>([])
-const eleZealCardRef = ref<eleZealCardRef | null>(null)
 const handleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
 const naiZealTableSearchRef = ref<eleZealTableSearchRef | null>(null)
 const naiPopupModalRef = ref<elePopupModalRef | null>(null)
@@ -55,14 +52,14 @@ const searchFormItems = useDecorateForm([
   ...it,
 })) as any[])
 // table column
-const getColumns = (isMobile: Ref<boolean>) => [
+const {tableColumns, eleZealCardRef} = useZealColumnTool<SongType>(({isMobile}) => [
   {type: 'selection', width: 55},
   {type: 'expand', render2: row => h('div', {}, JSON.stringify(row, null, 2))},
   {label: "No", prop: "no", width: 80},
   {label: "Title", prop: "title", slot: "title"},
   {label: "Length", prop: "length"},
   {
-    label: "Actions", fixed: 'right', width: 160, render2: row => h(
+    label: "Actions", fixed: 'right', width: isMobile.value ? 100 : 180, render2: row => h(
         EleZealTableBtnControl, {
           isMobile: isMobile.value,
           btnItems: [
@@ -81,12 +78,7 @@ const getColumns = (isMobile: Ref<boolean>) => [
         }
     )
   },
-] as ZealColumn<SongType>[];
-// const {tableColumns,eleZealCardRef}=useZealColumnTool(({isMobile})=>getColumns(isMobile??false))
-const tableColumns = computed(() => {
-  const isM = eleZealCardRef.value?.isMobile ?? ref(false)
-  return getColumns(isM)
-})
+])
 const pagination = usePagination(fetchData)
 const updateFormItems = useReactiveForm<SongType>([
   {

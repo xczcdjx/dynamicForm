@@ -1,5 +1,5 @@
 import '../index.less'
-import type {ExposeDyFType, ExposePopupMType, ExposeType, ExposeZealTSearchType} from "@/types";
+import type {ExposeDyFType, ExposePopupMType, ExposeType, ExposeZealCardType, ExposeZealTSearchType} from "@/types";
 import EleDynamicInput from "./EleDynamicInput";
 import EleDynamicCascadeInput from "./EleDynamicCascadeInput";
 import EleDynamicForm from "./EleDynamicForm";
@@ -13,12 +13,15 @@ type eleCascadeDynamicInputRef = InstanceType<typeof EleDynamicCascadeInput> & E
 type eleDynamicFormRef = InstanceType<typeof EleDynamicForm> & ExposeDyFType
 type elePopupModalRef = InstanceType<typeof ElePopupModal> & ExposePopupMType
 type eleZealTableSearchRef = InstanceType<typeof EleZealTableSearch> & ExposeZealTSearchType
+type eleZealCardRef = InstanceType<typeof EleZealCard> & ExposeZealCardType
 export * from './hooks/renderForm'
+export * from './hooks/useZealTool'
 export type{
     eleDynamicInputRef,
     eleCascadeDynamicInputRef,
     eleDynamicFormRef,
     elePopupModalRef,
+    eleZealCardRef,
     eleZealTableSearchRef
 }
 export {

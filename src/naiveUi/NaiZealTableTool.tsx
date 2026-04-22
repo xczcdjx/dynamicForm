@@ -10,7 +10,7 @@ import type {PropType, SlotsType, VNode} from 'vue'
 import type {DyFormItem, ZealPagination} from "@/types/form";
 import type {ZealTableBtnControlSlots, ZealTableSearchSlots} from "@/types/slots";
 import type {PaginationProps, PaginationSlots} from "naive-ui/es/pagination/src/Pagination";
-import {NButton, NDrawer, NDrawerContent, NDropdown, NPagination, NSpace} from "naive-ui";
+import {type ButtonProps, NButton, NDrawer, NDrawerContent, NDropdown, NPagination, NSpace} from "naive-ui";
 import {NaiDynamicForm} from "../naiveUi";
 import {useDyForm} from "../hooks/useDyForm";
 import type {TableBtnType} from "@/types";
@@ -289,11 +289,12 @@ export const NaiZealTableBtnControl = defineComponent({
             default: false
         },
         btnItems: {
-            type: Array as PropType<TableBtnType[]>,
+            type: Array as PropType<(TableBtnType&Partial<ButtonProps>)[]>,
             default: () => []
         },
         size: {
             type: String as PropType<"medium" | "small" | "large">,
+            default:'small'
         },
         dropDownProps: {
             type: Object as PropType<DropdownProps>
@@ -314,7 +315,7 @@ export const NaiZealTableBtnControl = defineComponent({
             items.find(it => it.key === k)?.onSelect?.(k)
             emit('onSelect', k)
         }
-        return () => <NSpace>
+        return () => <NSpace justify="center">
             {!props.isMobile ? items.map(it => {
                 const {key, onSelect, title, ...p} = it
                 // @ts-ignore

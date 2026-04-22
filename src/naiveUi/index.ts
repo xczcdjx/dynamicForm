@@ -1,5 +1,5 @@
 import '../index.less'
-import type {ExposeDyFType, ExposePopupMType, ExposeType, ExposeZealTSearchType} from "@/types";
+import type {ExposeDyFType, ExposePopupMType, ExposeType, ExposeZealCardType, ExposeZealTSearchType} from "@/types";
 import NaiDynamicInput from "./NaiDynamicInput";
 import NaiDynamicCascadeInput from "./NaiDynamicCascadeInput";
 import NaiDynamicForm from "./NaiDynamicForm";
@@ -13,7 +13,9 @@ type naiDynamicCascadeInputRef = InstanceType<typeof NaiDynamicCascadeInput> & E
 type naiDynamicFormRef = InstanceType<typeof NaiDynamicForm> & ExposeDyFType
 type naiPopupModalRef = InstanceType<typeof NaiPopupModal> & ExposePopupMType
 type naiZealTableSearchRef = InstanceType<typeof NaiZealTableSearch> & ExposeZealTSearchType
+type naiZealCardRef = InstanceType<typeof NaiZealCard> & ExposeZealCardType
 export * from './hooks/renderForm'
+export * from './hooks/useZealTool'
 export {
     NaiDynamicInput,
     NaiDynamicCascadeInput,
@@ -31,4 +33,5 @@ export type {
     naiDynamicFormRef,
     naiPopupModalRef,
     naiZealTableSearchRef,
+    naiZealCardRef
 }

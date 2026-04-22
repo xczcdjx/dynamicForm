@@ -8,20 +8,24 @@ import {
   NaiDynamicForm,
   NaiZealTableSearch,
   NaiZealTablePaginationControl,
+  NaiZealTableBtnControl,
   renderInput,
   renderInputNumber,
+  useZealColumnTool
 } from "@/naiveUi";
 import type {
   naiPopupModalRef,
   naiDynamicFormRef,
-  naiZealTableSearchRef
+  naiZealTableSearchRef,
 } from "@/naiveUi"
-import {useDyForm, useReactiveForm, usePagination} from "@/";
+import {useDyForm, useReactiveForm, usePagination} from "@/index";
+
 interface SongType {
-  no: number|string
+  no: number | string
   title: string
   length: string
 }
+
 const zealData = ref<SongType[]>([
   {no: 3, title: 'Wonderwall', length: '4:18'},
   {no: 4, title: 'Don\'t Look Back in Anger', length: '4:48'},
@@ -59,47 +63,51 @@ const searchFormItems = useDecorateForm([
   ...it,
 })) as any[])
 // table column
-const columns: DataTableColumns<SongType> = [
+
+const {tableColumns, naiZealCardRef} = useZealColumnTool<SongType>(({isMobile}) => [
   {
-    type: 'selection'
+    type: 'selection',
+    width: 55,
   },
   {
     title: 'No',
-    key: 'no'
+    key: 'no',
+    width: 100
   },
   {
     title: 'Title',
-    key: 'title'
+    key: 'title',
   },
   {
     title: 'Length',
     key: 'length'
   },
   {
-    title: 'Action',
     key: 'actions',
-    fixed: 'right',
-    render(row) {
-      return h(
-          NSpace, {}, [
-            h(NButton,
-                {
-                  size: 'small',
-                  onClick: () => upItem(row)
-                },
-                {default: () => 'update'}),
-            h(NButton,
-                {
-                  size: 'small',
-                  type: 'error',
-                  onClick: () => delItem(row)
-                },
-                {default: () => 'delete'})
-          ]
-      )
-    }
-  }
-]
+    title: "Actions", fixed: 'right', width: isMobile.value ? 100 : 180, render: row => h(
+        NaiZealTableBtnControl, {
+          dropDownText:'more',
+          isMobile: isMobile.value,
+          btnItems: [
+            {
+              title: 'Update',
+              key: "up",
+              onSelect: () => upItem(row),
+            },
+            {
+              title: 'Delete',
+              key: "del",
+              type: 'error',
+              onSelect: () => delItem(row)
+            }
+          ],
+        },
+        /*{
+          text:()=>h('span',{},'ttt')
+        }*/
+    )
+  },
+], {align: 'center'})
 const pagination = usePagination(fetchData)
 const updateFormItems = useReactiveForm<SongType>([
   {
@@ -133,9 +141,11 @@ const doReset = () => {
   fetchData()
   pagination.pageNo = 1
 }
+
 function rowKey(row: SongType) {
   return row.no
 }
+
 // mock http request
 async function fetchData() {
   tableLoading.value = true
@@ -178,6 +188,7 @@ function delItem(r: SongType) {
   message.success('delete successful')
   fetchData()
 }
+
 const deleteAll = () => {
   zealData.value = zealData.value.filter(it2 => !selectOpts.value.includes(it2.no))
   message.success('delete all successful')
@@ -210,7 +221,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NaiZealCard>
+  <NaiZealCard ref="naiZealCardRef" :observe-delay="10">
     <template #header="{isMobile}">
       <NaiZealTableSearch :isMobile="isMobile" :search-items="searchFormItems" ref="naiZealTableSearchRef"
                           :mobile-drawer="true"
@@ -230,7 +241,7 @@ onMounted(() => {
       <n-data-table
           :row-key="rowKey"
           :loading="tableLoading"
-          :columns="columns"
+          :columns="tableColumns"
           :data="tableData"
           :bordered="false"
           :style="{ height: tableHeight+'px'}"
