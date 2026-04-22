@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {h, nextTick, onMounted, ref} from "vue";
+import {computed, h, nextTick, onMounted, ref} from "vue";
 import {ElMessage, ElButton, ElSpace} from "element-plus";
 import {
   ElePopupModal,
@@ -10,19 +10,21 @@ import {
   EleZealTablePaginationControl,
   EleZealTable,
   renderInput,
-  renderInputNumber,
+  renderInputNumber, EleZealTableBtnControl
 } from "@/elementPlus";
 import type {
+  eleZealCardRef,
   elePopupModalRef,
   eleDynamicFormRef,
   eleZealTableSearchRef
 } from "@/elementPlus"
 import {type SongType, zealData} from "./dataTest";
-import {useDyForm, useReactiveForm, usePagination} from "@/";
-import {ZealColumn} from "@/types/form";
+import {useDyForm, useReactiveForm, usePagination} from "@/index.ts";
+import type {ZealColumn} from "@/types/form";
 
 const referId = ref<string | number>('-1')
 const tableData = ref<SongType[]>([])
+const eleZealCardRef = ref<eleZealCardRef | null>(null)
 const handleDynamicFormRef = ref<eleDynamicFormRef | null>(null)
 const naiZealTableSearchRef = ref<eleZealTableSearchRef | null>(null)
 const naiPopupModalRef = ref<elePopupModalRef | null>(null)
@@ -51,33 +53,37 @@ const searchFormItems = useDecorateForm([
   ...it,
 })) as any[])
 // table column
-const columns: ZealColumn<SongType>[] = [
+const getColumns = (isMobile: boolean) => [
   {type: 'selection', width: 55},
   {type: 'expand', render2: row => h('div', {}, JSON.stringify(row, null, 2))},
   {label: "No", prop: "no", width: 80},
   {label: "Title", prop: "title", slot: "title"},
   {label: "Length", prop: "length"},
   {
-    label: "Actions", fixed: 'right', width: 160, render2: (row) => h(
-        ElSpace, {}, [
-          h(ElButton,
-              {
-                size: 'small',
-                onClick: () => upItem(row)
-              },
-              'update'),
-          h(ElButton,
-              {
-                size: 'small',
-                type: 'danger',
-                onClick: () => delItem(row)
-              },
-              'delete')
-        ]
+    label: "Actions", fixed: 'right', width: 160, render2: row => h(
+        EleZealTableBtnControl, {
+          isMobile,
+          btnItems: [
+            {
+              title: 'Update',
+              key: "up",
+              onSelect: () => upItem(row),
+            },
+            {
+              title: 'Delete',
+              key: "del",
+              type: 'danger',
+              onSelect: () => delItem(row)
+            }
+          ]
+        }
     )
   },
-];
-
+] as ZealColumn<SongType>[];
+const tableColumns = computed(() => {
+  const isMobile = eleZealCardRef.value?.getSizeObj?.()?.isMobile ?? false
+  return getColumns(isMobile)
+})
 const pagination = usePagination(fetchData)
 const updateFormItems = useReactiveForm<SongType>([
   {
@@ -187,7 +193,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <EleZealCard>
+  <EleZealCard ref="eleZealCardRef">
     <template #header="{isMobile}">
       <EleZealTableSearch :is-mobile="isMobile" :search-items="searchFormItems" ref="naiZealTableSearchRef"
                           :mobile-drawer="true"
@@ -208,7 +214,7 @@ onMounted(() => {
       </el-button>
     </template>
     <template #default="{tableHeight}">
-      <EleZealTable :data="tableData" :columns="columns" :max-height="tableHeight" :loading="tableLoading"
+      <EleZealTable :data="tableData" :columns="tableColumns" :max-height="tableHeight" :loading="tableLoading"
                     @selection-change="handleSelectionChange">
         <template #title="{ row }">
           <el-tag>{{ row.title }}</el-tag>
