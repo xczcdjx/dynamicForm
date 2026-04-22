@@ -14,6 +14,7 @@ import {NButton, NDrawer, NDrawerContent, NDropdown, NPagination, NSpace} from "
 import {NaiDynamicForm} from "../naiveUi";
 import {useDyForm} from "../hooks/useDyForm";
 import type {TableBtnType} from "@/types";
+import type {DropdownProps} from "naive-ui/es/dropdown/src/Dropdown";
 
 
 export const NaiZealTableSearch = defineComponent({
@@ -294,6 +295,9 @@ export const NaiZealTableBtnControl = defineComponent({
         size: {
             type: String as PropType<"medium" | "small" | "large">,
         },
+        dropDownProps: {
+            type: Object as PropType<DropdownProps>
+        },
         dropDownText: {
             type: String,
             default: '更多'
@@ -326,6 +330,7 @@ export const NaiZealTableBtnControl = defineComponent({
                                     {dropDownText}
                                 </NButton>
                             }}
+                            {...props.dropDownProps}
             />}
         </NSpace>
     }

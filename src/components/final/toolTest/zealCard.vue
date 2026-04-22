@@ -8,7 +8,7 @@ const btnArray: (TableBtnType & ButtonProps)[] = [
   {
     key: "Add",
     title: "Add",
-    onSelect:(k:string)=>{
+    onSelect: (k: string) => {
       console.log(k)
     }
   },
@@ -40,12 +40,14 @@ const onSel = (k: string) => {
     <template #default="{ tableHeight, isMobile }">
       <div>tableHeight: {{ tableHeight }}, isMobile: {{ isMobile }}</div>
       <!-- 你的表格组件，传入 tableHeight 做滚动高度等 -->
-      <nai-zeal-table-btn-control size="small" :btn-items="btnArray" :isMobile="isMobile" @onSelect="onSel">
+      <nai-zeal-table-btn-control :drop-down-props="{trigger:'hover'}" size="small" :btn-items="btnArray"
+                                  :isMobile="isMobile" @onSelect="onSel">
         <!--        <template #text>-->
         <!--          <span>more</span>-->
         <!--        </template>-->
       </nai-zeal-table-btn-control>
-      <ele-zeal-table-btn-control size="small" :btn-items="btnArray" :isMobile="isMobile" @onSelect="onSel">
+      <ele-zeal-table-btn-control :drop-down-props="{trigger:'hover'}" size="small" :btn-items="btnArray"
+                                  :isMobile="isMobile" @onSelect="onSel">
         <!--        <template #text>-->
         <!--          <span>more</span>-->
         <!--        </template>-->

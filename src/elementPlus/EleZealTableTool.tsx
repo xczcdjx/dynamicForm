@@ -4,7 +4,7 @@ import {
     onMounted,
     ref,
     watch,
-    toRef,
+    toRef, type ExtractPropTypes,
 } from "vue";
 import type {PropType, SlotsType,} from 'vue'
 import type {DyFormItem, ZealColumn, ZealPagination} from "@/types/form";
@@ -29,6 +29,7 @@ import {EleDynamicForm} from "../elementPlus";
 import {useDyForm} from "../hooks/useDyForm";
 import type {PaginationProps} from "element-plus/es/components/pagination/src/pagination";
 import type {TableBtnType} from "@/types";
+import {dropdownProps} from "element-plus/es/components/dropdown/src/dropdown";
 
 
 export const EleZealTableSearch = defineComponent({
@@ -312,6 +313,9 @@ export const EleZealTableBtnControl = defineComponent({
         size: {
             type: String as PropType<"small" | "large">,
         },
+        dropDownProps: {
+            type: Object as PropType<Partial<ExtractPropTypes<typeof dropdownProps>>>
+        },
         dropDownText: {
             type: String,
             default: '更多'
@@ -348,6 +352,7 @@ export const EleZealTableBtnControl = defineComponent({
                                      }
                                  </ElDropdownMenu>
                              }}
+                             {...props.dropDownProps}
             >
                 {slots.text ? slots.text() : <ElButton size={size}>
                     {dropDownText}
