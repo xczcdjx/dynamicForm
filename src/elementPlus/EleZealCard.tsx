@@ -68,9 +68,9 @@ export default defineComponent({
                             </div>
                         </div>
                     },
-                    footer: () => <div class='footer'>
+                    footer: slots.footer ? () => <div class='footer'>
                         {slots.footer?.(unSizeObj)}
-                    </div>
+                    </div> : null
                 }}>
                     {slots.default?.({
                         tableHeight: tableHeight.value,
