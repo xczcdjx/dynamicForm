@@ -1,4 +1,5 @@
 import {
+    computed,
     defineComponent,
     nextTick,
     onBeforeUnmount,
@@ -9,6 +10,7 @@ import {
     type VNode
 } from 'vue'
 import '../../../index.less'
+import {getMarginY, getPadY} from "@/utils/tools.ts";
 
 export default defineComponent({
     name: 'BottomTouchFetch',
@@ -48,18 +50,29 @@ export default defineComponent({
         offset: {
             type: Number,
             default: 20
-        }
+        },
+        memoryScroll: {
+            type: Boolean,
+            default: false
+        },
     },
     emits: {
         'update:loading': (v: boolean) => true,
         'update:isError': (v: boolean) => true,
     },
     slots: Object as SlotsType<{
-        default: () => VNode
+        default: (hintHeight: number) => VNode
+        bottomHint: () => VNode
+        errorTxt: () => VNode
+        loadingTxt: () => VNode
+        finishedTxt: () => VNode
     }>,
     setup(props, {slots, emit}) {
-        const ignoreScroll = ref(true)
         const wrapRef = ref<HTMLElement | null>(null)
+        const botHintRef = ref<HTMLDivElement | null>(null)
+        const ignoreScroll = ref(true)  // 防止初始化请求两次
+        const botHeight = ref<number>(0)
+        const hintHeight = computed(() => (props.loading || props.finished || props.isError) ? botHeight.value : 0)
         let scrollEl: HTMLElement | null = null
 
         function handleScroll(e: Event) {
@@ -86,13 +99,19 @@ export default defineComponent({
             scrollEl = newScrollEl
 
             if (scrollEl) {
-                scrollEl.scrollTop = 0
+                if (!props.memoryScroll) scrollEl.scrollTop = 0
                 scrollEl.addEventListener("scroll", handleScroll)
             }
             requestAnimationFrame(() => {
                 ignoreScroll.value = false
             })
         }
+
+        async function bindHintHeight() {
+            const botRef = botHintRef.value?.getElementsByTagName('div')[0] as HTMLElement | null
+            botHeight.value = (botRef?.clientHeight ?? 0) + getMarginY(botRef)
+        }
+
         async function fetchData() {
             return props.loadData().then(v => {
                 emit('update:loading', false)
@@ -103,6 +122,7 @@ export default defineComponent({
         }
 
         onMounted(async () => {
+            await bindHintHeight()
             await fetchData()
             await bindScroll()
         })
@@ -113,16 +133,19 @@ export default defineComponent({
             }
         })
         return () => <div ref={wrapRef} class='loadedScroll'>
-            {slots.default?.()}
-            {props.finished ?
-                <div class='hintText'>{props.finishedTxt}</div> :
-                <>
-                    {props.loading && <div class='hintText'>{props.loadingTxt}</div>}
-                    {(props.isError && !props.loading) && <div class='hintText errorTxt' onClick={() => {
-                        emit('update:isError', false)
-                        fetchData()
-                    }}>{props.errorTxt}</div>}
-                </>}
+            {slots.default?.(hintHeight.value)}
+            <div ref={botHintRef}>
+                {slots.bottomHint ? slots.bottomHint?.() : props.finished ?
+                    <div class='hintText'>{slots.finishedTxt?.() ?? props.finishedTxt}</div> :
+                    <>
+                        {props.loading && <div class='hintText'>{slots.loadingTxt?.() ?? props.loadingTxt}</div>}
+                        {(props.isError && !props.loading) && <div class='hintText errorTxt' onClick={() => {
+                            emit('update:loading', true)
+                            emit('update:isError', false)
+                            fetchData()
+                        }}>{slots.errorTxt?.() ?? props.errorTxt}</div>}
+                    </>}
+            </div>
         </div>
     }
 })

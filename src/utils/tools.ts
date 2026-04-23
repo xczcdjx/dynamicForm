@@ -144,6 +144,11 @@ const getPadY = (el: HTMLElement | null) => {
     const s = getComputedStyle(el);
     return (parseFloat(s.paddingTop) || 0) + (parseFloat(s.paddingBottom) || 0);
 };
+const getMarginY = (el: HTMLElement | null) => {
+    if (!el) return 0;
+    const s = getComputedStyle(el);
+    return (parseFloat(s.marginTop) || 0) + (parseFloat(s.marginBottom) || 0);
+};
 const unwrapObj = <T extends Record<string, any>>(obj: T) =>
     Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, unref(v)])) as {
         [K in keyof T]: T[K] extends { value: infer V } ? V : T[K]
@@ -159,5 +164,6 @@ export {
     OmitValue,
     Debounce,
     getPadY,
+    getMarginY,
     unwrapObj
 }

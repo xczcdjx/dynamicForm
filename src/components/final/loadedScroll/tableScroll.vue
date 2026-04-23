@@ -20,7 +20,6 @@ const finished = ref(false)
 const isError = ref(false)
 const page = ref(1)
 const pageSize = 20
-const hintHeight = computed(() => (loading.value || finished.value || isError.value) ? 40 : 0)
 
 function rowKey(row: Row) {
   return row.id
@@ -46,10 +45,11 @@ async function fetchData() {
 function mockApi(page: number, pageSize: number): Promise<Row[]> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (page === 3) {
-        reject('error')
-        return;
-      }
+      // reject('error')
+      // if (page === 3) {
+      //   reject('error')
+      //   return;
+      // }
       if (page > 5) {
         resolve([])
         return
@@ -81,15 +81,17 @@ function mockApi(page: number, pageSize: number): Promise<Row[]> {
                         v-model:loading="loading"
                         v-model:is-error="isError"
                         :finished="finished">
-        <n-data-table
-            remote
-            :rowKey="rowKey"
-            :columns="columns"
-            :data="tableData"
-            :style="{ height: tableHeight-hintHeight+'px'}"
-            :flex-height="true"
-            :loading="loading"
-        />
+        <template #default="h">
+          <n-data-table
+              remote
+              :rowKey="rowKey"
+              :columns="columns"
+              :data="tableData"
+              :style="{ height: tableHeight-h+'px'}"
+              :flex-height="true"
+              :loading="loading"
+          />
+        </template>
       </BottomTouchFetch>
     </template>
 
