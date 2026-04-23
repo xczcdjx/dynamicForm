@@ -301,7 +301,7 @@ export const NaiZealTableBtnControl = defineComponent({
         },
         dropDownText: {
             type: String,
-            default: '更多'
+            default: 'controls'
         }
     },
     slots: Object as SlotsType<ZealTableBtnControlSlots>,

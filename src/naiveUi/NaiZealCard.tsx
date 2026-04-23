@@ -55,16 +55,16 @@ export default defineComponent({
                             {slots.header?.(unSizeObj) ?? <>
                                 <div class="title">{props.title}</div>
                                 <div class="search">
-                                    {slots.searchForm?.()}
-                                    {slots.searchBtn?.() || (slots.searchForm && <div class="searchBtn">
+                                    {slots.searchForm?.(unSizeObj)}
+                                    {slots.searchBtn?.(unSizeObj) || (slots.searchForm && <div class="searchBtn">
                                         <NButton size="small">{rTxt}</NButton>
                                         <NButton type="info" size="small">{sTxt}</NButton>
                                     </div>)}
                                 </div>
                             </>}
                             <div class="controlBtn">
-                                <div>{slots.controlBtn?.()}</div>
-                                {slots.toolBtn?.()}
+                                <div>{slots.controlBtn?.(unSizeObj)}</div>
+                                {slots.toolBtn?.(unSizeObj)}
                             </div>
                         </div>
                     },
@@ -74,7 +74,7 @@ export default defineComponent({
                 }}>
                     {slots.default?.({tableHeight: tableHeight.value, ...unSizeObj})}
                 </NCard>
-                <div ref={restRef}>{slots.rest?.()}</div>
+                <div ref={restRef}>{slots.rest?.(unSizeObj)}</div>
             </div>
         }
     }

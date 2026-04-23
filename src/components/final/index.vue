@@ -9,8 +9,8 @@ defineOptions({
 </script>
 
 <template>
-    <nai-test/>
-<!--          <ele-test/>-->
+<!--    <nai-test/>-->
+          <ele-test/>
 <!--  <zeal-card/>-->
 </template>
 

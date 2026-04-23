@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {computed, h, nextTick, onMounted, type Ref, ref, watchEffect} from "vue";
-import {ElMessage, ElButton, ElSpace} from "element-plus";
+import {h, nextTick, onMounted, ref} from "vue";
+import {ElMessage} from "element-plus";
 import {
   ElePopupModal,
   useDecorateForm,
@@ -20,7 +20,6 @@ import type {
 } from "@/elementPlus"
 import {type SongType, zealData} from "./dataTest";
 import {useDyForm, useReactiveForm, usePagination} from "@/index.ts";
-import type {ZealColumn} from "@/types/form";
 
 const referId = ref<string | number>('-1')
 const tableData = ref<SongType[]>([])
@@ -53,9 +52,9 @@ const searchFormItems = useDecorateForm([
 })) as any[])
 // table column
 const {tableColumns, eleZealCardRef} = useZealColumnTool<SongType>(({isMobile}) => [
-  {type: 'selection', width: 55},
-  {type: 'expand', render2: row => h('div', {}, JSON.stringify(row, null, 2))},
-  {label: "No", prop: "no", width: 80},
+  {type: 'selection', width: 35},
+  {type: 'expand', render2: row => h('div', {}, JSON.stringify(row, null, 2)), width: 20},
+  {label: "No", prop: "no", width: 50},
   {label: "Title", prop: "title", slot: "title"},
   {label: "Length", prop: "length"},
   {
@@ -78,8 +77,8 @@ const {tableColumns, eleZealCardRef} = useZealColumnTool<SongType>(({isMobile}) 
         }
     )
   },
-],{
-  align:'center'
+], {
+  align: 'center'
 })
 const pagination = usePagination(fetchData)
 const updateFormItems = useReactiveForm<SongType>([
@@ -196,9 +195,6 @@ onMounted(() => {
                           :mobile-drawer="true"
                           title="zeal test" @onReset="doReset"
                           @onSearch="doSearch">
-        <template #drawerBtn="{openDrawer}">
-          <el-button @click="openDrawer">+</el-button>
-        </template>
       </EleZealTableSearch>
     </template>
     <template #controlBtn>

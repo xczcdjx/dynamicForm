@@ -55,16 +55,16 @@ export default defineComponent({
                             {slots.header?.(unSizeObj) ?? <>
                                 <div class="title">{props.title}</div>
                                 <div class="search">
-                                    {slots.searchForm?.()}
-                                    {slots.searchBtn?.() || (slots.searchForm && <div class="searchBtn">
+                                    {slots.searchForm?.(unSizeObj)}
+                                    {slots.searchBtn?.(unSizeObj) || (slots.searchForm && <div class="searchBtn">
                                         <ElButton size="small">{rTxt}</ElButton>
                                         <ElButton type="info" size="small">{sTxt}</ElButton>
                                     </div>)}
                                 </div>
                             </>}
                             <div class="controlBtn">
-                                <div>{slots.controlBtn?.()}</div>
-                                {slots.toolBtn?.()}
+                                <div>{slots.controlBtn?.(unSizeObj)}</div>
+                                {slots.toolBtn?.(unSizeObj)}
                             </div>
                         </div>
                     },
@@ -77,7 +77,7 @@ export default defineComponent({
                         ...unSizeObj
                     })}
                 </ElCard>
-                <div ref={restRef}>{slots.rest?.()}</div>
+                <div ref={restRef}>{slots.rest?.(unSizeObj)}</div>
             </div>
         }
     }

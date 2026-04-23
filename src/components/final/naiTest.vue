@@ -67,12 +67,12 @@ const searchFormItems = useDecorateForm([
 const {tableColumns, naiZealCardRef} = useZealColumnTool<SongType>(({isMobile}) => [
   {
     type: 'selection',
-    width: 55,
+    width: 35,
   },
   {
     title: 'No',
     key: 'no',
-    width: 100
+    width: 80
   },
   {
     title: 'Title',
