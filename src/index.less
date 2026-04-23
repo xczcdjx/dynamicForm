@@ -511,7 +511,7 @@
 .eleZealTableSearch, .eleZealSearchDrawer {
   .searchForm {
 
-    .el-form-item{
+    .el-form-item {
       margin-bottom: 5px;
     }
   }
@@ -537,26 +537,45 @@
   .searchBtn {
     margin: 0;
   }
-  .el-drawer__header{
+
+  .el-drawer__header {
     margin-bottom: 15px;
   }
-  .el-drawer__body{
+
+  .el-drawer__body {
     padding: 5px 15px;
   }
 
   .searchForm {
     overflow: auto;
-    .el-form-item{
+
+    .el-form-item {
       margin-bottom: 10px;
     }
   }
 }
 
-.zealTableBtnControl{
+.zealTableBtnControl {
   display: flex;
   justify-content: center;
   gap: 5px;
 }
+
+.loadedScroll {
+  height: 100%;
+
+  .hintText {
+    margin-top: 10px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    &.errorTxt{
+      color: red;
+      cursor: pointer;
+    }
+  }
+}
+
 @media (max-width: 756px) {
   .dynamicForm {
     .dyFormList {
@@ -573,12 +592,14 @@
       }
     }
   }
-  .zealCard{
-    .n-card{
+
+  .zealCard {
+    .n-card {
       --n-padding-bottom: 10px !important;
       --n-padding-left: 10px !important;
     }
-    .el-card{
+
+    .el-card {
       --el-card-padding: 10px;
     }
   }

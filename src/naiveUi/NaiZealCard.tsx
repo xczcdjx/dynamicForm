@@ -39,7 +39,7 @@ export default defineComponent({
     slots: Object as SlotsType<ZealCardSlots>,
     setup(props, {slots, expose}) {
         const sizeObj = useWindowSize(...props.checkWindowSize)
-        const {wrapRef, cardRef, restRef, tableHeight} = useObserverSize(NCard,props.observeDelay)
+        const {wrapRef, cardRef, restRef, tableHeight} = useObserverSize(NCard, props.observeDelay)
         expose({
             tableHeight,
             isMobile: computed(() => sizeObj.isMobile)
@@ -68,9 +68,9 @@ export default defineComponent({
                             </div>
                         </div>
                     },
-                    footer: () => <div class='footer'>
+                    footer: () => slots.footer ? <div class='footer'>
                         {slots.footer?.(unSizeObj)}
-                    </div>
+                    </div> : null
                 }}>
                     {slots.default?.({tableHeight: tableHeight.value, ...unSizeObj})}
                 </NCard>
