@@ -12,46 +12,31 @@ import {
 import '../../../index.less'
 import {getMarginY, getPadY} from "@/utils/tools.ts";
 
+type PullEvent = TouchEvent | PointerEvent
+type ListenerItem = {
+    name: keyof HTMLElementEventMap
+    handler: EventListener
+    options?: AddEventListenerOptions | boolean
+}
+
+function getClientY(e: PullEvent) {
+    if ('touches' in e) {
+        return e.touches[0]?.clientY ?? 0
+    }
+    return e.clientY
+}
+
+function getEventId(e: PullEvent) {
+    if ('pointerId' in e) {
+        return e.pointerId
+    }
+    return null
+}
+
 export default defineComponent({
     name: 'PullDownRefresh',
     props: {
-        loading: {
-            type: Boolean,
-            default: true
-        },
         isError: {
-            type: Boolean,
-            default: false
-        },
-        loadData: {
-            type: Function as PropType<() => Promise<void>>,
-            required: true
-        },
-        scrollNode: {
-            type: String,
-            required: true
-        },
-        loadingTxt: {
-            type: String,
-            default: 'loading...'
-        },
-        finishedTxt: {
-            type: String,
-            default: 'no more data'
-        },
-        errorTxt: {
-            type: String,
-            default: 'fetch error , click again'
-        },
-        finished: {
-            type: Boolean,
-            default: false
-        },
-        offset: {
-            type: Number,
-            default: 20
-        },
-        memoryScroll: {
             type: Boolean,
             default: false
         },
@@ -78,9 +63,12 @@ export default defineComponent({
             type: String,
             default: 'refreshing...'
         },
+        supportMode: {
+            type: String as PropType<'pc' | 'mobile' | 'all'>,
+            default: 'mobile'
+        },
     },
     emits: {
-        'update:loading': (v: boolean) => true,
         'update:isError': (v: boolean) => true,
     },
     slots: Object as SlotsType<{
@@ -92,29 +80,11 @@ export default defineComponent({
     }>,
     setup(props, {slots, emit}) {
         const wrapRef = ref<HTMLElement | null>(null)
-        const botHintRef = ref<HTMLDivElement | null>(null)
-        const ignoreScroll = ref(true)  // 防止初始化请求两次
-        const botHeight = ref<number>(0)
-        const hintHeight = computed(() => (props.loading || props.finished || props.isError) ? botHeight.value : 0)
-
+        const pointerId = ref<number | null>(null)
         const touching = ref(false)
         const refreshing = ref(false)
         const startY = ref(0)
         const pullY = ref(0)
-
-        let scrollEl: HTMLElement | null = null
-
-        function handleScroll(e: Event) {
-            if (ignoreScroll.value || props.loading || props.finished || props.isError) return
-            const target = e.target as HTMLElement
-            const reachBottom =
-                target.scrollTop + target.clientHeight >= target.scrollHeight - props.offset
-
-            if (reachBottom) {
-                emit('update:loading', true)
-                fetchData()
-            }
-        }
 
 
         const pullText = computed(() => {
@@ -124,47 +94,62 @@ export default defineComponent({
         })
 
         function isTop() {
-            return !scrollEl || scrollEl.scrollTop <= 2
+            return !wrapRef.value || wrapRef.value.scrollTop <= 2
         }
 
         function canPullRefresh() {
             return props.pullRefresh &&
                 isTop() &&
-                !props.loading &&
                 !refreshing.value
         }
 
-        function handleTouchStart(e: TouchEvent) {
+        function handleStart(e: PullEvent) {
             touching.value = false
-            if (!props.pullRefresh || !scrollEl) return
+
+            if (!props.pullRefresh) return
             if (!isTop()) return
-            if (props.loading || refreshing.value) return
+            if (refreshing.value) return
+
             touching.value = true
-            startY.value = e.touches[0]!.clientY
+            startY.value = getClientY(e)
+            pointerId.value = getEventId(e)
+
+            if ('pointerId' in e) {
+                ;(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)
+            }
         }
 
-        function handleTouchMove(e: TouchEvent) {
-            if (!touching.value || !canPullRefresh()) return
+        function handleMove(e: PullEvent) {
+            if (!touching.value) return
 
-            const currentY = e.touches[0]!.clientY
+            if ('pointerId' in e && pointerId.value !== e.pointerId) return
+            if (!canPullRefresh()) return
+
+            const currentY = getClientY(e)
             const diff = currentY - startY.value
 
             if (diff <= 0) return
 
-            // 阻止浏览器默认回弹
             e.preventDefault()
 
-            // 阻尼效果
             pullY.value = Math.min(diff * 0.45, props.pullDistance + 30)
         }
 
-        async function handleTouchEnd() {
+        function handleEnd(e: PullEvent) {
             if (!touching.value) return
+
+            if ('pointerId' in e && pointerId.value !== e.pointerId) return
 
             touching.value = false
 
+            if ('pointerId' in e) {
+                ;(e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId)
+            }
+
+            pointerId.value = null
+
             if (pullY.value >= props.pullDistance) {
-                await doRefresh()
+                doRefresh()
             } else {
                 pullY.value = 0
             }
@@ -173,20 +158,14 @@ export default defineComponent({
         async function doRefresh() {
             if (refreshing.value) return
             refreshing.value = true
-            emit('update:loading', true)
             pullY.value = props.pullDistance
             try {
                 emit('update:isError', false)
-                if (props.refreshData) {
-                    await props.refreshData()
-                } else {
-                    await props.loadData()
-                }
+                await props.refreshData?.()
             } catch (e) {
                 emit('update:isError', true)
             } finally {
                 refreshing.value = false
-                emit('update:loading', false)
                 await nextTick()
                 await bindScroll()
                 setTimeout(() => {
@@ -195,63 +174,50 @@ export default defineComponent({
             }
         }
 
-        async function bindScroll(resetScroll = false) {
-            ignoreScroll.value = true
+        async function bindScroll() {
             await nextTick()
-            const newScrollEl = wrapRef.value?.querySelector(props.scrollNode
-            ) as HTMLElement | null
             unbindScroll()
 
-            scrollEl = newScrollEl
 
-            if (scrollEl) {
-                if (resetScroll && !props.memoryScroll) scrollEl.scrollTop = 0
-                scrollEl.addEventListener("scroll", handleScroll)
-            }
-            // 下拉刷新绑外层容器
-            if (wrapRef.value && props.pullRefresh) {
-                wrapRef.value.addEventListener('touchstart', handleTouchStart, {passive: true})
-                wrapRef.value.addEventListener('touchmove', handleTouchMove, {passive: false})
-                wrapRef.value.addEventListener('touchend', handleTouchEnd)
-                wrapRef.value.addEventListener('touchcancel', handleTouchEnd)
-            }
-            requestAnimationFrame(() => {
-                ignoreScroll.value = false
-            })
-        }
-
-        async function bindHintHeight() {
-            const botRef = botHintRef.value?.getElementsByTagName('div')[0] as HTMLElement | null
-            botHeight.value = (botRef?.clientHeight ?? 0) + getMarginY(botRef)
-        }
-
-        async function fetchData() {
-            return props.loadData().then(v => {
-                emit('update:loading', false)
-            }).catch(r => {
-                emit('update:loading', false)
-                emit('update:isError', true)
+            if (!wrapRef.value || !props.pullRefresh) return
+            getPullEvents().forEach(({name, handler, options}) => {
+                wrapRef.value?.addEventListener(name, handler, options)
             })
         }
 
         function unbindScroll() {
-            if (scrollEl) {
-                scrollEl.removeEventListener('scroll', handleScroll)
-            }
+            getPullEvents().forEach(({name, handler, options}) => {
+                wrapRef.value?.removeEventListener(name, handler, options)
+            })
+        }
 
-            if (wrapRef.value) {
-                wrapRef.value.removeEventListener('touchstart', handleTouchStart)
-                wrapRef.value.removeEventListener('touchmove', handleTouchMove)
-                wrapRef.value.removeEventListener('touchend', handleTouchEnd)
-                wrapRef.value.removeEventListener('touchcancel', handleTouchEnd)
+        function getPullEvents(): ListenerItem[] {
+            const start = handleStart as EventListener
+            const move = handleMove as EventListener
+            const end = handleEnd as EventListener
+            const pcArr: ListenerItem[] = [
+                {name: 'pointerdown', handler: start},
+                {name: 'pointermove', handler: move},
+                {name: 'pointerup', handler: end},
+                {name: 'pointercancel', handler: end}
+            ]
+            const mobileArr: ListenerItem[] = [
+                {name: 'touchstart', handler: start, options: {passive: true}},
+                {name: 'touchmove', handler: move, options: {passive: false}},
+                {name: 'touchend', handler: end},
+                {name: 'touchcancel', handler: end}
+            ]
+            switch (props.supportMode) {
+                case "pc":
+                    return pcArr
+                case "mobile":
+                    return mobileArr
+                default:
+                    return [...pcArr, ...mobileArr];
             }
         }
 
-        onMounted(async () => {
-            await bindHintHeight()
-            await fetchData()
-            await bindScroll()
-        })
+        onMounted(bindScroll)
 
         onBeforeUnmount(unbindScroll)
         return () => <div ref={wrapRef} class='loadedScroll'>
@@ -269,19 +235,7 @@ export default defineComponent({
                     {pullText.value}
                 </div>
             )}
-            {slots.default?.(hintHeight.value)}
-            <div ref={botHintRef}>
-                {slots.bottomHint ? slots.bottomHint?.() : props.finished ?
-                    <div class='hintText'>{slots.finishedTxt?.() ?? props.finishedTxt}</div> :
-                    <>
-                        {props.loading && <div class='hintText'>{slots.loadingTxt?.() ?? props.loadingTxt}</div>}
-                        {(props.isError && !props.loading) && <div class='hintText errorTxt' onClick={() => {
-                            emit('update:loading', true)
-                            emit('update:isError', false)
-                            fetchData()
-                        }}>{slots.errorTxt?.() ?? props.errorTxt}</div>}
-                    </>}
-            </div>
+            {slots.default?.(0)}
         </div>
     }
 })
