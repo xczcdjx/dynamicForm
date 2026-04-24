@@ -1,6 +1,7 @@
-import type {ValueType, DyCFormItem, DyRandomFun} from "@/types";
+import type {ValueType, DyCFormItem, DyRandomFun, PullEvent} from "@/types";
 import {isRef, ref, type Ref, unref} from "vue";
 import type {DyFormItem} from "@/types/form";
+
 const tranArr = (obj: ValueType, arrayFun: DyRandomFun, splitSymbol: string) => Object.keys(obj).map((it, i) => {
     const v = obj[it]
     const isArray = Array.isArray(v)
@@ -113,14 +114,16 @@ const saferRepairColor = (colors: string[], i: number): string => {
     const c = colors[i - 1]
     return c ?? getDepthColor(i)
 }
+
 function ensureRef(v: any): Ref<any> {
     return isRef(v) ? v : ref(v ?? null)
 }
+
 function OmitValue<
     T extends DyFormItem,
     const K extends readonly (keyof T)[]
 >(f: T, extraKeys?: K): Omit<T, "value" | K[number]> {
-    const res: any = { ...f }
+    const res: any = {...f}
     delete res.value
 
     extraKeys?.forEach((k) => {
@@ -129,7 +132,8 @@ function OmitValue<
 
     return res
 }
-function Debounce<T extends (...args: any[]) => void>(func: T, delay: number=500): (...args: Parameters<T>) => void {
+
+function Debounce<T extends (...args: any[]) => void>(func: T, delay: number = 500): (...args: Parameters<T>) => void {
     let timer: ReturnType<typeof setTimeout> | null = null;
 
     return function (...args: Parameters<T>) {
@@ -139,6 +143,7 @@ function Debounce<T extends (...args: any[]) => void>(func: T, delay: number=500
         }, delay);
     };
 }
+
 const getPadY = (el: HTMLElement | null) => {
     if (!el) return 0;
     const s = getComputedStyle(el);
@@ -153,6 +158,21 @@ const unwrapObj = <T extends Record<string, any>>(obj: T) =>
     Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, unref(v)])) as {
         [K in keyof T]: T[K] extends { value: infer V } ? V : T[K]
     };
+
+function getClientY(e: PullEvent) {
+    if ('touches' in e) {
+        return e.touches[0]?.clientY ?? 0
+    }
+    return e.clientY
+}
+
+function getEventId(e: PullEvent) {
+    if ('pointerId' in e) {
+        return e.pointerId
+    }
+    return null
+}
+
 export {
     tranArr,
     resetObj,
@@ -165,5 +185,7 @@ export {
     Debounce,
     getPadY,
     getMarginY,
-    unwrapObj
+    unwrapObj,
+    getClientY,
+    getEventId
 }

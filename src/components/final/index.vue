@@ -14,8 +14,8 @@ defineOptions({
 <!--    <nai-test/>-->
 <!--          <ele-test/>-->
 <!--  <zeal-card/>-->
-<!--  <table-scroll/>-->
-  <ele-table-scroll/>
+  <table-scroll/>
+<!--  <ele-table-scroll/>-->
 </template>
 
 <style scoped>

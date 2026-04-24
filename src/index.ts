@@ -1,8 +1,9 @@
 import DynamicInput from './origin/DynamicInput';
 import DynamicCascadeInput from "./origin/DynamicCascadeInput";
+import LoadedScroll from "./origin/LoadedScroll";
 import type {ExposeType} from "@/types";
 // 或者直接命名导出组件
-export {DynamicInput, DynamicCascadeInput};
+export {DynamicInput, DynamicCascadeInput, LoadedScroll};
 export * from './hooks/useDyForm'
 export * from './hooks/useTool'
 export * from './hooks/zealForm'

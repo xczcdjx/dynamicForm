@@ -3,6 +3,8 @@ import {NButton, NDataTable} from "naive-ui";
 import {NaiZealCard} from "@/naiveUi";
 import {onMounted, onBeforeUnmount, nextTick, ref, watch, computed} from "vue";
 import BottomTouchFetch from "@/components/final/loadedScroll/BottomTouchFetch.tsx";
+import PullDownRefresh from "@/components/final/loadedScroll/PullDownRefresh.tsx";
+import {LoadedScroll} from "@/index";
 
 type Row = {
   id: number
@@ -46,10 +48,10 @@ function mockApi(page: number, pageSize: number): Promise<Row[]> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       // reject('error')
-      // if (page === 3) {
-      //   reject('error')
-      //   return;
-      // }
+      if (page === 3) {
+        reject('error')
+        return;
+      }
       if (page > 5) {
         resolve([])
         return
@@ -65,6 +67,13 @@ function mockApi(page: number, pageSize: number): Promise<Row[]> {
     }, 1500)
   })
 }
+
+async function refreshData() {
+  page.value = 1
+  finished.value = false
+  tableData.value = []
+  await fetchData()
+}
 </script>
 <template>
   <NaiZealCard title="User List">
@@ -77,10 +86,16 @@ function mockApi(page: number, pageSize: number): Promise<Row[]> {
     </template>
 
     <template #default="{ tableHeight }">
-      <BottomTouchFetch scroll-node=".n-scrollbar-container" :load-data="fetchData"
-                        v-model:loading="loading"
-                        v-model:is-error="isError"
-                        :finished="finished">
+      <LoadedScroll
+          v-model:loading="loading"
+          v-model:is-error="isError"
+          :load-data="fetchData"
+          :finished="finished"
+          scroll-node=".n-scrollbar-container"
+          pull-refresh
+          :refresh-data="refreshData"
+          support-mode="all"
+      >
         <template #default="h">
           <n-data-table
               remote
@@ -92,7 +107,7 @@ function mockApi(page: number, pageSize: number): Promise<Row[]> {
               :loading="loading"
           />
         </template>
-      </BottomTouchFetch>
+      </LoadedScroll>
     </template>
 
 

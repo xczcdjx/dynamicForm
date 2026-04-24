@@ -7,10 +7,8 @@ import {
     type PropType,
     ref,
     type SlotsType,
-    type VNode, watch
+    type VNode
 } from 'vue'
-import '../../../index.less'
-import {getMarginY, getPadY} from "@/utils/tools.ts";
 
 type PullEvent = TouchEvent | PointerEvent
 type ListenerItem = {
@@ -220,7 +218,7 @@ export default defineComponent({
         onMounted(bindScroll)
 
         onBeforeUnmount(unbindScroll)
-        return () => <div ref={wrapRef} class='loadedScroll'>
+        return () => <div ref={wrapRef}>
             {props.pullRefresh && (
                 <div
                     class='pullRefreshHint'

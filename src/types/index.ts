@@ -157,3 +157,11 @@ export type TableBtnType = {
     onSelect?: (k: string) => void
     disabled?: boolean
 }
+
+export type PullEvent = TouchEvent | PointerEvent
+
+export type ListenerItem = {
+    name: keyof HTMLElementEventMap
+    handler: EventListener
+    options?: AddEventListenerOptions | boolean
+}
