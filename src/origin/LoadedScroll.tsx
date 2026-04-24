@@ -11,7 +11,6 @@ import {
 } from 'vue'
 import {getMarginY, getEventId, getClientY} from '@/utils/tools'
 import type {ListenerItem, PullEvent} from "@/types";
-import type {LoadedScroll} from "@/index.ts";
 
 const loadedScrollProps = {
     loading: {
@@ -92,8 +91,8 @@ const loadedScrollEmits = {
     'update:isError': (v: boolean) => true
 }
 
-export type LoadedScrollProps = ExtractPropTypes<typeof loadedScrollProps>
-export type LoadedScrollEmit = SetupContext<typeof loadedScrollEmits>['emit']
+type LoadedScrollProps = ExtractPropTypes<typeof loadedScrollProps>
+type LoadedScrollEmit = SetupContext<typeof loadedScrollEmits>['emit']
 
 export default defineComponent({
     name: 'LoadedScroll',

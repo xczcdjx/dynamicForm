@@ -1,55 +1,55 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { LoadedScroll } from "@/index";
+import {reactive, ref} from "vue";
+import {LoadedScroll} from "@/index";
 
 type Row = {
   id: number;
   name: string;
 };
+type pageModal = {
+  pageNo: number, pageSize: number
+}
 
 const tableData = ref<Row[]>([]);
 const loading = ref(true);
 const finished = ref(false);
 const isError = ref(false);
-const page = ref(1);
-const pageSize = 20;
+const pageModal = reactive({
+  pageNo: 1,
+  pageSize: 20,
+  total: 100
+})
 
 async function fetchData() {
   try {
-    const list = await mockApi(page.value, pageSize);
+    const list = await mockApi(pageModal);
 
-    if (list.length < pageSize) {
+    if (tableData.value.length >= pageModal.total) {
       finished.value = true;
+      return
     }
 
     tableData.value.push(...list);
-    page.value++;
+    pageModal.pageNo++;
   } catch (e) {
-    // 这里失败不要 page++
-    // 否则重试会跳过失败页
     throw e;
   }
 }
 
-function mockApi(page: number, pageSize: number): Promise<Row[]> {
+function mockApi(pm: pageModal): Promise<Row[]> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (page === 3) {
-        reject("error");
-        return;
+      if (pm.pageNo === 3) {
+        // test fail
+        pageModal.pageNo += 1
+        return reject("error");
       }
-
-      if (page > 5) {
-        resolve([]);
-        return;
-      }
-
-      const start = (page - 1) * pageSize + 1;
+      const start = (pm.pageNo - 1) * pm.pageSize + 1;
 
       resolve(
-          Array.from({ length: pageSize }, (_, i) => ({
+          Array.from({length: pm.pageSize}, (_, i) => ({
             id: start + i,
-            name: `数据 ${start + i}`,
+            name: `Data ${start + i}`,
           }))
       );
     }, 1500);
@@ -57,7 +57,7 @@ function mockApi(page: number, pageSize: number): Promise<Row[]> {
 }
 
 async function refreshData() {
-  page.value = 1;
+  pageModal.pageNo = 1
   finished.value = false;
   isError.value = false;
   tableData.value = [];
@@ -76,7 +76,6 @@ async function refreshData() {
       pull-refresh
       :refresh-data="refreshData"
       support-mode="all"
-      :refresh-loading="false"
   >
     <template #default="{ hintHeight }">
       <div class="native-table-wrap">
@@ -87,7 +86,7 @@ async function refreshData() {
             <thead>
             <tr>
               <th>ID</th>
-              <th>名称</th>
+              <th>Title</th>
             </tr>
             </thead>
 

@@ -10,7 +10,7 @@
 
 ## 概述
 
-> 新增综合`CRUD`模板
+> 新增触底加载下拉刷新
 
 `DynamicForm` 一个灵活且动态的表单组件，使用数组，简化模版操作，提供多种hook快速操作表单等。
 
@@ -37,7 +37,7 @@ yarn add dynamicformdjx
 pnpm add dynamicformdjx
 ```
 
-### 综合`CRUD` template **新**
+### 综合`CRUD` template
 
 > (依赖于naive ui或element plus组件库,请配合一起使用)
 
@@ -859,4 +859,175 @@ pnpm add dynamicformdjx
   <p>Result</p>
   <button @click="setData">setData 8888</button>
 </template>
+```
+
+### 触底加载下拉刷新 **新**
+
+```vue
+<script setup lang="ts">
+  import {reactive, ref} from "vue";
+  import {LoadedScroll} from "dynamicformdjx";
+
+  type Row = {
+    id: number;
+    name: string;
+  };
+  type pageModal = {
+    pageNo: number, pageSize: number
+  }
+
+  const tableData = ref<Row[]>([]);
+  const loading = ref(true);
+  const finished = ref(false);
+  const isError = ref(false);
+  const pageModal = reactive({
+    pageNo: 1,
+    pageSize: 20,
+    total: 100
+  })
+
+  async function fetchData() {
+    try {
+      const list = await mockApi(pageModal);
+
+      if (tableData.value.length >= pageModal.total) {
+        finished.value = true;
+        return
+      }
+
+      tableData.value.push(...list);
+      pageModal.pageNo++;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  function mockApi(pm: pageModal): Promise<Row[]> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (pm.pageNo === 3) {
+          // test fail
+          pageModal.pageNo += 1
+          return reject("error");
+        }
+        const start = (pm.pageNo - 1) * pm.pageSize + 1;
+
+        resolve(
+            Array.from({length: pm.pageSize}, (_, i) => ({
+              id: start + i,
+              name: `Data ${start + i}`,
+            }))
+        );
+      }, 1500);
+    });
+  }
+
+  async function refreshData() {
+    pageModal.pageNo = 1
+    finished.value = false;
+    isError.value = false;
+    tableData.value = [];
+
+    await fetchData();
+  }
+</script>
+
+<template>
+  <h2>LoadedScroll Test</h2>
+  <LoadedScroll
+      v-model:loading="loading"
+      v-model:is-error="isError"
+      :load-data="fetchData"
+      :finished="finished"
+      scroll-node=".native-table-body"
+      pull-refresh
+      :refresh-data="refreshData"
+      support-mode="all"
+  >
+    <template #default="{ hintHeight }">
+      <div class="native-table-wrap">
+        <div
+            class="native-table-body"
+        >
+          <table class="native-table">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="row in tableData" :key="row.id">
+              <td>{{ row.id }}</td>
+              <td>{{ row.name }}</td>
+            </tr>
+
+            <tr v-if="!tableData.length && !loading">
+              <td colspan="2" class="empty-cell">
+                No Data
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+  </LoadedScroll>
+</template>
+
+<style scoped>
+  h2{
+    text-align: center;
+    margin: 10px;
+  }
+  .native-table-wrap {
+    height: calc(100vh - 130px);
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .native-table-body {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .native-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 14px;
+  }
+
+  .native-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #f8fafc;
+  }
+
+  .native-table th,
+  .native-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+
+  .native-table th {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .native-table td {
+    color: #111827;
+  }
+
+  .empty-cell {
+    height: 220px;
+    text-align: center !important;
+    color: #999;
+  }
+</style>
 ```

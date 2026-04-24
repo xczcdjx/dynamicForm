@@ -1,6 +1,6 @@
 {
   "name": "dynamicformdjx",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "author": "xczcdjx",
   "license": "MIT",
@@ -51,6 +51,7 @@
   "scripts": {
     "dev:v3": "vite --host",
     "build:v3": "vue-tsc -b && vite build",
+    "build:skipTsc": "vite build",
     "preview": "vite preview",
     "pub": "npm version patch && npm publish"
   },

@@ -6,7 +6,7 @@ import {NButton} from "naive-ui";
 // import {PresetType} from "../../../dist/types";
 import {useDyForm, useReactiveForm} from "@/hooks/useDyForm";
 import {type naiDynamicFormRef, NaiDynamicForm, renderInput, renderRadioGroup} from "@/naiveUi";
-import {PresetType} from "@/types";
+import type {PresetType} from "@/types";
 
 type FormRow = {
   username: string
@@ -55,12 +55,12 @@ const formItems = useReactiveForm<FormRow>([
 const useForm = useDyForm<FormRow>(formItems)
 const getData = () => {
   // const res=useForm.getValues() // 或
-  const res = naiDynamicFormRef.value?.getResult()
+  const res = naiDynamicFormRef.value?.getResult?.()
   console.log(res)
 }
 const resetData = () => {
   // useForm.onReset() // 或
-  naiDynamicFormRef.value?.reset()
+  naiDynamicFormRef.value?.reset?.()
 }
 const setData = () => {
   // 隐藏username
@@ -75,7 +75,7 @@ const setData = () => {
 }
 const validatorData = () => {
   // 校验
-  naiDynamicFormRef.value.validator().then(data => {
+  naiDynamicFormRef.value?.validator().then(data => {
     console.log(data)
   }).catch(err => {
     console.log(err)
