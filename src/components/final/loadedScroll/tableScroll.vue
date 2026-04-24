@@ -95,14 +95,15 @@ async function refreshData() {
           pull-refresh
           :refresh-data="refreshData"
           support-mode="all"
+          :refresh-loading="false"
       >
-        <template #default="h">
+        <template #default="{hintHeight}">
           <n-data-table
               remote
               :rowKey="rowKey"
               :columns="columns"
               :data="tableData"
-              :style="{ height: tableHeight-h+'px'}"
+              :style="{ height: tableHeight-hintHeight+'px'}"
               :flex-height="true"
               :loading="loading"
           />

@@ -4,6 +4,7 @@ import NaiTest from "@/components/final/naiTest.vue";
 import EleTest from "@/components/final/eleTest.vue";
 import TableScroll from "@/components/final/loadedScroll/tableScroll.vue";
 import EleTableScroll from "@/components/final/loadedScroll/eleTableScroll.vue";
+import ComTest from "@/components/final/loadedScroll/comTest.vue";
 
 defineOptions({
   name: 'finalIndex'
@@ -16,6 +17,7 @@ defineOptions({
 <!--  <zeal-card/>-->
   <table-scroll/>
 <!--  <ele-table-scroll/>-->
+<!--  <com-test/>-->
 </template>
 
 <style scoped>

@@ -100,7 +100,7 @@ export default defineComponent({
     props: loadedScrollProps,
     emits: loadedScrollEmits,
     slots: Object as SlotsType<{
-        default: (hintHeight: number) => VNode
+        default: (obj: { hintHeight: number }) => VNode
         bottomHint: () => VNode
         errorTxt: () => VNode
         loadingTxt: () => VNode
@@ -174,7 +174,7 @@ export default defineComponent({
                         {pullText.value}
                     </div>
                 )}
-                {slots.default?.(hintHeight.value)}
+                {slots.default?.({hintHeight: hintHeight.value})}
                 <div ref={botHintRef}>
                     {slots.bottomHint ? slots.bottomHint?.() : props.finished ?
                         <div class='hintText'>{slots.finishedTxt?.() ?? props.finishedTxt}</div> :
