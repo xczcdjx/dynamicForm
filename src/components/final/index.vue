@@ -12,12 +12,12 @@ defineOptions({
 </script>
 
 <template>
-<!--    <nai-test/>-->
+    <nai-test/>
 <!--          <ele-test/>-->
 <!--  <zeal-card/>-->
 <!--  <table-scroll/>-->
 <!--  <ele-table-scroll/>-->
-  <com-test/>
+<!--  <com-test/>-->
 </template>
 
 <style scoped>

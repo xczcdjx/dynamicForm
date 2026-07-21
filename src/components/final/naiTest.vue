@@ -84,7 +84,8 @@ const {tableColumns, naiZealCardRef} = useZealColumnTool<SongType>(({isMobile}) 
   },
   {
     key: 'actions',
-    title: "Actions", fixed: 'right', width: isMobile.value ? 100 : 180, render: row => h(
+    title: "Actions", fixed: 'right', width: isMobile.value ? 100 : 180,
+    render: row => h(
         NaiZealTableBtnControl, {
           dropDownText:'more',
           isMobile: isMobile.value,
