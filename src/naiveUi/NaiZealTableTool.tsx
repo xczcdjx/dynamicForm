@@ -309,30 +309,49 @@ export const NaiZealTableBtnControl = defineComponent({
         onSelect: (k: string) => true
     },
     setup(props, {emit, slots}) {
-        const items = props.btnItems
-        const {dropDownText, size} = props
         const onSelect = (k: string) => {
-            items.find(it => it.key === k)?.onSelect?.(k)
+            props.btnItems.find(it => it.key === k)?.onSelect?.(k)
             emit('onSelect', k)
         }
-        return () => <div class='zealTableBtnControl'>
-            {!props.isMobile ? items.map(it => {
-                const {key, onSelect, title, ...p} = it
-                // @ts-ignore
-                return <NButton size={size} key={key} onClick={() => {
-                    onSelect?.(key)
-                    emit('onSelect', key)
-                }} {...p}>{title}</NButton>
-            }) : <NDropdown size={size} trigger='click'
-                            onSelect={onSelect}
-                            options={items.map(it => ({label: it.title, disabled: it.disabled, key: it.key}))}
-                            v-slots={{
-                                default: () => slots.text ? slots.text() : <NButton size={size}>
-                                    {dropDownText}
+        return () => {
+            const { btnItems, dropDownProps, dropDownText, isMobile, size } = props;
+
+            return (
+                <div class="zealTableBtnControl">
+                    {!isMobile ? (
+                        btnItems.map((item) => {
+                            const { key, onSelect: selectItem, title, ...buttonProps } = item;
+                            return (
+                                <NButton
+                                    {...buttonProps}
+                                    size={size}
+                                    key={key}
+                                    onClick={() => {
+                                        selectItem?.(key);
+                                        emit('onSelect', key);
+                                    }}
+                                >
+                                    {title}
                                 </NButton>
-                            }}
-                            {...props.dropDownProps}
-            />}
-        </div>
+                            );
+                        })
+                    ) : (
+                        <NDropdown
+                            {...dropDownProps}
+                            size={size}
+                            trigger="click"
+                            onSelect={onSelect}
+                            options={btnItems.map((item) => ({
+                                label: item.title,
+                                disabled: item.disabled,
+                                key: item.key,
+                            }))}
+                        >
+                            {slots.text?.() ?? <NButton size={size}>{dropDownText}</NButton>}
+                        </NDropdown>
+                    )}
+                </div>
+            );
+        };
     }
 })

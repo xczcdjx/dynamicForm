@@ -305,62 +305,110 @@ export const EleZealTableBtnControl = defineComponent({
     props: {
         isMobile: {
             type: Boolean,
-            default: false
+            default: false,
         },
         btnItems: {
-            type: Array as PropType<(TableBtnType&Partial<ExtractPropTypes<typeof buttonProps>>)[]>,
-            default: () => []
+            type: Array as PropType<
+                (
+                    TableBtnType &
+                    Partial<ExtractPropTypes<typeof buttonProps>>
+                    )[]
+            >,
+            default: () => [],
         },
         size: {
-            type: String as PropType<"small" | "large">,
-            default:'small'
+            type: String as PropType<'small' | 'large'>,
+            default: 'small',
         },
         dropDownProps: {
-            type: Object as PropType<Partial<ExtractPropTypes<typeof dropdownProps>>>
+            type: Object as PropType<
+                Partial<ExtractPropTypes<typeof dropdownProps>>
+            >,
         },
         dropDownText: {
             type: String,
-            default: 'controls'
-        }
+            default: 'controls',
+        },
     },
     slots: Object as SlotsType<ZealTableBtnControlSlots>,
     emits: {
-        onSelect: (k: string) => true
+        onSelect: (_key: string) => true,
     },
-    setup(props, {emit, slots}) {
-        const items = props.btnItems
-        const {dropDownText, size} = props
-        return () => <div class='zealTableBtnControl'>
-            {!props.isMobile ? items.map(it => {
-                const {key, onSelect, title, ...p} = it
-                return <ElButton size={size} key={key} onClick={() => {
-                    onSelect?.(key)
-                    emit('onSelect', key)
-                }} {...p}>{title}</ElButton>
+    setup(props, { emit, slots }) {
+        const onSelect = (key: string) => {
+            props.btnItems
+                .find((item) => item.key === key)
+                ?.onSelect?.(key);
 
-            }) : <ElDropdown size={size} trigger='click'
-                             placement='bottom'
-                             v-slots={{
-                                 dropdown: () => <ElDropdownMenu>
-                                     {
-                                         items.map(it => <ElDropdownItem disabled={it.disabled} key={it.key}
-                                                                         onClick={() => {
-                                                                             it.onSelect?.(it.key)
-                                                                             emit('onSelect', it.key)
-                                                                         }}>
-                                                 {it.title}
-                                             </ElDropdownItem>
-                                         )
-                                     }
-                                 </ElDropdownMenu>
-                             }}
-                             {...props.dropDownProps}
-            >
-                {slots.text ? slots.text() : <ElButton size={size}>
-                    {dropDownText}
-                </ElButton>}
-            </ElDropdown>
-            }
-        </div>
-    }
-})
+            emit('onSelect', key);
+        };
+
+        return () => {
+            const {
+                btnItems,
+                dropDownProps,
+                dropDownText,
+                isMobile,
+                size,
+            } = props;
+
+            return (
+                <div class="zealTableBtnControl">
+                    {!isMobile ? (
+                        btnItems.map((item) => {
+                            const {
+                                key,
+                                onSelect: selectItem,
+                                title,
+                                ...buttonProps
+                            } = item;
+
+                            return (
+                                <ElButton
+                                    {...buttonProps}
+                                    size={size}
+                                    key={key}
+                                    onClick={() => {
+                                        selectItem?.(key);
+                                        emit('onSelect', key);
+                                    }}
+                                >
+                                    {title}
+                                </ElButton>
+                            );
+                        })
+                    ) : (
+                        <ElDropdown
+                            {...dropDownProps}
+                            size={size}
+                            trigger="click"
+                            placement="bottom"
+                            onCommand={onSelect}
+                            v-slots={{
+                                dropdown: () => (
+                                    <ElDropdownMenu>
+                                        {btnItems.map((item) => (
+                                            <ElDropdownItem
+                                                command={item.key}
+                                                disabled={item.disabled}
+                                                key={item.key}
+                                            >
+                                                {item.title}
+                                            </ElDropdownItem>
+                                        ))}
+                                    </ElDropdownMenu>
+                                ),
+                            }}
+                        >
+                            {slots.text?.() ?? (
+                                <ElButton size={size}>
+                                    {dropDownText}
+                                </ElButton>
+                            )}
+                        </ElDropdown>
+                    )}
+                </div>
+            );
+        };
+    },
+});
