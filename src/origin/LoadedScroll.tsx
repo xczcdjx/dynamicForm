@@ -7,9 +7,10 @@ import {
     type PropType, type Ref,
     ref, type SetupContext,
     type SlotsType,
-    type VNode
+    type VNode,
+    watch
 } from 'vue'
-import {getMarginY, getEventId, getClientY} from '@/utils/tools'
+import {getEventId, getClientY} from '@/utils/tools'
 import type {ListenerItem, PullEvent} from "@/types";
 
 const loadedScrollProps = {
@@ -83,7 +84,12 @@ const loadedScrollProps = {
     refreshLoading: {
         type: Boolean,
         default: true
-    }
+    },
+    stackStatus: {
+        // true 时常驻展示结束/错误提示，false 时仅在滚动底部展示
+        type: Boolean,
+        default: true
+    },
 }
 
 const loadedScrollEmits = {
@@ -112,17 +118,28 @@ export default defineComponent({
         // node
         const wrapRef = ref<HTMLElement | null>(null)
         let scrollEl: HTMLElement | null = null
+        const isAtBottom = ref(false)
         // bottom
         const {
             ignoreScroll,
             botHintRef,
             hintHeight,
             handleScroll,
+            updateBottomStatus,
             bindHintHeight,
             fetchData
-        } = useBotLoaded(props, emit)
+        } = useBotLoaded(props, emit, f => {
+            isAtBottom.value = f
+        })
         // top
         const {pullY, pullText, touching, bindLoaded, unbindLoaded} = useTopRefresh(props, emit, wrapRef, bindScroll)
+        const showBottomStatus = computed(() => {
+            return props.stackStatus || isAtBottom.value
+        })
+
+        watch(() => [props.loading, props.finished, props.isError], () => {
+            if (scrollEl) updateBottomStatus(scrollEl)
+        }, {flush: 'post'})
 
         async function bindScroll() {
             ignoreScroll.value = true
@@ -135,7 +152,10 @@ export default defineComponent({
 
             if (scrollEl) {
                 if (!props.memoryScroll) scrollEl.scrollTop = 0
+                updateBottomStatus(scrollEl)
                 scrollEl.addEventListener("scroll", handleScroll)
+            } else {
+                isAtBottom.value = false
             }
             setTimeout(() => {
                 ignoreScroll.value = false
@@ -174,52 +194,94 @@ export default defineComponent({
                     </div>
                 )}
                 {slots.default?.({hintHeight: hintHeight.value})}
-                <div ref={botHintRef}>
-                    {slots.bottomHint ? slots.bottomHint?.() : props.finished ?
-                        <div class='hintText'>{slots.finishedTxt?.() ?? props.finishedTxt}</div> :
+                <div ref={botHintRef} style={{display: 'flow-root'}}>
+                    {slots.bottomHint ? slots.bottomHint?.() : (
                         <>
-                            {props.loading &&
-                                <div class='hintText'>{slots.loadingTxt?.() ?? props.loadingTxt}</div>}
-                            {(props.isError && !props.loading) && <div class='hintText errorTxt'
-                                                                       data-no-pull
-                                // @ts-ignore
-                                                                       onPointerDown={(e) => e.stopPropagation()}
-                                // @ts-ignore
-                                                                       onTouchStart={(e) => e.stopPropagation()}
-                                                                       onClick={() => {
-                                                                           emit('update:loading', true)
-                                                                           emit('update:isError', false)
-                                                                           fetchData()
-                                                                       }}>{slots.errorTxt?.() ?? props.errorTxt}</div>}
-                        </>}
+                            {props.loading && (
+                                <div class='hintText'>
+                                    {slots.loadingTxt?.() ?? props.loadingTxt}
+                                </div>
+                            )}
+
+                            {showBottomStatus.value && props.finished && (
+                                <div class='hintText'>
+                                    {slots.finishedTxt?.() ?? props.finishedTxt}
+                                </div>
+                            )}
+
+                            {showBottomStatus.value &&
+                                props.isError &&
+                                !props.loading && (
+                                    <div
+                                        class='hintText errorTxt'
+                                        data-no-pull
+                                        // @ts-ignore
+                                        onPointerDown={(e) => e.stopPropagation()}
+                                        // @ts-ignore
+                                        onTouchStart={(e) => e.stopPropagation()}
+                                        onClick={() => {
+                                            emit('update:loading', true)
+                                            emit('update:isError', false)
+                                            fetchData()
+                                        }}
+                                    >
+                                        {slots.errorTxt?.() ?? props.errorTxt}
+                                    </div>
+                                )}
+                        </>
+                    )}
                 </div>
             </div>
         )
     }
 })
 
-function useBotLoaded(props: LoadedScrollProps, emit: LoadedScrollEmit) {
+function useBotLoaded(props: LoadedScrollProps, emit: LoadedScrollEmit, cb: (f: boolean) => void) {
     const ignoreScroll = ref(true)  // 防止初始化请求两次
     const botHeight = ref<number>(0)
     const botHintRef = ref<HTMLDivElement | null>(null)
-    const hintHeight = computed(() => (props.loading || props.finished || props.isError) ? botHeight.value : 0)
+    // 根据实际渲染内容占位，提示隐藏或自定义插槽为空时高度为 0。
+    const hintHeight = botHeight
+    let hintObserver: ResizeObserver | undefined
 
-    function handleScroll(e: Event) {
-        if (ignoreScroll.value || props.loading || props.finished || props.isError) return
-        const target = e.target as HTMLElement
+    function updateBottomStatus(target: HTMLElement) {
         const reachBottom =
             target.scrollTop + target.clientHeight >= target.scrollHeight - props.offset
+        // 提示出现会压缩表格高度，补回占位高度以避免显示/隐藏反复切换。
+        cb(target.scrollTop + target.clientHeight + hintHeight.value >= target.scrollHeight - props.offset)
+        return reachBottom
+    }
 
-        if (reachBottom) {
-            emit('update:loading', true)
-            fetchData()
+    function handleScroll(e: Event) {
+        // 状态提示仍需跟随滚动；终态只阻止继续请求数据。
+        const reachBottom = updateBottomStatus(e.target as HTMLElement)
+        if (
+            ignoreScroll.value ||
+            props.loading ||
+            props.finished ||
+            props.isError ||
+            !reachBottom
+        ) {
+            return
         }
+        emit('update:loading', true)
+        fetchData()
     }
 
     async function bindHintHeight() {
-        const botRef = botHintRef.value?.getElementsByTagName('div')[0] as HTMLElement | null
-        botHeight.value = (botRef?.clientHeight ?? 0) + getMarginY(botRef)
+        await nextTick()
+        const botRef = botHintRef.value
+        if (!botRef) return
+        const measure = () => {
+            botHeight.value = botRef.getBoundingClientRect().height
+        }
+        measure()
+        hintObserver?.disconnect()
+        hintObserver = new ResizeObserver(measure)
+        hintObserver.observe(botRef)
     }
+
+    onBeforeUnmount(() => hintObserver?.disconnect())
 
     async function fetchData() {
         return props.loadData?.().then(v => {
@@ -232,7 +294,7 @@ function useBotLoaded(props: LoadedScrollProps, emit: LoadedScrollEmit) {
 
     return {
         ignoreScroll, hintHeight, botHeight, botHintRef,
-        handleScroll, bindHintHeight, fetchData
+        handleScroll, updateBottomStatus, bindHintHeight, fetchData
     }
 }
 

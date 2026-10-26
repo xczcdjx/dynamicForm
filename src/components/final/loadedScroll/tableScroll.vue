@@ -96,6 +96,7 @@ async function refreshData() {
           :refresh-data="refreshData"
           support-mode="all"
           :refresh-loading="false"
+          :stackStatus="false"
       >
         <template #default="{hintHeight}">
           <n-data-table

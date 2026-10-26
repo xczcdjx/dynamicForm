@@ -13,9 +13,9 @@ defineOptions({
 
 <template>
 <!--    <nai-test/>-->
-          <ele-test/>
+<!--          <ele-test/>-->
 <!--  <zeal-card/>-->
-<!--  <table-scroll/>-->
+  <table-scroll/>
 <!--  <ele-table-scroll/>-->
 <!--  <com-test/>-->
 </template>
