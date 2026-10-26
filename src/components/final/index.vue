@@ -12,8 +12,8 @@ defineOptions({
 </script>
 
 <template>
-    <nai-test/>
-<!--          <ele-test/>-->
+<!--    <nai-test/>-->
+          <ele-test/>
 <!--  <zeal-card/>-->
 <!--  <table-scroll/>-->
 <!--  <ele-table-scroll/>-->

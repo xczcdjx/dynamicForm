@@ -369,6 +369,10 @@
     color: red;
   }
 
+  .el-row {
+    gap: 5px 0;
+  }
+
   .header {
     margin-bottom: 5px;
   }
@@ -480,7 +484,7 @@
 
   .naiTitle {
     margin-bottom: 10px;
-    font-weight: 500;
+    font-weight: bold;
     font-size: 18px;
   }
 
@@ -510,6 +514,8 @@
 
 .eleZealTableSearch, .eleZealSearchDrawer {
   .searchForm {
+    overflow-y: auto;
+    overflow-x: hidden;
 
     .el-form-item {
       margin-bottom: 5px;
@@ -518,6 +524,8 @@
 
   .naiTitle {
     margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 18px;
   }
 
   .drawerSearchBtn {
@@ -570,7 +578,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    &.errorTxt{
+
+    &.errorTxt {
       color: red;
       cursor: pointer;
     }

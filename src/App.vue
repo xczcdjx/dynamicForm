@@ -25,7 +25,7 @@ import FinalIndex from "@/components/final/index.vue";
         <!--      <custom-dy-form-test/>-->
         <!--      <decorate-dy-form-test/>-->
         <!--      element-plus-->
-        <!--      <ele-simple-dy-form-test/>-->
+<!--              <ele-simple-dy-form-test/>-->
         <!--      <ele-custom-dy-form-test/>-->
         <!--      <ele-dynamicform-test/>-->
         <!--      <ele-decorate-dy-form-test/>-->

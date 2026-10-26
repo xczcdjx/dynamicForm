@@ -77,6 +77,10 @@ export const EleZealTableSearch = defineComponent({
         isMobile: {
             type: Boolean,
             default: false
+        },
+        formSize:{
+            type: String as PropType<"" | "small" | "default" | "large">,
+            default: 'default'
         }
     },
     emits: {
@@ -134,8 +138,9 @@ export const EleZealTableSearch = defineComponent({
                                 <EleDynamicForm items={props.searchItems} preset={'grid'}
                                                 formConfig={{
                                                     labelPosition: 'left',
-                                                    showMessage: false
-                                                    // showFeedback: false
+                                                    showMessage: false,
+                                                    // showFeedback: false,
+                                                    size:props.formSize
                                                 }}/>
                             </div>
                             {
